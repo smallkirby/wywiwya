@@ -1,7 +1,7 @@
 <template>
   <layout-wrapper>
     <div>
-      <p>index</p>
+      <p>history</p>
     </div>
   </layout-wrapper>
 </template>
@@ -9,10 +9,10 @@
 <script lang="ts">
 import Vue from 'vue';
 
-export const IndexPage = Vue.extend({
-  name: 'IndexPage',
+export const HistoryPage = Vue.extend({
+  name: 'HistoryPage',
 });
 
-export default IndexPage;
+export default HistoryPage;
 
 </script>

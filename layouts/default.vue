@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg-white w-full h-full">
+  <div class="bg-skwhite w-full h-full">
     <wywiwya-logo />
     <div class="w-7/12 h-screen mx-auto">
       <layout-header />
