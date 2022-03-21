@@ -10,6 +10,9 @@ module.exports = {
   ],
   plugins: [
   ],
+  ignorePatterns: [
+    'functions/lib/**',
+  ],
   rules: {
     indent: ['error', 2],
     'no-tabs': 'off',
