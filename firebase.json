@@ -4,8 +4,8 @@
     "predeploy": "npm --prefix \"$RESOURCE_DIR\" run build"
   },
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "./fconfig/firestore.rules",
+    "indexes": "./fconfig/firestore.indexes.json"
   },
   "hosting": {
     "public": "dist",
@@ -24,9 +24,6 @@
     },
     "firestore": {
       "port": 8081
-    },
-    "database": {
-      "port": 9000
     },
     "hosting": {
       "port": 5000
