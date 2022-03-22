@@ -1,5 +1,4 @@
 export default {
-  // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'wywiwya',
     htmlAttrs: {
@@ -18,32 +17,26 @@ export default {
 
   ssr: false,
 
-  // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
 
-  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    {
+      src: '~/plugins/firebase.ts', // TODO
+    },
   ],
 
-  // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
-  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
-    // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
   ],
 
-  // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseURL: '/',
   },
@@ -54,11 +47,23 @@ export default {
     },
   },
 
-  // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
 
   router: {
     base: '/',
+    middleware: [
+      'firebase',
+    ],
+  },
+
+  publicRuntimeConfig: {
+    FB_APIKEY: process.env.FB_APIKEY,
+    FB_AUTHDOMAIN: process.env.FB_AUTHDOMAIN,
+    FB_PROJECTID: process.env.FB_PROJECTID,
+    FB_STORAGEBUCKET: process.env.FB_STORAGEBUCKET,
+    FB_MESSAGINGSENDERID: process.env.FB_MESSAGINGSENDERID,
+    FB_APPID: process.env.FB_APPID,
+    FB_MEASUREMENTID: process.env.FB_MEASUREMENTID,
   },
 };

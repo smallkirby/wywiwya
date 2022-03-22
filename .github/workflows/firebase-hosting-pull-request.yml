@@ -5,10 +5,23 @@ jobs:
     if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: npm ci && npm run generate
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install deps and generate a site
+        env:
+          FB_APIKEY: ${{ secrets.FB_APIKEY}}
+          FB_AUTHDOMAIN: ${{ secrets.FB_AUTHDOMAIN}}
+          FB_PROJECTID: ${{ secrets.FB_PROJECTID }}
+          FB_STORAGEBUCKET: ${{ secrets.FB_STORAGEBUCKET }}
+          FB_MESSAGINGSENDERID: ${{ secrets.FB_MESSAGINGSENDERID }}
+          FB_APPID: ${{ secrets.FB_APPID }}
+          MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
+        run: npm ci && npm run generate
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}'
+          channelId: live
           projectId: wywiwya

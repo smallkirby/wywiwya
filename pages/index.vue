@@ -11,6 +11,11 @@ import Vue from 'vue';
 
 export const IndexPage = Vue.extend({
   name: 'IndexPage',
+
+  mounted () {
+    // eslint-disable-next-line no-console
+    console.log(this.$config.FB_PROJECTID);
+  },
 });
 
 export default IndexPage;
