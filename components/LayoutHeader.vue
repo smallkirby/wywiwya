@@ -1,6 +1,6 @@
 <template>
   <layout-wrapper>
-    <header class="h-12 py-2">
+    <header class="h-12 pt-2 pb-4">
       <div class="flex">
         <div v-for="(item,ix) in headerEntries" :key="ix">
           <header-button :entry="item" :selected="button_route_same(item.to)" />
@@ -44,7 +44,7 @@ export default Vue.extend({
     // TODO: check login status
     this.headerEntries.push({
       text: 'Login',
-      to: 'login',
+      to: '/login',
     });
   },
 
