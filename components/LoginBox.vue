@@ -50,6 +50,7 @@ export default Vue.extend({
   methods: {
     async doLogin () {
       await Login();
+      this.$router.push('/');
     },
   },
 });

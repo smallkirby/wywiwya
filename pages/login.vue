@@ -9,6 +9,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
+// TODO: goto home when already logged in
+
 export default Vue.extend({
   name: 'LoginPage',
 });

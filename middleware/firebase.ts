@@ -1,7 +1,10 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { Store } from 'vuex';
+import { isValidUser } from '~/lib/auth';
 import { isAppInitialized } from '~/plugins/firebase';
+import { State } from '~/store/state';
 
-export default () => {
+export default ({ store }: {store: Store<State>}) => {
   if (!isAppInitialized()) {
     return;
   }
@@ -9,11 +12,12 @@ export default () => {
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // eslint-disable-next-line no-console
-      console.log(user);
-    } else {
-      // eslint-disable-next-line no-console
-      console.log(user);
+      if (isValidUser(user)) {
+        store.commit('setUser', { user });
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('Login Failed');
+      }
     }
   });
 };

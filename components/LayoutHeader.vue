@@ -12,7 +12,35 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import { HeaderButtonEntry } from './HeaderButton.vue';
+
+const headerentriesBase: HeaderButtonEntry[] = [
+  {
+    text: 'Home',
+    to: '/',
+  },
+  {
+    text: 'About',
+    to: '/about',
+  },
+  {
+    text: 'Write Diary',
+    to: '/write',
+  },
+  {
+    text: 'History',
+    to: '/history',
+  },
+];
+const loginEntry: HeaderButtonEntry = {
+  text: 'Login',
+  to: '/login',
+};
+const logoutEntry: HeaderButtonEntry = {
+  text: 'Logout',
+  to: '/logout',
+};
 
 export default Vue.extend({
   name: 'LayoutHeader',
@@ -20,32 +48,33 @@ export default Vue.extend({
   data () {
     return {
       headerEntries: [
-        {
-          text: 'Home',
-          to: '/',
-        },
-        {
-          text: 'About',
-          to: '/about',
-        },
-        {
-          text: 'Write Diary',
-          to: '/write',
-        },
-        {
-          text: 'History',
-          to: '/history',
-        },
+        ...headerentriesBase,
       ] as HeaderButtonEntry[],
     };
   },
 
+  computed: {
+    ...mapGetters([
+      'isLoggedIn',
+    ]),
+  },
+
+  watch: {
+    isLoggedIn (newValue: boolean) {
+      if (newValue) {
+        this.headerEntries = headerentriesBase.concat([logoutEntry]);
+      } else {
+        this.headerEntries = headerentriesBase.concat([loginEntry]);
+      }
+    },
+  },
+
   created () {
-    // TODO: check login status
-    this.headerEntries.push({
-      text: 'Login',
-      to: '/login',
-    });
+    if (this.isLoggedIn === true) {
+      this.headerEntries.push(logoutEntry);
+    } else {
+      this.headerEntries.push(logoutEntry);
+    }
   },
 
   methods: {

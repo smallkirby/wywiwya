@@ -1,7 +1,7 @@
 <template>
   <layout-wrapper>
-    <div>
-      <p>index</p>
+    <div class="mx-auto w-96">
+      <logout-box />
     </div>
   </layout-wrapper>
 </template>
@@ -9,10 +9,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-export const IndexPage = Vue.extend({
-  name: 'IndexPage',
+export default Vue.extend({
+  name: 'LogoutPage',
 });
-
-export default IndexPage;
 
 </script>
