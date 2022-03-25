@@ -2,7 +2,7 @@
   <div class="bg-skwhite w-full h-full">
     <div class="flex justify-between items-center md:items-end flex-col md:flex-row">
       <wywiwya-logo />
-      <div class="mr-8">
+      <div class="md:mr-8">
         <me-badge />
       </div>
     </div>

@@ -12,6 +12,11 @@ module.exports = {
           DEFAULT: '#504945',
           dark: '#282828',
         },
+        skgreen: {
+          light: '#8EC07C',
+          DEFAULT: '#689D6A',
+          dark: '#427B58',
+        },
       },
     },
   },

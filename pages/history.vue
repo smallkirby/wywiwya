@@ -6,6 +6,10 @@
           Diaries: {{ numDiaries }} 件
         </div>
       </div>
+
+      <div>
+        <first-diary-prompt v-show="numDiaries === 0" class="mt-4 mb-8" />
+      </div>
     </layout-main-box>
   </layout-wrapper>
 </template>
