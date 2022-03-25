@@ -1,4 +1,7 @@
 import { initializeApp } from 'firebase/app';
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
+import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc } from 'firebase/firestore';
+import { User } from '~/store/state';
 
 let isInitialized = false;
 
@@ -20,7 +23,56 @@ export const initApp = (vueConfig: any) => {
     mesurementId: vueConfig.FB_MEASUREMENTID,
   };
   initializeApp(config);
+
+  if (vueConfig.FB_FIRESTORE_EMULATE === 1) {
+    // eslint-disable-next-line no-console
+    console.log('Using emulator for firestore.');
+    connectFirestoreEmulator(getFirestore(), 'localhost', 8081);
+  }
+  if (vueConfig.FB_FUNCTIONS_EMULATE === 1) {
+    // eslint-disable-next-line no-console
+    console.log('Using emulator for functions.');
+    connectFunctionsEmulator(getFunctions(), 'localhost', 5001);
+  }
+
   isInitialized = true;
+};
+
+export const setUser = async (user: User): Promise<boolean> => {
+  const db = getFirestore();
+  const userDocRef = doc(db, 'users', user.uid);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (userDocSnap.exists()) {
+    const existingUser = userDocSnap.data();
+    if (existingUser === user) {
+      return true;
+    } else {
+      return await updateDoc(doc(db, 'users', user.uid), {
+        photoURL: user.photoURL,
+        uid: user.uid,
+        displayName: user.displayName,
+      }).then(() => {
+        return true;
+      }).catch((reason: any) => {
+        // eslint-disable-next-line no-console
+        console.error(reason);
+        return false;
+      });
+    }
+  } else {
+    return await setDoc(doc(db, 'users', user.uid), {
+      photoURL: user.photoURL,
+      uid: user.uid,
+      displayName: user.displayName,
+    }).then(() => {
+      return true;
+    }).catch((reason: any) => {
+      // eslint-disable-next-line no-console
+      console.error(reason);
+      return false;
+    });
+  }
 };
 
 export default ({ $config }: {$config: any}) => {

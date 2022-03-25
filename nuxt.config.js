@@ -67,5 +67,8 @@ export default {
     FB_MESSAGINGSENDERID: process.env.FB_MESSAGINGSENDERID,
     FB_APPID: process.env.FB_APPID,
     FB_MEASUREMENTID: process.env.FB_MEASUREMENTID,
+
+    FB_FIRESTORE_EMULATE: process.env.FB_FIRESTORE_EMULATE,
+    FB_FUNCTIONS_EMULATE: process.env.FB_FUNCTIONS_EMULATE,
   },
 };

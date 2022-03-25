@@ -13,7 +13,7 @@ export default ({ store }: {store: Store<State>}) => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       if (isValidUser(user)) {
-        store.commit('setUser', { user });
+        store.dispatch('setUser', { user });
       } else {
         // eslint-disable-next-line no-console
         console.error('Login Failed');
