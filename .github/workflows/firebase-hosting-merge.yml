@@ -29,6 +29,13 @@ jobs:
           channelId: live
           projectId: wywiwya
 
+
+  deploy-firebase-rule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Deploy firebase rules
         uses: w9jds/firebase-action@master
         with:
