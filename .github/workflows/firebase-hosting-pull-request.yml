@@ -1,8 +1,7 @@
 name: Deploy to Firebase Hosting on PR
 'on': pull_request
 jobs:
-  build_and_preview:
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,12 +15,20 @@ jobs:
           FB_STORAGEBUCKET: ${{ secrets.FB_STORAGEBUCKET }}
           FB_MESSAGINGSENDERID: ${{ secrets.FB_MESSAGINGSENDERID }}
           FB_APPID: ${{ secrets.FB_APPID }}
-          MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
+          FB_MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
         run: npm ci && npm run generate
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Deploy hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}'
           channelId: live
           projectId: wywiwya
+
+      - name: Deploy firebase rules
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only firestore:rules
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}

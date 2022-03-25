@@ -21,9 +21,17 @@ jobs:
           FB_MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
         run: npm ci && npm run generate
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Deploy hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}'
           channelId: live
           projectId: wywiwya
+
+      - name: Deploy firebase rules
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only firestore:rules
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
