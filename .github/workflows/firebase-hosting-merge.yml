@@ -18,7 +18,7 @@ jobs:
           FB_STORAGEBUCKET: ${{ secrets.FB_STORAGEBUCKET }}
           FB_MESSAGINGSENDERID: ${{ secrets.FB_MESSAGINGSENDERID }}
           FB_APPID: ${{ secrets.FB_APPID }}
-          MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
+          FB_MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
         run: npm ci && npm run generate
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
