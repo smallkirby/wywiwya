@@ -1,4 +1,5 @@
 # GitHub Logo
 
 LICENSE: GitHub, Inc.
-TOC: https://github.com/logos
+
+TOU: https://github.com/logos

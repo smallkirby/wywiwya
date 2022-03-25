@@ -1,8 +1,10 @@
 <template>
   <layout-wrapper>
-    <div>
-      <p>history</p>
-    </div>
+    <layout-main-box>
+      <div>
+        <p>history</p>
+      </div>
+    </layout-main-box>
   </layout-wrapper>
 </template>
 

@@ -12,7 +12,9 @@
         <Nuxt />
       </div>
     </div>
-    <!--<layout-footer />-->
+    <div>
+      <layout-footer />
+    </div>
   </div>
 </template>
 
