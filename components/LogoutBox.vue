@@ -19,6 +19,10 @@
         <div class="textsm my-6">
           ボタンを押してさようなら
         </div>
+
+        <div>
+          <vue-loading v-show="isLoading" />
+        </div>
       </div>
     </div>
   </layout-wrapper>
@@ -30,12 +34,17 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'LogoutBox',
   data () {
-    return {};
+    return {
+      isLoading: false,
+    };
   },
 
   methods: {
-    doLogout () {
-      this.$store.dispatch('signout');
+    async doLogout () {
+      this.isLoading = true;
+      await this.$store.dispatch('signout');
+      this.isLoading = false;
+
       this.$router.push('/');
     },
   },

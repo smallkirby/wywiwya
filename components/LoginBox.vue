@@ -21,6 +21,10 @@
         </div>
       </div>
 
+      <div>
+        <vue-loading v-show="isLoading" />
+      </div>
+
       <div class="text-right flex flex-col text-xs mx-4 text-gray-600">
         <div class="my-1">
           <nuxt-link to="/">
@@ -43,13 +47,19 @@ import { Login } from '@/lib/auth';
 
 export default Vue.extend({
   name: 'LoginBox',
+
   data () {
-    return {};
+    return {
+      isLoading: false,
+    };
   },
 
   methods: {
     async doLogin () {
+      this.isLoading = true;
       await Login();
+      this.isLoading = false;
+
       this.$router.push('/');
     },
   },
