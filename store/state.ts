@@ -12,4 +12,4 @@ const state: State = {
   user: null,
 };
 
-export default state;
+export default () => state;
