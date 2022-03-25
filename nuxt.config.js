@@ -35,6 +35,7 @@ export default {
 
   modules: [
     '@nuxtjs/axios',
+    'nuxt-webfontloader',
   ],
 
   axios: {
