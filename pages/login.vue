@@ -1,7 +1,7 @@
 <template>
   <layout-wrapper>
     <div class="w-full md:w-96 mr-3 px-3 md:mx-auto">
-      <login-box />
+      <loginout-login-box />
     </div>
   </layout-wrapper>
 </template>

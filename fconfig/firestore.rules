@@ -3,33 +3,60 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{uid} {
-    		function signedIn() {
-					return request.auth.uid != null
-				}
-  			function isOwnPath(uid) {
-  				return uid == request.auth.uid
-  			}
-        function isValidCreation(data) {
-        	return data.keys().hasAll(['uid', 'photoURL', 'displayName'])
-          && data.keys().hasOnly(['uid', 'photoURL', 'displayName'])
-          && data.uid is string && data.photoURL is string && data.displayName is string
-          && data.uid == uid
-          ;
-        }
-        function isValidUpdate(data) {
-        	return data.keys().hasAll(['uid', 'photoURL', 'displayName'])
-          && data.keys().hasOnly(['uid', 'photoURL', 'displayName'])
-          && data.uid is string && data.photoURL is string && data.displayName is string
-          && data.uid == uid
-        }
-      	allow create: if signedIn() && isOwnPath(uid) && isValidCreation(request.resource.data);
-        allow delete: if false;
-        allow update: if signedIn() && isOwnPath(uid) && isValidUpdate(request.resource.data);
-        allow read: if signedIn() && isOwnPath(uid);
+      function signedIn() {
+        return request.auth.uid != null
+      }
+      function isOwnPath(uid) {
+        return uid == request.auth.uid
+      }
+      function isValidCreation(data) {
+        return data.keys().hasAll(['uid', 'photoURL', 'displayName', 'numDiaries'])
+        && data.keys().hasOnly(['uid', 'photoURL', 'displayName', 'numDiaries'])
+        && data.uid is string && data.photoURL is string && data.displayName is string
+        && data.numDiaries is number
+        && data.uid == uid && data.numDiaries == 0
+        ;
+      }
+      function isValidUpdate(data) {
+        return data.keys().hasAll(['uid', 'photoURL', 'displayName', 'numDiaries'])
+        && data.keys().hasOnly(['uid', 'photoURL', 'displayName', 'numDiaries'])
+        && data.uid is string && data.photoURL is string && data.displayName is string
+        && data.uid == uid
+        && data.diff(resource.data).affectedKeys().hasOnly(['photoURL', 'displayName'])
+        ;
+      }
+      allow create: if signedIn() && isOwnPath(uid) && isValidCreation(inData());
+      allow delete: if false;
+      allow update: if signedIn() && isOwnPath(uid) && isValidUpdate(inData());
+      allow read: if signedIn() && isOwnPath(uid);
+    }
+
+    match /diaries/{uid} {
+      function signedIn() {
+        return request.auth.uid != null
+      }
+      function isOwnPath(uid) {
+        return uid == request.auth.uid
+      }
+      function isValidCreation(data) {
+        return true
+        ;
+      }
+      function isValidUpdate(data) {
+        return true
+      }
+      allow create: if signedIn() && isOwnPath(uid) && isValidCreation(inData());
+      allow delete: if false;
+      allow update: if signedIn() && isOwnPath(uid) && isValidUpdate(inData());
+      allow read: if signedIn() && isOwnPath(uid);
     }
 
     match /{document=**} {
       allow read, write: if false;
+    }
+
+    function inData() {
+      return request.resource.data;
     }
   }
 }

@@ -2,6 +2,7 @@ export type User = {
   displayName: string,
   photoURL: string,
   uid: string,
+  numDiaries: number | null,
 }
 
 export type State = {

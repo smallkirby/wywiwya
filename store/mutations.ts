@@ -6,11 +6,18 @@ const mutations = {
       uid: user.uid,
       displayName: user.displayName,
       photoURL: user.photoURL,
+      numDiaries: 0,
     };
   },
 
   clearUser: (state: State) => {
     state.user = null;
+  },
+
+  setNumDiaries: (state: State, num: number) => {
+    if (state.user !== null) {
+      state.user.numDiaries = num;
+    }
   },
 };
 

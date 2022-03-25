@@ -38,6 +38,18 @@ export const initApp = (vueConfig: any) => {
   isInitialized = true;
 };
 
+export const getNumDiaries = async (user: User): Promise<number | null> => {
+  const db = getFirestore();
+  const userDocRef = doc(db, 'users', user.uid);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (userDocSnap.exists()) {
+    return userDocSnap.data().numDiaries;
+  } else {
+    return null;
+  }
+};
+
 export const setUser = async (user: User): Promise<boolean> => {
   const db = getFirestore();
   const userDocRef = doc(db, 'users', user.uid);
@@ -48,9 +60,8 @@ export const setUser = async (user: User): Promise<boolean> => {
     if (existingUser === user) {
       return true;
     } else {
-      return await updateDoc(doc(db, 'users', user.uid), {
+      return await updateDoc(userDocRef, {
         photoURL: user.photoURL,
-        uid: user.uid,
         displayName: user.displayName,
       }).then(() => {
         return true;
@@ -65,6 +76,7 @@ export const setUser = async (user: User): Promise<boolean> => {
       photoURL: user.photoURL,
       uid: user.uid,
       displayName: user.displayName,
+      numDiaries: 0,
     }).then(() => {
       return true;
     }).catch((reason: any) => {
