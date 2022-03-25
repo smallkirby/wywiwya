@@ -1,8 +1,11 @@
 <template>
   <layout-wrapper>
-    <button>
-      <div class="mx-2 px-4 my-auto rounded hover:bg-skwhite-dark" :class="buttonClass">
-        <p v-if="entry.to !== undefined" class="text-2xl">
+    <button class="pb-1 border-b-2 md:border-0">
+      <div
+        class="md:mx-2 px-2 md:px-4 my-auto rounded hover:bg-skwhite-dark whitespace-nowrap"
+        :class="buttonClass"
+      >
+        <p v-if="entry.to !== undefined" class="md:text-2xl">
           <nuxt-link :to="entry.to">
             {{ entry.text }}
           </nuxt-link>

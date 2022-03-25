@@ -5,7 +5,7 @@
       shadow-2xl flex flex-col text-center justify-between"
     >
       <div>
-        <div class="text-3xl text-center my-6">
+        <div class="text-2xl md:text-3xl text-center my-6">
           ログアウトしますか？
         </div>
 

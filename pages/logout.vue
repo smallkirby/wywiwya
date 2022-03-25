@@ -1,6 +1,6 @@
 <template>
   <layout-wrapper>
-    <div class="mx-auto w-96">
+    <div class="w-full md:w-96 mr-3 px-3 md:mx-auto">
       <logout-box />
     </div>
   </layout-wrapper>

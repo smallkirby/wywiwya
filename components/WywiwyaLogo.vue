@@ -6,7 +6,8 @@
           <div class="text-6xl mr-2">
             WYWIWYA
           </div>
-          <div class="flex-col">
+          <img src="~/static/logo/wywiwya.png" class="w-10 md:hidden">
+          <div class="flex-col hidden md:block">
             <div class="text-xs text-center leading-none">
               WHAT YOU WRITE
             </div>
@@ -17,6 +18,9 @@
               WHAT YOU ARE
             </div>
           </div>
+        </div>
+        <div class="md:hidden">
+          What You Write Is What You Are
         </div>
       </nuxt-link>
     </button>

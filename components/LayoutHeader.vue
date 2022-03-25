@@ -1,7 +1,7 @@
 <template>
   <layout-wrapper>
-    <header class="h-12 pt-2 pb-4">
-      <div class="flex">
+    <header class="mx-2 h-12 pt-3 pb-4 md:block overflow-x-scroll overflow-y-hidden md:overflow-hidden">
+      <div class="flex mx-auto justify-center">
         <div v-for="(item,ix) in headerEntries" :key="ix">
           <header-button :entry="item" :selected="button_route_same(item.to)" />
         </div>
