@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-skwhite w-full h-full">
+  <div class="bg-skwhite w-full min-h-full h-auto">
     <div class="flex justify-between items-center md:items-end flex-col md:flex-row">
       <wywiwya-logo />
       <div class="md:mr-8">
         <me-badge />
       </div>
     </div>
-    <div class="w-full md:w-7/12 h-screen mx-auto">
+    <div class="w-full md:w-7/12 mx-auto min-h-screen h-auto">
       <layout-header />
       <div class="my-4">
         <Nuxt />
