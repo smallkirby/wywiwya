@@ -55,9 +55,13 @@ export default Vue.extend({
 
   watch: {
     async me () {
+      // @ts-ignore
       if (this.me !== null && this.isLoading) {
+        // @ts-ignore
         this.diary = await this.getDiary();
+        // @ts-ignore
         this.isLoading = false;
+        // @ts-ignore
         this.changeLayout();
       }
     },
@@ -70,9 +74,13 @@ export default Vue.extend({
   },
 
   async mounted () {
+    // @ts-ignore
     if (this.me !== null && this.isLoading) {
+      // @ts-ignore
       this.diary = await this.getDiary();
+      // @ts-ignore
       this.isLoading = false;
+      // @ts-ignore
       this.changeLayout();
     }
   },
@@ -84,9 +92,12 @@ export default Vue.extend({
     },
 
     changeLayout () {
+      // @ts-ignore
       if (this.diary === null) {
+        // @ts-ignore
         $nuxt.setLayout('default');
       } else {
+        // @ts-ignore
         $nuxt.setLayout('full');
       }
     },
