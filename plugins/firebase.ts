@@ -22,17 +22,17 @@ export const initApp = (vueConfig: any) => {
     appId: vueConfig.FB_APPID,
     mesurementId: vueConfig.FB_MEASUREMENTID,
   };
-  initializeApp(config);
+  const app = initializeApp(config);
 
   if (vueConfig.FB_FIRESTORE_EMULATE === 1) {
     // eslint-disable-next-line no-console
     console.log('Using emulator for firestore.');
-    connectFirestoreEmulator(getFirestore(), 'localhost', 8081);
+    connectFirestoreEmulator(getFirestore(app), 'localhost', 8081);
   }
   if (vueConfig.FB_FUNCTIONS_EMULATE === 1) {
     // eslint-disable-next-line no-console
     console.log('Using emulator for functions.');
-    connectFunctionsEmulator(getFunctions(), 'localhost', 5001);
+    connectFunctionsEmulator(getFunctions(app, 'us-central1'), 'localhost', 5001);
   }
 
   isInitialized = true;

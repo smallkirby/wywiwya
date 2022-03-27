@@ -1,7 +1,7 @@
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+import admin from 'firebase-admin';
+
+process.env.TZ = 'Asia/Tokyo';
+
+admin.initializeApp();
+
+export { createNewDiary } from './diary';

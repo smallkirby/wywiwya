@@ -1,5 +1,6 @@
 import { UID } from '~/store/state';
 
+export type DID = string;
 export type DateID = string;
 
 export type Diary = {

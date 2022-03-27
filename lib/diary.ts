@@ -1,6 +1,7 @@
 import { collection, doc, getDoc, getDocs, getFirestore, query, where } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import moment from 'moment';
-import { Diary } from '~/typings/diary';
+import { Diary, DID } from '~/typings/diary';
 import { User } from '~/store/state';
 
 export const fetchDiary = async (uid: string, did: string): Promise<Diary | null> => {
@@ -36,4 +37,23 @@ export const fetchTodaysDiary = async (user: User): Promise<Diary | null> => {
   } else {
     return diarySnap.docs[0].data() as Diary;
   }
+};
+
+export const createNewDiary = async (): Promise<DID | null> => {
+  const functions = getFunctions();
+  const f = httpsCallable(functions, 'createNewDiary');
+  return await f({}).then((result) => {
+    const data = result.data as any;
+    if (data.err !== null) {
+      // eslint-disable-next-line no-console
+      console.error(data.err);
+      return null;
+    } else {
+      return data.did;
+    }
+  }).catch((e: any) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    return null;
+  });
 };

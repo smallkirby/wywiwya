@@ -20,6 +20,7 @@
               class="bg-skgreen-light hover:bg-skgreen-dark rounded-xl py-2 px-4 my-2 w-2/3
               flex justify-center items-center mx-auto
             "
+              @click="onClick"
             >
               <font-awesome-icon icon="fa-solid fa-circle-plus" />
               <div class="mx-2">
@@ -58,6 +59,7 @@ export default Vue.extend({
   data () {
     return {
       todaysDiary: null as Diary | null,
+      isLoading: false,
     };
   },
 
@@ -71,11 +73,15 @@ export default Vue.extend({
   },
 
   watch: {
-    me () {
+    async me () {
       if (this.todaysDiary === null) {
-        this.updateTodaysDiary();
+        await this.updateTodaysDiary();
       }
     },
+  },
+
+  async mounted () {
+    await this.updateTodaysDiary();
   },
 
   methods: {
@@ -83,6 +89,10 @@ export default Vue.extend({
       if (this.todaysDiary === null && this.me !== null) {
         this.todaysDiary = await fetchTodaysDiary(this.me);
       }
+    },
+
+    onClick () {
+      this.$emit('requestNewWrite');
     },
   },
 });
