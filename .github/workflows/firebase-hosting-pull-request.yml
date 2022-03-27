@@ -26,9 +26,43 @@ jobs:
           channelId: live
           projectId: wywiwya
 
+
+  deploy-firebase-rule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Deploy firebase rules
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only firestore:rules
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
+
+  deploy-firebase-functions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: install deps
+        run: npm ci && npm -w functions ci
+
+      - name: lint and build
+        env:
+          FB_APIKEY: ${{ secrets.FB_APIKEY}}
+          FB_AUTHDOMAIN: ${{ secrets.FB_AUTHDOMAIN}}
+          FB_PROJECTID: ${{ secrets.FB_PROJECTID }}
+          FB_STORAGEBUCKET: ${{ secrets.FB_STORAGEBUCKET }}
+          FB_MESSAGINGSENDERID: ${{ secrets.FB_MESSAGINGSENDERID }}
+          FB_APPID: ${{ secrets.FB_APPID }}
+          FB_MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
+        run: npm -w functions run build
+
+      - name: Deploy firebase rules
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
