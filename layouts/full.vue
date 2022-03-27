@@ -6,7 +6,7 @@
         <me-badge />
       </div>
     </div>
-    <div class="w-full md:w-7/12 mx-auto min-h-screen h-auto">
+    <div class="w-full mx-auto min-h-screen h-auto">
       <layout-header />
       <div class="my-4">
         <Nuxt />
@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from 'vue';
 export default Vue.extend({
-  name: 'DefaultLayout',
+  name: 'FullLayout',
 });
 </script>
 

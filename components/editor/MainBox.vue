@@ -1,7 +1,7 @@
 <template>
   <layout-wrapper>
     <div>
-      <textarea id="editor" class="w-full h-auto" />
+      <textarea id="editor" ref="mdTextarea" class="w-full h-auto" />
     </div>
   </layout-wrapper>
 </template>
@@ -18,7 +18,7 @@ import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/keymap/vim.js';
 
 export default Vue.extend({
-  name: 'VimEditor',
+  name: 'MainBox',
 
   data () {
     return {
@@ -42,6 +42,11 @@ export default Vue.extend({
       keyMap: 'vim',
     };
     this.editor = fromTextArea(editor, config);
+
+    this.editor.on('change', () => {
+      if (this.editor === null) { return; }
+      this.$emit('mdCodeChange', this.editor.getDoc().getValue());
+    });
   },
 });
 </script>
