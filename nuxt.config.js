@@ -1,8 +1,8 @@
 export default {
   head: {
-    title: 'wywiwya',
+    title: 'WYWIWYA',
     htmlAttrs: {
-      lang: 'en',
+      lang: 'jp',
     },
     meta: [
       { charset: 'utf-8' },

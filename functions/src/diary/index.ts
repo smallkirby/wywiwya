@@ -52,7 +52,7 @@ const doCreateNewDiary = async (uid: string): Promise<DID> => {
   const newData: Diary = {
     dateID: todaysString,
     isPublic: true,
-    isTemporary: true,
+    isTemporary: false,
     contentMd: '',
     author: uid,
     createdAt: firestore.FieldValue.serverTimestamp(),

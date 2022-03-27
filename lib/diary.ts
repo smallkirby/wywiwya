@@ -1,8 +1,15 @@
-import { collection, doc, getDoc, getDocs, getFirestore, query, where } from 'firebase/firestore';
+// eslint-disable-next-line max-len
+import { collection, doc, getDoc, getDocs, getFirestore, query, where, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import moment from 'moment';
 import { Diary, DID } from '~/typings/diary';
 import { User } from '~/store/state';
+
+const convertDiary = (diary: Diary): Diary => {
+  diary.lastUpdatedAt = (diary.lastUpdatedAt as any).toDate();
+  diary.createdAt = (diary.createdAt as any).toDate();
+  return diary;
+};
 
 export const fetchDiary = async (uid: string, did: string): Promise<Diary | null> => {
   const db = getFirestore();
@@ -14,7 +21,7 @@ export const fetchDiary = async (uid: string, did: string): Promise<Diary | null
   if (diarySnap === null || !diarySnap.exists()) {
     return null;
   } else {
-    return diarySnap.data() as Diary;
+    return convertDiary(diarySnap.data() as Diary);
   }
 };
 
@@ -35,7 +42,8 @@ export const fetchTodaysDiary = async (user: User): Promise<Diary | null> => {
   if (diarySnap.size === 0) {
     return null;
   } else {
-    return diarySnap.docs[0].data() as Diary;
+    const diary = diarySnap.docs[0].data() as Diary;
+    return convertDiary(diary);
   }
 };
 
@@ -56,4 +64,29 @@ export const createNewDiary = async (): Promise<DID | null> => {
     console.error(e);
     return null;
   });
+};
+
+export const updsateDiary = async (diary: Diary): Promise<string | null> => {
+  const db = getFirestore();
+  const diariesRef = collection(db, 'users', diary.author, 'diaries');
+  const diaryQuery = query(diariesRef, where('dateID', '==', diary.dateID));
+  const diarySnap = await getDocs(diaryQuery);
+
+  if (diarySnap.size === 0) {
+    return 'Somehow, the diary does not exist.';
+  }
+
+  const diaryRef = diarySnap.docs[0].ref;
+  const newData = {
+    isPublic: diary.isPublic,
+    isTemporary: diary.isTemporary,
+    contentMd: diary.contentMd,
+    lastUpdatedAt: serverTimestamp(),
+  } as any;
+  return await updateDoc(diaryRef, newData).then(() => { return null; })
+    .catch((e) => {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      return e.toString();
+    });
 };

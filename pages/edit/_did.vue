@@ -1,7 +1,7 @@
 <template>
   <layout-wrapper>
     <vue-loading v-show="isLoading" class="pt-20" />
-    <editor-integrated v-if="!isLoading && diary !== null" />
+    <editor-integrated v-if="!isLoading && diary !== null" :diary="diary" />
 
     <layout-main-box v-if="!isLoading && diary === null">
       <div class="flex flex-col mt-4">

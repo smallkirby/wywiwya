@@ -48,6 +48,15 @@ export default Vue.extend({
       this.$emit('mdCodeChange', this.editor.getDoc().getValue());
     });
   },
+
+  methods: {
+    setText (newMd: string) {
+      if (this.editor === null) {
+        return;
+      }
+      this.editor.getDoc().setValue(newMd);
+    },
+  },
 });
 </script>
 

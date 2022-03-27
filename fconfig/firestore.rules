@@ -38,14 +38,17 @@ service cloud.firestore {
       function isOwnPath(uid) {
         return uid == request.auth.uid
       }
-      function isValidCreation(data) {
-        return true
+      function isValidUpdate(data) {
+        return data.keys().hasAll(['dateID', 'createdAt', 'lastUpdatedAt', 'isPublic', 'isTemporary', 'contentMd', 'author'])
+        && data.keys().hasOnly(['dateID', 'createdAt', 'lastUpdatedAt', 'isPublic', 'isTemporary', 'contentMd', 'author'])
+        && data.diff(resource.data).affectedKeys().hasOnly(['lastUpdatedAt', 'isPublic', 'contentMd', 'isTemporary'])
+        && data.lastUpdatedAt is timestamp
+        && data.isPublic is bool
+        && data.isTemporary is bool
+        && data.contentMd is string
         ;
       }
-      function isValidUpdate(data) {
-        return true
-      }
-      allow create: if signedIn() && isOwnPath(uid) && isValidCreation(inData());
+      allow create: if false;
       allow delete: if false;
       allow update: if signedIn() && isOwnPath(uid) && isValidUpdate(inData());
       allow read: if signedIn() && isOwnPath(uid);
