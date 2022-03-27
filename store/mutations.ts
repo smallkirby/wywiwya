@@ -1,11 +1,12 @@
-import { State, User } from '~/store/state';
+import { User as FirebaseUser } from 'firebase/auth';
+import { State } from '~/store/state';
 
 const mutations = {
-  setUser: (state: State, { user }:{ user: User }) => {
+  setUser: (state: State, { user }:{ user: FirebaseUser }) => {
     state.user = {
       uid: user.uid,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
+      displayName: user.displayName!!,
+      photoURL: user.photoURL!!,
       numDiaries: 0,
     };
   },

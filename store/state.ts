@@ -1,7 +1,9 @@
+export type UID = string;
+
 export type User = {
   displayName: string,
   photoURL: string,
-  uid: string,
+  uid: UID,
   numDiaries: number | null,
 }
 

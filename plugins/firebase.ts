@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc } from 'firebase/firestore';
-import { User } from '~/store/state';
+import { UID, User } from '~/store/state';
 
 let isInitialized = false;
 
@@ -50,6 +50,17 @@ export const getNumDiaries = async (user: User): Promise<number | null> => {
   }
 };
 
+export const getUser = async (uid: UID): Promise<User | null> => {
+  const db = getFirestore();
+  const userDocRef = doc(db, 'users', uid);
+  const userDocSnap = await getDoc(userDocRef);
+  if (userDocSnap.exists()) {
+    return userDocSnap.data() as User;
+  } else {
+    return null;
+  }
+};
+
 export const setUser = async (user: User): Promise<boolean> => {
   const db = getFirestore();
   const userDocRef = doc(db, 'users', user.uid);
@@ -72,6 +83,7 @@ export const setUser = async (user: User): Promise<boolean> => {
       });
     }
   } else {
+    // create new user
     return await setDoc(doc(db, 'users', user.uid), {
       photoURL: user.photoURL,
       uid: user.uid,

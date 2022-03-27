@@ -31,7 +31,7 @@ service cloud.firestore {
       allow read: if signedIn() && isOwnPath(uid);
     }
 
-    match /diaries/{uid} {
+    match /users/{uid}/diaries/{did} {
       function signedIn() {
         return request.auth.uid != null
       }
