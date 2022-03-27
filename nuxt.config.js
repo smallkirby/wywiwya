@@ -22,7 +22,10 @@ export default {
 
   plugins: [
     {
-      src: '~/plugins/firebase.ts', // TODO
+      src: '~/plugins/firebase.ts',
+    },
+    {
+      src: '~/plugins/fontawesome.ts',
     },
   ],
 
