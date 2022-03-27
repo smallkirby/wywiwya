@@ -1,7 +1,21 @@
-import { collection, getDocs, getFirestore, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, getFirestore, query, where } from 'firebase/firestore';
 import moment from 'moment';
 import { Diary } from '~/typings/diary';
 import { User } from '~/store/state';
+
+export const fetchDiary = async (uid: string, did: string): Promise<Diary | null> => {
+  const db = getFirestore();
+  const diaryRef = doc(db, 'users', uid, 'diaries', did);
+  const diarySnap = await getDoc(diaryRef).then(snap => snap).catch(() => {
+    return null;
+  });
+
+  if (diarySnap === null || !diarySnap.exists()) {
+    return null;
+  } else {
+    return diarySnap.data() as Diary;
+  }
+};
 
 export const fetchTodaysDiary = async (user: User): Promise<Diary | null> => {
   const todaysDateID = moment().format('YYYY-MM-DD');

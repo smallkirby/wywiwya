@@ -60,6 +60,14 @@ export default {
       'firebase',
       'loading',
     ],
+
+    routes: [
+      {
+        name: 'edit',
+        path: '/edit/:did',
+        component: 'components/edit/_did.vue',
+      },
+    ],
   },
 
   publicRuntimeConfig: {
