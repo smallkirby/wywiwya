@@ -1,14 +1,14 @@
 <template>
   <layout-wrapper>
     <div
-      class="bg-white rounded-xl px-4 py-3 border-2 border-skdark-light shadow-2xl
+      class="rounded-xl px-4 py-3 border-r-2 border-l-2 border-skgray-dark shadow-2xl pt-4
         flex flex-col justify-between items-center"
     >
-      <div class="text-lg md:text-xl mb-4 text-center pb-4 border-b-2 md:w-2/3">
+      <div class="text-lg md:text-xl mb-4 text-center pb-4 border-b-2 border-skgray-dark md:w-2/3">
         <p>📝 最初のDiaryを書きましょう 📝</p>
       </div>
 
-      <div class="mb-4 border-b-2 pb-4 md:w-2/3">
+      <div class="mb-4 border-b-2 border-skgray-dark pb-4 md:w-2/3">
         <ul class="min-w-max text-center">
           <li>❤️ その日に考えたことを書き留める</li>
           <li>🧠 過去の日記を振り返る</li>

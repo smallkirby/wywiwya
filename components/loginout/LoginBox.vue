@@ -1,15 +1,18 @@
 <template>
   <layout-wrapper>
     <div
-      class="bg-white h-96 rounded-xl px-3 py-3
-      shadow-2xl flex flex-col text-center justify-between"
+      class="bg-skdark h-96 rounded-xl px-3 py-3
+      shadow-2xl flex flex-col text-center justify-between border-2 border-skgray"
     >
       <div>
         <div class="text-3xl text-center my-6">
           Signin with GitHub
         </div>
 
-        <button class="rounded-xl bg-gray-700 w-2/3 mx-auto p-1 mb-2 flex items-center" @click="doLogin">
+        <button
+          class="rounded-xl bg-gray-700 hover:bg-gray-800 w-2/3 mx-auto p-1 mb-2 flex items-center"
+          @click="doLogin"
+        >
           <img src="~/static/3rd/github/GitHub-Mark-Light-32px.png" class="mx-2">
           <p class="text-skwhite-light ml-2">
             Signin with GitHub

@@ -2,7 +2,7 @@
   <layout-wrapper>
     <button>
       <nuxt-link to="/">
-        <div class="flex mx-2 items-center hover:bg-skwhite-dark rounded-md">
+        <div class="flex ml-4 mr-2 items-center hover:bg-skwhite-dark rounded-md">
           <div class="text-6xl mr-2">
             WYWIWYA
           </div>

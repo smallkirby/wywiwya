@@ -21,16 +21,16 @@
 
     <layout-main-box v-show="!isLoading">
       <div class="flex flex-col p-4">
-        <div class="border-b-2 my-2">
+        <div class="border-b-2 my-2 border-skgray-dark">
           <write-todays-write class="mb-6" @requestNewWrite="createNewDiary" />
         </div>
 
-        <div class="border-b-2 pb-6">
-          <write-temp-write class="mt-6" />
+        <div class="border-b-2 pb-6 border-skgray-dark">
+          <write-temp-write class="mt-6 py-6" />
         </div>
 
-        <div class="border-b-2 my-2 pb-6">
-          <write-old-edit class="mt-6" />
+        <div class="border-b-2 my-2 pb-6 border-skgray-dark">
+          <write-old-edit class="mt-6 py-6" />
         </div>
       </div>
     </layout-main-box>

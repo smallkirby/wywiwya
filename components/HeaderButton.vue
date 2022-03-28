@@ -2,7 +2,8 @@
   <layout-wrapper>
     <button class="pb-1 border-b-2 md:border-0">
       <div
-        class="md:mx-2 px-2 md:px-4 my-auto rounded hover:bg-skwhite-dark whitespace-nowrap"
+        class="md:mx-2 px-2 md:px-4 my-auto rounded hover:bg-skwhite-dark whitespace-nowrap
+        text-skwhite-dark hover:text-skdark-dark"
         :class="buttonClass"
       >
         <p v-if="entry.to !== undefined" class="md:text-2xl">
@@ -45,7 +46,7 @@ export default Vue.extend({
 
   computed: {
     buttonClass: function () {
-      return this !== undefined && this.selected ? 'bg-skwhite-dark' : '';
+      return this !== undefined && this.selected ? 'bg-skwhite-dark text-skdark-dark' : '';
     },
   },
 });
