@@ -1,6 +1,13 @@
 <template>
-  <div class="bg-white border-2 rounded-sm pt-6 pb-2 px-2 mr-4 h-full w-full">
-    <div id="previewBox" ref="previewBox" class="h-full w-full px-8 ml-4 mr-4 overflow-y-scroll" />
+  <div
+    class="border-t-2 border-b-2 border-skgray-dark rounded-2xl
+  pt-6 pb-2 px-2 ml-2 mr-4 h-full w-full bg-skdark-dark"
+  >
+    <div
+      id="previewBox"
+      ref="previewBox"
+      class="h-full w-full px-8 ml-4 mr-4 overflow-y-scroll"
+    />
   </div>
 </template>
 
@@ -40,7 +47,7 @@ export default Vue.extend({
 
 #previewBox {
   @import'../../node_modules/bootstrap/scss/bootstrap';
-  height: calc(100vh - 150px) !important;
+  height: calc(100vh - 195px) !important;
   padding-bottom: 30px;
 }
 </style>

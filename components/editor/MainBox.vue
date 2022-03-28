@@ -1,7 +1,11 @@
 <template>
   <layout-wrapper>
     <div>
-      <textarea id="editor" ref="mdTextarea" class="w-full h-auto" />
+      <textarea
+        id="editor"
+        ref="mdTextarea"
+        class="w-full h-auto rounded-2xl border-t-2 border-b-2 border-skgray-dark"
+      />
     </div>
   </layout-wrapper>
 </template>
@@ -9,8 +13,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { EditorConfiguration, Editor, fromTextArea } from 'codemirror';
-import 'codemirror/theme/gruvbox-dark.css';
-import 'codemirror/theme/darcula.css';
+import '~/static/css/wywiwya.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/addon/hint/show-hint.css';
@@ -32,7 +35,7 @@ export default Vue.extend({
       return;
     }
     const config: EditorConfiguration = {
-      theme: 'darcula',
+      theme: 'wywiwya',
       lineNumbers: true,
       mode: 'markdown',
       showHint: true,

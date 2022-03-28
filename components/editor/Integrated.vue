@@ -1,6 +1,6 @@
 <template>
   <layout-wrapper>
-    <div>
+    <div class="px-4">
       <misc-dialog v-show="isUpdateFailShowing" :config="failDialogConfig" @failAlertOk="onFailDialogClosed">
         <div class="flex flex-col">
           <div>Diaryの更新に失敗しました。</div>

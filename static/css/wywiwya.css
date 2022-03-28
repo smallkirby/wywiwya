@@ -1,0 +1,52 @@
+/*
+
+    Name:       wywiwya
+    Author:     smallkirby (http://github.com/smallkirby)
+    License:    MIT
+
+*/
+
+
+.cm-s-wywiwya.CodeMirror, .cm-s-wywiwya .CodeMirror-gutters {
+  background-color: #130F1A !important;
+  color: #EBDBB2 !important;
+  border-left: none;
+  border-right: none;
+  border-top: solid;
+  border-bottom: solid;
+  border-color: rgba(23, 33, 49, var(--tw-border-opacity));
+  border-top-width: 2px;
+  border-radius: 1rem;
+  padding-top: 0.5rem;
+}
+.cm-s-wywiwya .CodeMirror-gutters { 
+  color: #282a36;
+  padding-right: 0.6rem;
+  border: none;
+}
+.cm-s-wywiwya .CodeMirror-cursor { border-left: solid thin #f8f8f0; }
+.cm-s-wywiwya .CodeMirror-linenumber { color: #6D8A88; }
+.cm-s-wywiwya .CodeMirror-selected { background: rgba(255, 255, 255, 0.10); }
+.cm-s-wywiwya .CodeMirror-line::selection, .cm-s-wywiwya .CodeMirror-line > span::selection, .cm-s-wywiwya .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.10); }
+.cm-s-wywiwya .CodeMirror-line::-moz-selection, .cm-s-wywiwya .CodeMirror-line > span::-moz-selection, .cm-s-wywiwya .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.10); }
+.cm-s-wywiwya span.cm-comment { color: #6272a4; }
+.cm-s-wywiwya span.cm-string, .cm-s-wywiwya span.cm-string-2 { color: #f1fa8c; }
+.cm-s-wywiwya span.cm-strong { color: #B16286 !important}
+.cm-s-wywiwya span.cm-em { color: #FBEBC2}
+.cm-s-wywiwya span.cm-number { color: #bd93f9; }
+.cm-s-wywiwya span.cm-variable { color: #50fa7b; }
+.cm-s-wywiwya span.cm-variable-2 { color: #EBDBB2; }
+.cm-s-wywiwya span.cm-def { color: #50fa7b; }
+.cm-s-wywiwya span.cm-operator { color: #ff79c6; }
+.cm-s-wywiwya span.cm-keyword { color: #0F574E; }
+.cm-s-wywiwya span.cm-atom { color: #bd93f9; }
+.cm-s-wywiwya span.cm-meta { color: #f8f8f2; }
+.cm-s-wywiwya span.cm-tag { color: #ff79c6; }
+.cm-s-wywiwya span.cm-attribute { color: #50fa7b; }
+.cm-s-wywiwya span.cm-qualifier { color: #50fa7b; }
+.cm-s-wywiwya span.cm-property { color: #66d9ef; }
+.cm-s-wywiwya span.cm-builtin { color: #50fa7b; }
+.cm-s-wywiwya span.cm-variable-3, .cm-s-wywiwya span.cm-type { color: #6D8A88; }
+
+.cm-s-wywiwya .CodeMirror-activeline-background { background: rgba(255,255,255,0.2); }
+.cm-s-wywiwya .CodeMirror-matchingbracket { text-decoration: underline; color: white !important; }
