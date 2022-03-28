@@ -11,14 +11,19 @@
 
       <div class="flex flex-col mx-2 mt-1">
         <div>
-          <editor-toolbar ref="toolbar" :date-string="dateString" @requestSave="onRequestSave" />
+          <editor-toolbar
+            ref="toolbar"
+            :date-string="dateString"
+            :is-temporary="diaryChanged.isTemporary"
+            @requestSave="onRequestSave"
+          />
         </div>
 
         <div class="flex">
-          <div class="w-1/2 mr-1">
+          <div class="w-1/2">
             <editor-main-box ref="mainEditor" @mdCodeChange="onCodeChange" />
           </div>
-          <div class="w-1/2 ml-1 overflow-x-hidden">
+          <div class="w-1/2 overflow-x-hidden">
             <editor-preview-box ref="previewBox" />
           </div>
         </div>
@@ -31,7 +36,7 @@
 import Vue, { PropType } from 'vue';
 import { ConfirmDialog } from '../misc/Dialog.vue';
 import { Diary } from '~/typings/diary';
-import { getDiary, setDiary } from '~/lib/localstorage';
+import { getDiary, removeDiary, setDiary } from '~/lib/localstorage';
 import { updsateDiary } from '~/lib/diary';
 
 const FailDialogConfig: ConfirmDialog = {
@@ -115,7 +120,7 @@ export default Vue.extend({
         console.error(`Failed to update diary: ${result}`);
         this.isUpdateFailShowing = true;
       } else {
-        // TODO: remove local cache
+        removeDiary(this.diary.dateID);
       }
 
       (this.$refs.toolbar!! as any).onSaveComplete();

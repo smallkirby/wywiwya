@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white border-2 rounded-sm py-2 px-2 mr-4 h-full w-full">
+  <div class="bg-white border-2 rounded-sm pt-6 pb-2 px-2 mr-4 h-full w-full">
     <div id="previewBox" ref="previewBox" class="h-full w-full px-8 ml-4 mr-4 overflow-y-scroll" />
   </div>
 </template>

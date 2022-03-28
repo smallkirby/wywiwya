@@ -9,7 +9,7 @@ export type DiaryLocal = {
 };
 
 const getDiaryKey = (did: string) => {
-  return `$diaries/${did}`;
+  return `diaries/${did}`;
 };
 
 export const setDiary = (diary: Diary) => {
@@ -33,5 +33,5 @@ export const getDiary = (dateID: string): DiaryLocal | null => {
 };
 
 export const removeDiary = (dateID: string) => {
-  localStorage.removeItem(dateID);
+  localStorage.removeItem(getDiaryKey(dateID));
 };
