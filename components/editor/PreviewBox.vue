@@ -60,6 +60,11 @@ export default Vue.extend({
   border-color: rgba(23, 33, 49, var(--tw-border-opacity));
 }
 
+#previewBox h1,h2,h3,h4,h5:first-child {
+  margin-top: 0rem;
+  padding-top: 0rem;
+}
+
 #previewBox p {
   padding-left: 1rem;
 }

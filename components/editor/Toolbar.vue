@@ -27,6 +27,7 @@
         <!-- MARK AS TEMP BOX -->
         <div class="m-1 px-1 w-28 h-full">
           <toggle-button
+            v-tooltip="isTemporary ? 'ドラフト状態です' : '清書状態です'"
             :value="!isTemporary"
             :color="{checked: '#EBDBB2', unchecked: '#1A1423'}"
             :switch-color="{checked: '#1A1423', unchecked: '#EBDBB2'}"
