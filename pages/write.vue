@@ -20,13 +20,13 @@
     </misc-dialog>
 
     <layout-main-box v-show="!isLoading">
-      <div class="flex flex-col p-4">
+      <div class="flex flex-col p-2 md:p-4">
         <div class="border-b-2 my-2 border-skgray-dark">
           <write-todays-write class="mb-6" @requestNewWrite="createNewDiary" />
         </div>
 
         <div class="border-b-2 pb-6 border-skgray-dark">
-          <write-temp-write class="mt-6 py-6" />
+          <write-temp-write v-if="me !== null" class="mt-6 py-6" :me="me" />
         </div>
 
         <div class="border-b-2 my-2 pb-6 border-skgray-dark">
@@ -39,6 +39,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import { ConfirmDialog } from '~/components/misc/Dialog.vue';
 import { createNewDiary } from '~/lib/diary';
 
@@ -58,6 +59,12 @@ export default Vue.extend({
       failDialogConfig: FailDialogConfig,
       dialogShowing: false,
     };
+  },
+
+  computed: {
+    ...mapGetters([
+      'me',
+    ]),
   },
 
   methods: {

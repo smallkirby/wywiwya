@@ -5,8 +5,14 @@
         <font-awesome-icon icon="fa-solid fa-circle-check" />
         書きかけの Diary を完成させる
       </div>
-      <div class="ml-2 md:ml-12 flex flex-col">
-        <div>
+      <div class="ml-2 md:ml-12 flex flex-col mt-2">
+        <div v-show="tempDiaries !== null">
+          <div v-for="(diary, ix) in tempDiaries" :key="ix" class="mb-2 md:pr-4">
+            <diary-badge :diary="diary" />
+          </div>
+        </div>
+
+        <div v-show="tempDiaries !== null && tempDiaries.length === 0">
           書きかけの Diary はありません。
         </div>
       </div>
@@ -15,16 +21,42 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import moment from 'moment';
+import { User } from '~/store/state';
+import { fetchTemporaryDiaries } from '~/lib/diary';
+import { Diary } from '~/typings/diary';
 
 export default Vue.extend({
   name: 'TempWrite',
+
+  props: {
+    me: {
+      type: Object as PropType<User>,
+      required: true,
+    },
+  },
+
+  data () {
+    return {
+      tempDiaries: null as Diary[] | null,
+    };
+  },
 
   computed: {
     todayString () {
       return moment().format('YYYY年MM月DD日');
     },
+  },
+
+  async mounted () {
+    const tempDiaries = await fetchTemporaryDiaries(this.me);
+    if (tempDiaries === null) {
+      // eslint-disable-next-line no-console
+      console.log('Failed to fetch temporary diaries.');
+    } else {
+      this.tempDiaries = tempDiaries;
+    }
   },
 });
 

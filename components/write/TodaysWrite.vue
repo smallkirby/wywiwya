@@ -6,7 +6,7 @@
           <font-awesome-icon icon="fa-solid fa-circle-plus" />
           今日のDiaryを書く
         </div>
-        <div class="md:ml-12 flex flex-col">
+        <div class="ml-3 md:ml-12 flex flex-col">
           <div v-if="todaysDiary === null">
             {{ todayString }}の Diary はまだありません。
           </div>

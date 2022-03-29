@@ -25,6 +25,26 @@ export const fetchDiary = async (uid: string, did: string): Promise<Diary | null
   }
 };
 
+export const fetchTemporaryDiaries = async (user: User): Promise<Diary[] | null> => {
+  const db = getFirestore();
+  const diariesRef = collection(db, 'users', user.uid, 'diaries');
+  const tempDiariesQuery = query(diariesRef, where('isTemporary', '==', true));
+
+  const diariesSnap = await getDocs(tempDiariesQuery).then(snap => snap).catch((e: any) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    return null;
+  });
+  if (diariesSnap === null) { return null; }
+
+  const tempDiaries: Diary[] = [];
+  diariesSnap.forEach((doc) => {
+    const data = doc.data();
+    tempDiaries.push(convertDiary(data as Diary));
+  });
+  return tempDiaries;
+};
+
 export const fetchTodaysDiary = async (user: User): Promise<Diary | null> => {
   const todaysDateID = moment().format('YYYY-MM-DD');
 
