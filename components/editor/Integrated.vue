@@ -16,6 +16,7 @@
             :date-string="dateString"
             :is-temporary="diaryChanged.isTemporary"
             @requestSave="onRequestSave"
+            @temporaryStateChanged="onTemporaryChange"
           />
         </div>
 
@@ -128,6 +129,10 @@ export default Vue.extend({
 
     onFailDialogClosed () {
       this.isUpdateFailShowing = false;
+    },
+
+    onTemporaryChange (isTemporary: boolean) {
+      this.diaryChanged.isTemporary = isTemporary;
     },
   },
 });

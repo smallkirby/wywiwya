@@ -6,18 +6,18 @@
           <font-awesome-icon icon="fa-solid fa-circle-plus" />
           今日のDiaryを書く
         </div>
-        <div class="ml-12 flex flex-col">
+        <div class="md:ml-12 flex flex-col">
           <div v-if="todaysDiary === null">
-            {{ todayString }}のDiary はまだありません。
+            {{ todayString }}の Diary はまだありません。
           </div>
           <div v-else>
-            {{ todayString }}のDiaryは既に存在します。
+            {{ todayString }}の Diary は既に存在します。
           </div>
 
           <div class="text-center justify-center">
             <button
               v-if="todaysDiary === null"
-              class="bg-skgreen-light hover:bg-skgreen-dark rounded-xl py-2 px-4 my-2 w-2/3
+              class="bg-skgreen-light hover:bg-skgreen-dark rounded-xl py-2 px-4 my-2 w-2/3 text-skdark
               flex justify-center items-center mx-auto
             "
               @click="onClick"

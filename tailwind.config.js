@@ -16,7 +16,7 @@ module.exports = {
         skgreen: {
           light: '#1B998B',
           DEFAULT: '#0F574E',
-          dark: '#4A6C6F',
+          dark: '#3A4C4F',
         },
         skgray: {
           DEFAULT: '#374151',

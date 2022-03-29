@@ -5,7 +5,7 @@
         <font-awesome-icon icon="fa-solid fa-pen" />
         過去の Diary を編集する
       </div>
-      <div class="ml-12 flex flex-col">
+      <div class="ml-2 md:ml-12 flex flex-col">
         <div>
           まだ Diary を書いていません。
         </div>

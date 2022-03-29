@@ -3,8 +3,8 @@
     <transition>
       <div class="dialog-wrapper items-center">
         <div
-          class="bg-white rounded-md drop-shadow-2xl w-[50rem] mx-auto
-          py-auto my-40 py-4 px-8 border-2 border-gray-400"
+          class="bg-skdark-dark rounded-md drop-shadow-2xl md:w-[50rem] mx-6 md:mx-auto
+          py-auto my-40 py-4 px-4 md:px-8 border-2 border-gray-400"
         >
           <div class="flex flex-col">
             <div class="text-2xl mb-3">
@@ -16,7 +16,7 @@
             </div>
 
             <div class="text-right">
-              <button class="border-2 border-gray-700 hover:bg-gray-300 px-4" @click="onOkClick">
+              <button class="border-2 border-gray-700 hover:bg-gray-300 px-4 hover:text-skdark" @click="onOkClick">
                 {{ config.closeText }}
               </button>
             </div>

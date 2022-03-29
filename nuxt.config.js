@@ -27,6 +27,12 @@ export default {
     {
       src: '~/plugins/fontawesome.ts',
     },
+    {
+      src: '~/plugins/tooltip.ts',
+    },
+    {
+      src: '~/plugins/toggle.ts',
+    },
   ],
 
   components: true,

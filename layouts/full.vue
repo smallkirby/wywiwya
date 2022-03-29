@@ -26,6 +26,9 @@ export default Vue.extend({
 </script>
 
 <style>
+@import '~/static/css/tooltip.css';
+@import '~/static/css/toggle.css';
+
 body {
   font-family: 'Ubuntu Mono';
 }
