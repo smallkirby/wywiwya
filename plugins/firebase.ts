@@ -1,9 +1,27 @@
 import { initializeApp } from 'firebase/app';
-import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
-import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc } from 'firebase/firestore';
+import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
+import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc, Firestore } from 'firebase/firestore';
 import { UID, User } from '~/store/state';
 
 let isInitialized = false;
+let functions: Functions | null = null;
+let firestore: Firestore | null = null;
+
+export const getProjectFirestore = () => {
+  if (firestore === null) {
+    // eslint-disable-next-line no-console
+    console.error('Firestore is not initialized');
+  };
+  return firestore as Firestore;
+};
+
+export const getProjectFunctions = () => {
+  if (functions === null) {
+    // eslint-disable-next-line no-console
+    console.error('Functions is not initialized');
+  };
+  return functions as Functions;
+};
 
 export const isAppInitialized = () => {
   return isInitialized;
@@ -24,15 +42,17 @@ export const initApp = (vueConfig: any) => {
   };
   const app = initializeApp(config);
 
+  functions = getFunctions(app, 'asia-northeast1');
+  firestore = getFirestore(app);
   if (vueConfig.FB_FIRESTORE_EMULATE === 1) {
     // eslint-disable-next-line no-console
     console.log('Using emulator for firestore.');
-    connectFirestoreEmulator(getFirestore(app), 'localhost', 8081);
+    connectFirestoreEmulator(firestore, 'localhost', 8081);
   }
   if (vueConfig.FB_FUNCTIONS_EMULATE === 1) {
     // eslint-disable-next-line no-console
     console.log('Using emulator for functions.');
-    connectFunctionsEmulator(getFunctions(app, 'asis-northeast1'), 'localhost', 5001);
+    connectFunctionsEmulator(functions, 'localhost', 5001);
   }
 
   isInitialized = true;

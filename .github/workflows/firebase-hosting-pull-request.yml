@@ -16,7 +16,7 @@ jobs:
           FB_MESSAGINGSENDERID: ${{ secrets.FB_MESSAGINGSENDERID }}
           FB_APPID: ${{ secrets.FB_APPID }}
           FB_MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
-        run: npm ci && npm run generate
+        run: npm ci && npm run build 
 
       - name: Deploy hosting
         uses: FirebaseExtended/action-hosting-deploy@v0

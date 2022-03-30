@@ -107,11 +107,18 @@ export default Vue.extend({
     },
 
     setText (newText: string) {
-      const mainEditor = this.$refs.mainEditor;
-      if (mainEditor === undefined) {
-        return;
-      }
-      (mainEditor as any).setText(newText);
+      // dirty workaround
+      const interval = setInterval(() => {
+        if (this.$refs.mainEditor) {
+          const mainEditor = this.$refs.mainEditor;
+          if (mainEditor === undefined) {
+            return;
+          }
+          (mainEditor as any).setText(newText);
+
+          clearInterval(interval);
+        }
+      }, 100);
     },
 
     async onRequestSave () {

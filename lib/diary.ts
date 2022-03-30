@@ -1,10 +1,10 @@
 // eslint-disable-next-line max-len
 import { collection, doc, getDoc, getDocs, getFirestore, query, where, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { httpsCallable } from 'firebase/functions';
 import moment from 'moment';
-import { getApp } from 'firebase/app';
 import { Diary, DID } from '~/typings/diary';
 import { User } from '~/store/state';
+import { getProjectFunctions } from '~/plugins/firebase';
 
 const convertDiary = (diary: Diary): Diary => {
   diary.lastUpdatedAt = (diary.lastUpdatedAt as any).toDate();
@@ -69,7 +69,7 @@ export const fetchTodaysDiary = async (user: User): Promise<Diary | null> => {
 };
 
 export const createNewDiary = async (): Promise<DID | null> => {
-  const functions = getFunctions(getApp(), 'asia-northeast1');
+  const functions = getProjectFunctions();
   const f = httpsCallable(functions, 'createNewDiary');
   return await f({}).then((result) => {
     const data = result.data as any;

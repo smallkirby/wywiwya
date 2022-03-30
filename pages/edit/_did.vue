@@ -79,9 +79,9 @@ export default Vue.extend({
       // @ts-ignore
       this.diary = await this.getDiary();
       // @ts-ignore
-      this.isLoading = false;
-      // @ts-ignore
       this.changeLayout();
+      // @ts-ignore
+      this.isLoading = false;
     }
   },
 

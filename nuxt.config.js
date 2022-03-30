@@ -61,18 +61,9 @@ export default {
   },
 
   router: {
-    base: '/',
     middleware: [
       'firebase',
       'loading',
-    ],
-
-    routes: [
-      {
-        name: 'edit',
-        path: '/edit/:did',
-        component: 'components/edit/_did.vue',
-      },
     ],
   },
 
