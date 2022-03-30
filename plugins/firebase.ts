@@ -32,7 +32,7 @@ export const initApp = (vueConfig: any) => {
   if (vueConfig.FB_FUNCTIONS_EMULATE === 1) {
     // eslint-disable-next-line no-console
     console.log('Using emulator for functions.');
-    connectFunctionsEmulator(getFunctions(app, 'us-central1'), 'localhost', 5001);
+    connectFunctionsEmulator(getFunctions(app, 'asis-northeast1'), 'localhost', 5001);
   }
 
   isInitialized = true;

@@ -62,23 +62,24 @@ const doCreateNewDiary = async (uid: string): Promise<DID> => {
   return diariesRef.id;
 };
 
-export const createNewDiary = functions.https.onCall(async (_, context): Promise<ReturnType> => {
-  if (!isAuthed(context.auth)) {
-    return {
-      err: 'forbidden',
-      did: '',
-    };
-  }
-  if (!(await isValidCreate(context.auth!!.uid))) {
-    return {
-      err: 'already-exist',
-      did: '',
-    };
-  }
+export const createNewDiary =
+  functions.region('asia-northeast1').https.onCall(async (_, context): Promise<ReturnType> => {
+    if (!isAuthed(context.auth)) {
+      return {
+        err: 'forbidden',
+        did: '',
+      };
+    }
+    if (!(await isValidCreate(context.auth!!.uid))) {
+      return {
+        err: 'already-exist',
+        did: '',
+      };
+    }
 
-  const did = await doCreateNewDiary(context.auth!!.uid);
-  return {
-    err: null,
-    did,
-  };
-});
+    const did = await doCreateNewDiary(context.auth!!.uid);
+    return {
+      err: null,
+      did,
+    };
+  });
