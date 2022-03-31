@@ -1,6 +1,16 @@
 name: Deploy to Firebase Hosting on PR
 'on': pull_request
+
 jobs:
+  static_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check if raw Markdown compiler is not used.
+        run: bash ./misc/check-raw-md.bash
+
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:

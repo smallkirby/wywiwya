@@ -13,29 +13,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import MarkdownIt from 'markdown-it';
+import { compile2md } from '~/lib/md';
 
 export default Vue.extend({
   name: 'PreviewBox',
 
-  data () {
-    return {
-      md: null as MarkdownIt | null,
-    };
-  },
-
-  mounted () {
-    this.md = new MarkdownIt({
-      html: true,
-      xhtmlOut: true,
-      breaks: false,
-    });
-  },
-
   methods: {
     compileWrite (mdCode: string) {
-      if (this.md === null) { return; }
-      const code = this.md.render(mdCode);
+      const code = compile2md(mdCode);
       (this.$refs.previewBox!! as any).innerHTML = code;
     },
   },

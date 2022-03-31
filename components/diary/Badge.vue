@@ -44,10 +44,10 @@
         <!-- RIGHT -->
         <div class="w-full flex flex-col md:mx-4 pt-4 md:pt-0">
           <div class="text-2xl mb-2">
-            タイトル
+            {{ title }}
           </div>
-          <div class="ml-4">
-            content.
+          <div class="ml-4 overflow-hidden h-16 text-ellipsis">
+            <div ref="badgeDiaryContent" />
           </div>
         </div>
       </button>
@@ -62,6 +62,7 @@ import { User } from '~/store/state';
 import { did2string } from '~/lib/util/diary';
 import { fetchUser } from '~/lib/user';
 import { date2string } from '~/lib/util/date';
+import { extractTitle, extractContentHtml } from '~/lib/md';
 
 export default Vue.extend({
   name: 'DiaryBadge',
@@ -76,6 +77,7 @@ export default Vue.extend({
   data () {
     return {
       author: null as User | null,
+      content: '',
     };
   },
 
@@ -87,6 +89,12 @@ export default Vue.extend({
     lastUpdateString () {
       return date2string(this.diary.lastUpdatedAt);
     },
+
+    title () {
+      // @ts-ignore
+      const nullableTtile = extractTitle(this.diary.contentMd);
+      return nullableTtile === null ? '(no title)' : nullableTtile;
+    },
   },
 
   async created () {
@@ -94,6 +102,17 @@ export default Vue.extend({
     const user = await fetchUser(this.diary.author);
     // @ts-ignore
     this.author = user;
+  },
+
+  mounted () {
+    const interval = setInterval(() => {
+      // @ts-ignore
+      if (this.$refs.badgeDiaryContent) {
+        // @ts-ignore
+        this.$refs.badgeDiaryContent.innerHTML = extractContentHtml(this.diary.contentMd);
+        clearInterval(interval);
+      }
+    }, 100);
   },
 });
 </script>
