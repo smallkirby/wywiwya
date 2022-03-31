@@ -22,7 +22,9 @@ CSP = {
   "script-src": [
     "'self'",
     "*.apis.google.com",
+    "apis.google.com",
     "*.smallkirby.xyz",
+    "smallkirby.xyz",
     "wywiwya.firebaseapp.com",
   ],
   "child-src": ["'self'"],
