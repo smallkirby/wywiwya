@@ -58,6 +58,7 @@ export default {
   },
 
   build: {
+    extractCSS: true,
   },
 
   router: {
