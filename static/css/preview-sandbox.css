@@ -1,0 +1,40 @@
+body {
+  font-family: 'Ubuntu Mono';
+  color: #EBDBB2;
+  background-color: #130F1A;
+}
+
+h1,h2,h3,h4,h5 {
+  margin-top: 0.8rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  padding-right: 2.0rem;
+  border-bottom: solid 1px;
+  border-color: #1A1423;
+}
+
+h1,h2,h3,h4,h5:first-child {
+  margin-top: 0rem;
+  padding-top: 0rem;
+}
+
+p {
+  padding-left: 1rem;
+}
+
+li {
+  list-style: square;
+  margin-bottom: 0.2rem;
+}
+
+strong {
+  color: #B16286;
+}
+
+code {
+  color: #6272A4;
+}
+
+a {
+  color: #076678;
+}

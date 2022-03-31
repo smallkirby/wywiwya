@@ -3,9 +3,10 @@
     class="border-t-2 border-b-2 border-skgray-dark rounded-2xl
   pt-6 pb-2 px-2 ml-2 mr-4 h-full w-full bg-skdark-dark"
   >
-    <div
+    <iframe
       id="previewBox"
       ref="previewBox"
+      sandbox="allow-same-origin allow-popups"
       class="h-full w-full pl-2 pr-8 ml-4 mr-4 overflow-y-scroll"
     />
   </div>
@@ -21,7 +22,14 @@ export default Vue.extend({
   methods: {
     compileWrite (mdCode: string) {
       const code = compile2md(mdCode);
-      (this.$refs.previewBox!! as any).innerHTML = code;
+      const style = `
+        <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/preview-sandbox.css">
+      `;
+      (this.$refs.previewBox!! as any).srcdoc = style + code;
     },
   },
 });
@@ -29,46 +37,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-
 #previewBox {
-  @import'../../node_modules/bootstrap/scss/bootstrap';
   height: calc(100vh - 195px) !important;
   padding-bottom: 30px;
-}
-
-#previewBox h1,h2,h3,h4,h5 {
-  margin-top: 0.8rem;
-  margin-bottom: 1.2rem;
-  padding-bottom: 0.8rem;
-  padding-right: 2.0rem;
-  border-bottom: solid 1px;
-  border-color: rgba(23, 33, 49, var(--tw-border-opacity));
-}
-
-#previewBox h1,h2,h3,h4,h5:first-child {
-  margin-top: 0rem;
-  padding-top: 0rem;
-}
-
-#previewBox p {
-  padding-left: 1rem;
-}
-
-#previewBox li {
-  list-style: square;
-  margin-bottom: 0.2rem;
-}
-
-#previewBox strong {
-  color: #B16286;
-}
-
-#previewBox code {
-  color: #6272A4;
-}
-
-#previewBox a {
-  color: #076678;
 }
 
 </style>

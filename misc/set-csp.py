@@ -23,7 +23,7 @@ CSP = {
   "child-src": ["'self'"],
   "connect-src": [
     "'self'",
-    "identitytoolkit.googleapis.com",
+    "*.googleapis.com",
     "http://localhost:5001",
     "http://localhost:8081",
     "http://localhost:9099",
