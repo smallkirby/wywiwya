@@ -18,19 +18,25 @@ CSP = {
   ],
   "script-src": [
     "'self'",
-    "'nonce-hogehoge'"
+    "'nonce-hogehoge'",
+    "*.apis.google.com",
+    "*.smallkirby.xyz",
+    "wywiwya.firebaseapp.com",
   ],
   "child-src": ["'self'"],
   "connect-src": [
     "'self'",
     "*.googleapis.com",
+    "*.smallkirby.xyz",
+    "wywiwya.firebaseapp.com",
+    "https://asia-northeast1-wywiwya.cloudfunctions.net",
     "http://localhost:5001",
     "http://localhost:8081",
     "http://localhost:9099",
   ],
   "font-src": ["*"],
   "frame-src": ["'self'"],
-  "img-src": ["*"],
+  "img-src": ["*", "data:"],
   "media-src": ["*"],
   "style-src": ["*", "'unsafe-inline'"],
 }
