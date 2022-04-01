@@ -1,11 +1,13 @@
 import { initializeApp } from 'firebase/app';
 import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc, Firestore } from 'firebase/firestore';
+import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
 import { UID, User } from '~/store/state';
 
 let isInitialized = false;
 let functions: Functions | null = null;
 let firestore: Firestore | null = null;
+let auth : Auth | null = null;
 
 export const getProjectFirestore = () => {
   if (firestore === null) {
@@ -44,6 +46,7 @@ export const initApp = (vueConfig: any) => {
 
   functions = getFunctions(app, 'asia-northeast1');
   firestore = getFirestore(app);
+  auth = getAuth(app);
   if (vueConfig.FB_FIRESTORE_EMULATE === 1) {
     // eslint-disable-next-line no-console
     console.log('Using emulator for firestore.');
@@ -53,6 +56,11 @@ export const initApp = (vueConfig: any) => {
     // eslint-disable-next-line no-console
     console.log('Using emulator for functions.');
     connectFunctionsEmulator(functions, 'localhost', 5001);
+  }
+  if (vueConfig.FB_AUTH_EMULATE === 1) {
+    // eslint-disable-next-line no-console
+    console.log('Using emulator for auth.');
+    connectAuthEmulator(auth, 'http://localhost:9099');
   }
 
   isInitialized = true;

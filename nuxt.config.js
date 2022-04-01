@@ -79,5 +79,6 @@ export default {
 
     FB_FIRESTORE_EMULATE: process.env.FB_FIRESTORE_EMULATE,
     FB_FUNCTIONS_EMULATE: process.env.FB_FUNCTIONS_EMULATE,
+    FB_AUTH_EMULATE: process.env.FB_AUTH_EMULATE,
   },
 };

@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "FB_FIRESTORE_EMULATE=1 && FB_FUNCTIONS_EMULATE=1 && nuxt",
+    "dev": "FB_FIRESTORE_EMULATE=1 && FB_FUNCTIONS_EMULATE=1 && FB_AUTH_EMULATE=1 && nuxt",
     "build": "nuxt build && python3 ./misc/set-csp.py",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint:js": "eslint --ext \".js,.ts,.vue\" --ignore-path .gitignore .",
     "lint": "npm run lint:js",
     "lintfix": "npm run lint:js -- --fix",
-    "emulate": "firebase emulators:start"
+    "emulate": "bash ./misc/start-emulator.bash"
   },
   "workspaces": [
     "functions"
