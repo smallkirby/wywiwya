@@ -39,7 +39,11 @@ CSP = {
     "http://localhost:9099",
   ],
   "font-src": ["*"],
-  "frame-src": ["'self'"],
+  "frame-src": [
+    "'self'",
+    "apis.google.com",
+    "wywiwya.firebaseapp.com",
+  ],
   "img-src": ["*", "data:"],
   "media-src": ["*"],
   "style-src": ["*", "'unsafe-inline'"],
