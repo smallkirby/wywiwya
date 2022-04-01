@@ -27,7 +27,7 @@ Therefore, XSS preventions are required. WYWIWYA does below:
 | Directive | Sources |
 |:---|:---|
 | `default-src` | `self` |
-| `script-src` | `self`, `*.apis.google.com`, `*.smallkirby.xyz`, `<Firebase Auth Domain>` |
+| `script-src` | `self`, `*.apis.google.com`, `*.smallkirby.xyz`, `<Firebase Auth Domain>`, and SHA256 hashes of inline scripts in `index.html` |
 | `child-src` |  `none` |
 | `connect-src` | `self`, `*.googleapis.com`, `*.smallkirby.xyz`, `<Firebase Auth Domain>`, `<Cloud Functions Location>` |
 | `font-src` |  `*` |

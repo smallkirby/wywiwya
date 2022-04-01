@@ -10,3 +10,5 @@ npm run nirugiri # start emulators and local server
   - building and watching Cloud Functions code.
   - start emulators by importing existing data in `/emu-sample`.
   - start nuxt.
+
+- You have to prepare `.env` file. The sample is [`.env.example`](../.env.example).
