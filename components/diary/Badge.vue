@@ -2,13 +2,13 @@
   <layout-wrapper>
     <div
       v-if="author!== null"
-      class="rounded-xl px-2 md:px-4 py-3 border-2 border-skgray-dark hover:border-skwhite-dark shadow-2xl pt-4"
+      class="rounded-xl px-2 md:px-4 border-2 border-skgray-dark hover:border-skwhite-dark shadow-2xl pt-4 pb-1"
     >
       <button class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left">
         <!-- LEFT -->
         <div
           class="flex flex-col md:pr-6 pb-4 md:pb-0
-        border-b-2 md:border-b-0 md:border-r-2 border-skgray-dark whitespace-nowrap"
+        border-b-2 md:border-b-0 md:border-r-2 border-skgray-dark whitespace-nowrap mb-2"
         >
           <div class="text-xl md:mr-2 mb-2 flex items-center justify-between">
             <div>
@@ -42,12 +42,16 @@
         </div>
 
         <!-- RIGHT -->
-        <div class="w-full flex flex-col md:mx-4 pt-4 md:pt-0">
+        <div class="w-full h-full flex flex-col md:mx-4 pt-4 md:pt-0">
           <div class="text-2xl mb-2">
             {{ title }}
           </div>
-          <div class="ml-4 overflow-hidden h-16 text-ellipsis">
-            <div ref="badgeDiaryContent" />
+          <div class="ml-4 overflow-hidden h-full text-ellipsis pb-0">
+            <iframe
+              ref="badgeDiaryContent"
+              sandbox="allow-same-origin allow-popups"
+              class="w-full h-[4.8rem] overflow-hidden sandboxedPreview"
+            />
           </div>
         </div>
       </button>
@@ -62,7 +66,7 @@ import { User } from '~/store/state';
 import { did2string } from '~/lib/util/diary';
 import { fetchUser } from '~/lib/user';
 import { date2string } from '~/lib/util/date';
-import { extractTitle, extractContentHtml } from '~/lib/md';
+import { extractTitle, extractContentHtmlStyled } from '~/lib/md';
 
 export default Vue.extend({
   name: 'DiaryBadge',
@@ -109,7 +113,32 @@ export default Vue.extend({
       // @ts-ignore
       if (this.$refs.badgeDiaryContent) {
         // @ts-ignore
-        this.$refs.badgeDiaryContent.innerHTML = extractContentHtml(this.diary.contentMd);
+        let html = extractContentHtmlStyled(this.diary.contentMd);
+        html = html + `
+          <style>
+            body {
+              line-height: 1;
+              overflow: hidden;
+            }
+            p {
+              margin-bottom: 0.2rem !important;
+              padding-left: 0.2rem !important;
+            }
+            .blurFilter {
+              position: absolute;
+              filter: blur(4px);
+              top: 3.8rem;
+              width: 100%;
+              height: 100%;
+              z-index: 99;
+              background-color: #130F1A !important;
+              opacity: 0.8;
+            }
+          </style>
+          <div class="blurFilter" />
+        `;
+        // @ts-ignore
+        this.$refs.badgeDiaryContent.srcdoc = html;
         clearInterval(interval);
       }
     }, 100);
