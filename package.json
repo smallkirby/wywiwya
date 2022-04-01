@@ -10,7 +10,8 @@
     "lint:js": "eslint --ext \".js,.ts,.vue\" --ignore-path .gitignore .",
     "lint": "npm run lint:js",
     "lintfix": "npm run lint:js -- --fix",
-    "emulate": "bash ./misc/start-emulator.bash"
+    "emulate": "bash ./misc/start-emulator.bash",
+    "nirugiri": "bash ./misc/start-workspace.bash"
   },
   "workspaces": [
     "functions"
