@@ -1,10 +1,10 @@
 // eslint-disable-next-line max-len
-import { collection, doc, getDoc, getDocs, getFirestore, query, where, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, getFirestore, query, where, updateDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import moment from 'moment';
 import { Diary, DID } from '~/typings/diary';
 import { User } from '~/store/state';
-import { getProjectFunctions } from '~/plugins/firebase';
+import { getProjectFirestore, getProjectFunctions } from '~/plugins/firebase';
 
 const convertDiary = (diary: Diary): Diary => {
   diary.lastUpdatedAt = (diary.lastUpdatedAt as any).toDate();
@@ -13,7 +13,7 @@ const convertDiary = (diary: Diary): Diary => {
 };
 
 export const fetchDiary = async (uid: string, did: string): Promise<Diary | null> => {
-  const db = getFirestore();
+  const db = getProjectFirestore();
   const diaryRef = doc(db, 'users', uid, 'diaries', did);
   const diarySnap = await getDoc(diaryRef).then(snap => snap).catch(() => {
     return null;
@@ -24,6 +24,30 @@ export const fetchDiary = async (uid: string, did: string): Promise<Diary | null
   } else {
     return convertDiary(diarySnap.data() as Diary);
   }
+};
+
+// fetches most recently edited diaries.
+export const fetchDiaries = async (uid: string, numRequired: number): Promise<Diary[] | null> => {
+  if (numRequired <= 0) { numRequired = 1; }
+
+  const db = getProjectFirestore();
+  const diariesRef = collection(db, 'users', uid, 'diaries');
+  const diariesQuery = query(diariesRef, orderBy('lastUpdatedAt', 'desc'), limit(numRequired));
+
+  const diariesSnap = await getDocs(diariesQuery).then(snap => snap).catch((e: any) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    return null;
+  });
+  if (diariesSnap === null) { return null; }
+
+  const diaries: Diary[] = [];
+  diariesSnap.forEach((doc) => {
+    const data = doc.data();
+    diaries.push(convertDiary(data as Diary));
+  });
+
+  return diaries;
 };
 
 export const fetchTemporaryDiaries = async (user: User): Promise<Diary[] | null> => {

@@ -8,7 +8,19 @@
       </div>
 
       <div>
-        <first-diary-prompt v-show="numDiaries === 0" class="mt-4 mb-8" />
+        <div>
+          <vue-loading v-show="!isDiariesFetched" />
+        </div>
+        <div v-show="isDiariesFetched">
+          <first-diary-prompt v-if="numDiaries === 0" class="mt-4 mb-8" />
+
+          <!-- TODO: need paging -->
+          <div v-else class="mt-8 ml-2 md:ml-12 flex flex-col">
+            <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
+              <diary-badge :diary="diary" />
+            </div>
+          </div>
+        </div>
       </div>
     </layout-main-box>
   </layout-wrapper>
@@ -17,9 +29,18 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
+import { fetchDiaries } from '~/lib/diary';
+import { Diary } from '~/typings/diary';
 
 export const HistoryPage = Vue.extend({
   name: 'HistoryPage',
+
+  data () {
+    return {
+      diaries: [] as Diary[],
+      isDiariesFetched: false,
+    };
+  },
 
   computed: {
     numDiaries () {
@@ -33,6 +54,49 @@ export const HistoryPage = Vue.extend({
     ...mapGetters([
       'me',
     ]),
+  },
+
+  watch: {
+    async me () {
+      // @ts-ignore
+      if (!this.isDiariesFetched) {
+        // @ts-ignore
+        await this.fetchDiaries();
+        // @ts-ignore
+        this.isDiariesFetched = true;
+      }
+    },
+  },
+
+  async mounted () {
+    if (this.me) {
+      // @ts-ignore
+      await this.fetchDiaries();
+      // @ts-ignore
+      this.isDiariesFetched = true;
+    }
+  },
+
+  methods: {
+    fetchDiaries () {
+      const interval = setInterval(async () => {
+        if (this.me.numDiaries !== null && this.me.numDiaries > 0) {
+          clearInterval(interval);
+        } else {
+          return;
+        }
+
+        const diaries = await fetchDiaries(this.me.uid, this.me.numDiaries);
+        if (diaries === null) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to fetch diaries...');
+          return;
+        }
+
+        // @ts-ignore
+        this.diaries = diaries;
+      }, 500);
+    },
   },
 });
 

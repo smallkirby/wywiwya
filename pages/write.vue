@@ -30,7 +30,7 @@
         </div>
 
         <div class="border-b-2 my-2 pb-6 border-skgray-dark">
-          <write-old-edit class="mt-6 py-6" />
+          <write-old-edit v-if="me !== null" class="mt-6 py-6" :me="me" />
         </div>
       </div>
     </layout-main-box>

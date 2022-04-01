@@ -1,12 +1,11 @@
 import * as functions from 'firebase-functions';
 import firebase from 'firebase-admin';
 import moment from 'moment';
+import { firestore } from '../lib/firebase';
+import { incrementNumDiaries, UID } from '../user';
 import { isAuthed } from '../lib/auth';
 
-const firestore = firebase.firestore;
-
 // @typings/diary.d.ts
-export type UID = string;
 export type DID = string;
 export type DateID = string;
 export type Diary = {
@@ -19,7 +18,7 @@ export type Diary = {
   author: UID,
 };
 
-type ErrorCode = 'forbidden' | 'already-exist';
+type ErrorCode = 'forbidden' | 'already-exist' | 'failure-update-user';
 
 type ReturnType = {
   err: ErrorCode | null,
@@ -77,9 +76,22 @@ export const createNewDiary =
       };
     }
 
+    // create new diary in Firestore.
     const did = await doCreateNewDiary(context.auth!!.uid);
-    return {
-      err: null,
-      did,
-    };
+
+    // increment # of diaries in Firestore.
+    const result = await incrementNumDiaries(context.auth!!.uid);
+    if (result !== null) {
+      // eslint-disable-next-line no-console
+      console.error(result);
+      return {
+        err: 'failure-update-user',
+        did,
+      };
+    } else {
+      return {
+        err: null,
+        did,
+      };
+    }
   });
