@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import firebase from 'firebase-admin';
 import moment from 'moment';
 import { firestore } from '../lib/firebase';
-import { incrementNumDiaries, UID } from '../user';
+import { addDiaryRef, UID } from '../user';
 import { isAuthed } from '../lib/auth';
 
 // @typings/diary.d.ts
@@ -23,15 +23,15 @@ type ErrorCode = 'forbidden' | 'already-exist' | 'failure-update-user';
 
 type ReturnType = {
   err: ErrorCode | null,
-  did: DID,
+  did: string | null,
 };
 
 const fetchDiaryByDate = async (uid: string, dateID: string) => {
   const diarySnap = await firestore()
-    .collection('users')
-    .doc(uid)
     .collection('diaries')
-    .where('dateID', '==', dateID).get();
+    .where('author', '==', uid)
+    .where('dateID', '==', dateID)
+    .get();
   if (diarySnap.size === 0) {
     return null;
   } else {
@@ -47,7 +47,7 @@ const isValidCreate = async (uid: string): Promise<boolean> => {
 };
 
 // FIXME: BUG: may cause TOCTOU race condition
-const doCreateNewDiary = async (uid: string): Promise<DID> => {
+const doCreateNewDiary = async (uid: string): Promise<firebase.firestore.DocumentReference> => {
   const todaysString = moment().format('YYYY-MM-DD');
   const newData: Diary = {
     dateID: todaysString,
@@ -59,8 +59,6 @@ const doCreateNewDiary = async (uid: string): Promise<DID> => {
     lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
   };
   const diariesRef = await firestore()
-    .collection('users')
-    .doc(uid)
     .collection('diaries')
     .add(newData)
     .then(async (res) => {
@@ -70,7 +68,8 @@ const doCreateNewDiary = async (uid: string): Promise<DID> => {
       });
       return res;
     });
-  return diariesRef.id;
+
+  return diariesRef;
 };
 
 export const createNewDiary =
@@ -78,32 +77,32 @@ export const createNewDiary =
     if (!isAuthed(context.auth)) {
       return {
         err: 'forbidden',
-        did: '',
+        did: null,
       };
     }
     if (!(await isValidCreate(context.auth!!.uid))) {
       return {
         err: 'already-exist',
-        did: '',
+        did: null,
       };
     }
 
     // create new diary in Firestore.
-    const did = await doCreateNewDiary(context.auth!!.uid);
+    const newDiary = await doCreateNewDiary(context.auth!!.uid);
 
-    // increment # of diaries in Firestore.
-    const result = await incrementNumDiaries(context.auth!!.uid);
+    // add reference of newly created diary into user
+    const result = await addDiaryRef(context.auth!!.uid, newDiary);
     if (result !== null) {
       // eslint-disable-next-line no-console
       console.error(result);
       return {
         err: 'failure-update-user',
-        did,
+        did: newDiary.id,
       };
     } else {
       return {
         err: null,
-        did,
+        did: newDiary.id,
       };
     }
   });

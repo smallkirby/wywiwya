@@ -2,7 +2,7 @@ import { Commit, ActionContext } from 'vuex';
 import { User as FirestoreUser } from 'firebase/auth';
 import { State, User } from './state';
 import { Logout } from '~/lib/auth';
-import { getNumDiaries, setUser } from '~/plugins/firebase';
+import { getUser, setUser } from '~/plugins/firebase';
 
 const actions = {
   signout: async ({ commit }: {commit: Commit}) => {
@@ -19,20 +19,20 @@ const actions = {
       photoURL: user.photoURL!!,
       uid: user.uid,
       displayName: user.displayName!!,
-      numDiaries: null,
+      diaries: [],
     };
     await setUser(_user);
 
     // set numDiaries
-    await dispatch('getUpdateNumDiaries');
+    await dispatch('fetchRemoteUser');
   },
 
-  getUpdateNumDiaries: async ({ commit, getters }: ActionContext<State, State>) => {
-    const me = getters.me;
+  fetchRemoteUser: async ({ commit, getters }: ActionContext<State, State>) => {
+    const me: User = getters.me;
     if (me === null) { return; }
-    const numDiaries = await getNumDiaries(me);
-    if (numDiaries === null) { return; }
-    commit('setNumDiaries', numDiaries);
+    const user = await getUser(me.uid);
+    if (user === null) { return; }
+    commit('setUserDiaries', user.diaries);
   },
 };
 

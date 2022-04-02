@@ -30,7 +30,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import { fetchMyDiaryById } from '~/lib/diary';
+import { fetchDiaryById } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
 export default Vue.extend({
@@ -88,7 +88,7 @@ export default Vue.extend({
   methods: {
     async getDiary () {
       if (this.me === null) { return null; }
-      return await fetchMyDiaryById(this.me.uid, this.$route.params.did);
+      return await fetchDiaryById(this.me.uid, this.$route.params.did);
     },
 
     changeLayout () {

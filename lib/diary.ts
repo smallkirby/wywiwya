@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-len
-import { collection, getDocs, getFirestore, query, where, updateDoc, serverTimestamp, orderBy, limit, DocumentSnapshot, collectionGroup, QueryConstraint } from 'firebase/firestore';
+import { collection, getDocs, getFirestore, query, where, updateDoc, serverTimestamp, orderBy, limit, DocumentSnapshot, QueryConstraint } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import moment from 'moment';
 import { Diary, DID } from '~/typings/diary';
@@ -15,29 +15,9 @@ const convertDiary = (snap: DocumentSnapshot): Diary => {
   return data;
 };
 
-const queryAllDiaries = async (...queryConstraints: QueryConstraint[]): Promise<Diary[] | null> => {
+const queryDiaries = async (...queryConstraints: QueryConstraint[]): Promise<Diary[] | null> => {
   const db = getProjectFirestore();
-  const diaryQuery = query(collectionGroup(db, 'diaries'), ...queryConstraints);
-  const diariesSnap = await getDocs(diaryQuery).then(snap => snap).catch((e: any) => {
-    // eslint-disable-next-line no-console
-    console.error(e);
-    return null;
-  });
-
-  const convertedDiaries: Diary[] = [];
-  if (diariesSnap === null || !diariesSnap.size) {
-    return null;
-  } else {
-    diariesSnap.docs.forEach((doc) => {
-      convertedDiaries.push(convertDiary(doc));
-    });
-    return convertedDiaries;
-  }
-};
-
-const queryMyDiaries = async (uid: UID, ...queryConstraints: QueryConstraint[]): Promise<Diary[] | null> => {
-  const db = getProjectFirestore();
-  const diariesRef = collection(db, 'users', uid, 'diaries');
+  const diariesRef = collection(db, 'diaries');
   const diariesQuery = query(diariesRef, ...queryConstraints);
 
   const diariesSnap = await getDocs(diariesQuery).then(snap => snap).catch((e: any) => {
@@ -57,26 +37,25 @@ const queryMyDiaries = async (uid: UID, ...queryConstraints: QueryConstraint[]):
 
 /* ***************************************** */
 
-export const fetchMyDiaryById = async (uid: string, id: string): Promise<Diary | null> => {
-  const result = await queryMyDiaries(uid, where('id', '==', id));
-  if (result === null || result.length === 0) {
-    return null;
-  } else {
-    return result[0];
+export const fetchDiaryById = async (uid: string, id: string): Promise<Diary | null> => {
+  const authorDiary = await queryDiaries(where('id', '==', id), where('author', '==', uid));
+  if (authorDiary !== null && authorDiary.length !== 0) {
+    return authorDiary[0];
   }
-};
-
-export const fetchDiaryById = async (id: string): Promise<Diary | null> => {
-  const result = await queryAllDiaries(where('id', '==', id), where('isPublic', '==', true));
-  if (result === null || result.length === 0) {
-    return null;
+  const othersDiary = await queryDiaries(
+    where('id', '==', id),
+    where('isTemporary', '==', false),
+    where('isPublic', '==', true),
+  );
+  if (othersDiary !== null && othersDiary.length !== 0) {
+    return othersDiary[0];
   } else {
-    return result[0];
+    return null;
   }
 };
 
 export const fetchMyDiaryByDate = async (uid: UID, did: DID): Promise<Diary | null> => {
-  const result = await queryMyDiaries(uid, where('dateID', '==', did));
+  const result = await queryDiaries(where('dateID', '==', did), where('author', '==', uid));
   if (result === null || result.length === 0) {
     return null;
   } else {
@@ -88,7 +67,7 @@ export const fetchMyDiaryByDate = async (uid: UID, did: DID): Promise<Diary | nu
 export const fetchMyDiaries = async (uid: string, numRequired: number): Promise<Diary[] | null> => {
   if (numRequired <= 0) { numRequired = 1; }
 
-  const result = await queryMyDiaries(uid, orderBy('lastUpdatedAt', 'desc'), limit(numRequired));
+  const result = await queryDiaries(where('author', '==', uid), orderBy('lastUpdatedAt', 'desc'), limit(numRequired));
   if (result === null || result.length === 0) {
     return null;
   } else {
@@ -97,7 +76,11 @@ export const fetchMyDiaries = async (uid: string, numRequired: number): Promise<
 };
 
 export const fetchMyTemporaryDiaries = async (user: User): Promise<Diary[] | null> => {
-  const result = await queryMyDiaries(user.uid, where('isTemporary', '==', true), orderBy('lastUpdatedAt', 'desc'));
+  const result = await queryDiaries(
+    where('author', '==', user.uid),
+    where('isTemporary', '==', true),
+    orderBy('lastUpdatedAt', 'desc'),
+  );
   if (result === null || result.length === 0) {
     return null;
   } else {
@@ -105,10 +88,10 @@ export const fetchMyTemporaryDiaries = async (user: User): Promise<Diary[] | nul
   }
 };
 
-export const fetchTodaysDiary = async (user: User): Promise<Diary | null> => {
+export const fetchMyTodaysDiary = async (user: User): Promise<Diary | null> => {
   const todaysDateID = moment().format('YYYY-MM-DD');
 
-  const result = await queryMyDiaries(user.uid, where('dateID', '==', todaysDateID));
+  const result = await queryDiaries(where('author', '==', user.uid), where('dateID', '==', todaysDateID));
   if (result === null || result.length === 0) {
     return null;
   } else {
@@ -135,10 +118,13 @@ export const createNewDiary = async (): Promise<DID | null> => {
   });
 };
 
-export const updsateDiary = async (diary: Diary): Promise<string | null> => {
+export const updateDiary = async (diary: Diary): Promise<string | null> => {
   const db = getFirestore();
-  const diariesRef = collection(db, 'users', diary.author, 'diaries');
-  const diaryQuery = query(diariesRef, where('dateID', '==', diary.dateID));
+  const diariesRef = collection(db, 'diaries');
+  const diaryQuery = query(diariesRef,
+    where('dateID', '==', diary.dateID),
+    where('author', '==', diary.author),
+  );
   const diarySnap = await getDocs(diaryQuery);
 
   if (diarySnap.size === 0) {

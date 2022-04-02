@@ -50,7 +50,7 @@
 import Vue from 'vue';
 import moment from 'moment';
 import { mapGetters } from 'vuex';
-import { fetchTodaysDiary } from '~/lib/diary';
+import { fetchMyTodaysDiary } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
 export default Vue.extend({
@@ -87,7 +87,7 @@ export default Vue.extend({
   methods: {
     async updateTodaysDiary () {
       if (this.todaysDiary === null && this.me !== null) {
-        this.todaysDiary = await fetchTodaysDiary(this.me);
+        this.todaysDiary = await fetchMyTodaysDiary(this.me);
       }
     },
 

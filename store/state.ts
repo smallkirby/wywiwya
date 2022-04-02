@@ -1,10 +1,12 @@
+import { DocumentReference } from 'firebase/firestore';
+
 export type UID = string;
 
 export type User = {
   displayName: string,
   photoURL: string,
   uid: UID,
-  numDiaries: number | null,
+  diaries: DocumentReference[],
 }
 
 export type State = {

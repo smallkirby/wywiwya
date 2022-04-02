@@ -1,33 +1,4 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "diaries",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        {
-          "fieldPath": "id",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "isPublic",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "diaries",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "isTemporary",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "lastUpdatedAt",
-          "order": "DESCENDING"
-        }
-      ]
-    }
-  ],
+  "indexes": [],
   "fieldOverrides": []
 }

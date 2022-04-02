@@ -15,8 +15,10 @@
             ref="toolbar"
             :date-string="dateString"
             :is-temporary="diaryChanged.isTemporary"
+            :is-public="diaryChanged.isPublic"
             @requestSave="onRequestSave"
             @temporaryStateChanged="onTemporaryChange"
+            @publicStateChanged="onPublicChange"
           />
         </div>
 
@@ -38,7 +40,7 @@ import Vue, { PropType } from 'vue';
 import { ConfirmDialog } from '../misc/Dialog.vue';
 import { Diary } from '~/typings/diary';
 import { getDiary, removeDiary, setDiary } from '~/lib/localstorage';
-import { updsateDiary } from '~/lib/diary';
+import { updateDiary } from '~/lib/diary';
 
 const FailDialogConfig: ConfirmDialog = {
   typ: 'confirm',
@@ -122,7 +124,7 @@ export default Vue.extend({
     },
 
     async onRequestSave () {
-      const result = await updsateDiary(this.diaryChanged);
+      const result = await updateDiary(this.diaryChanged);
       if (result !== null) {
         // eslint-disable-next-line no-console
         console.error(`Failed to update diary: ${result}`);
@@ -140,6 +142,10 @@ export default Vue.extend({
 
     onTemporaryChange (isTemporary: boolean) {
       this.diaryChanged.isTemporary = isTemporary;
+    },
+
+    onPublicChange (isPublic: boolean) {
+      this.diaryChanged.isPublic = isPublic;
     },
   },
 });

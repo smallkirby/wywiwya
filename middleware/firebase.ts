@@ -1,7 +1,7 @@
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { Store } from 'vuex';
 import { isValidUser } from '~/lib/auth';
-import { isAppInitialized } from '~/plugins/firebase';
+import { getProjectAuth, isAppInitialized } from '~/plugins/firebase';
 import { State } from '~/store/state';
 
 export default ({ store }: {store: Store<State>}) => {
@@ -9,7 +9,7 @@ export default ({ store }: {store: Store<State>}) => {
     return;
   }
 
-  const auth = getAuth();
+  const auth = getProjectAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
       if (isValidUser(user)) {

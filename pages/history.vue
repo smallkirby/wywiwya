@@ -1,23 +1,29 @@
 <template>
   <layout-wrapper>
     <layout-main-box>
-      <div>
-        <div>
-          Diaries: {{ numDiaries }} 件
-        </div>
+      <div v-if="me === null">
+        <vue-loading />
       </div>
 
-      <div>
+      <div v-else>
         <div>
-          <vue-loading v-show="!isDiariesFetched" />
+          <div>
+            Diaries: {{ me.diaries.length }} 件
+          </div>
         </div>
-        <div v-show="isDiariesFetched">
-          <first-diary-prompt v-if="numDiaries === 0" class="mt-4 mb-8" />
 
-          <!-- TODO: need paging -->
-          <div v-else class="mt-8 ml-2 md:ml-12 flex flex-col">
-            <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
-              <diary-badge :diary="diary" />
+        <div>
+          <div>
+            <vue-loading v-show="!isDiariesFetched" />
+          </div>
+          <div v-show="isDiariesFetched">
+            <first-diary-prompt v-if="me.diaries.length === 0" class="mt-4 mb-8" />
+
+            <!-- TODO: need paging -->
+            <div v-else class="mt-8 ml-2 md:ml-12 flex flex-col">
+              <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
+                <diary-badge :diary="diary" />
+              </div>
             </div>
           </div>
         </div>
@@ -43,35 +49,27 @@ export const HistoryPage = Vue.extend({
   },
 
   computed: {
-    numDiaries () {
-      if (this.me === null) {
-        return 0;
-      } else {
-        return this.me.numDiaries;
-      }
-    },
-
     ...mapGetters([
       'me',
     ]),
   },
 
   watch: {
-    async me () {
+    me () {
       // @ts-ignore
       if (!this.isDiariesFetched) {
         // @ts-ignore
-        await this.fetchDiaries();
+        this.fetchDiaries();
         // @ts-ignore
         this.isDiariesFetched = true;
       }
     },
   },
 
-  async mounted () {
+  mounted () {
     if (this.me) {
       // @ts-ignore
-      await this.fetchDiaries();
+      this.fetchDiaries();
       // @ts-ignore
       this.isDiariesFetched = true;
     }
@@ -80,13 +78,13 @@ export const HistoryPage = Vue.extend({
   methods: {
     fetchDiaries () {
       const interval = setInterval(async () => {
-        if (this.me.numDiaries !== null && this.me.numDiaries > 0) {
+        if (this.me) {
           clearInterval(interval);
         } else {
           return;
         }
 
-        const diaries = await fetchMyDiaries(this.me.uid, this.me.numDiaries);
+        const diaries = await fetchMyDiaries(this.me.uid, this.me.diaries.length);
         if (diaries === null) {
           // eslint-disable-next-line no-console
           console.error('Failed to fetch diaries...');

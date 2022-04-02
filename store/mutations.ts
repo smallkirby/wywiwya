@@ -1,4 +1,5 @@
 import { User as FirebaseUser } from 'firebase/auth';
+import { DocumentReference } from 'firebase/firestore';
 import { State } from '~/store/state';
 
 const mutations = {
@@ -7,7 +8,7 @@ const mutations = {
       uid: user.uid,
       displayName: user.displayName!!,
       photoURL: user.photoURL!!,
-      numDiaries: 0,
+      diaries: [],
     };
   },
 
@@ -15,9 +16,9 @@ const mutations = {
     state.user = null;
   },
 
-  setNumDiaries: (state: State, num: number) => {
+  setUserDiaries: (state: State, diaries: DocumentReference[]) => {
     if (state.user !== null) {
-      state.user.numDiaries = num;
+      state.user.diaries = diaries;
     }
   },
 };

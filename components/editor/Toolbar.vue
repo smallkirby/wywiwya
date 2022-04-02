@@ -24,8 +24,26 @@
           </button>
         </div>
 
+        <!-- MARK PUBLIC BOX -->
+        <div class="m-1 w-8 h-full">
+          <div class="border-2 border-skdark hover:border-skdark-light rounded-md px-1">
+            <button class="w-full h-full" @click="onPublicChange(!isPublicNow)">
+              <font-awesome-icon
+                v-if="!isPublicNow"
+                v-tooltip="'あなただけが見ることができます'"
+                icon="fa-solid fa-lock"
+              />
+              <font-awesome-icon
+                v-if="isPublicNow"
+                v-tooltip="'誰でも閲覧可能です'"
+                icon="fa-solid fa-lock-open"
+              />
+            </button>
+          </div>
+        </div>
+
         <!-- MARK AS TEMP BOX -->
-        <div class="m-1 px-1 w-28 h-full">
+        <div class="m-1 px-1 w-18 h-full">
           <toggle-button
             v-tooltip="isTemporary ? 'ドラフト状態です' : '清書状態です'"
             :value="!isTemporary"
@@ -57,12 +75,17 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+    isPublic: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data () {
     return {
       isSaving: false,
       isShowingSuccessSave: false,
+      isPublicNow: this.isPublic,
     };
   },
 
@@ -81,6 +104,11 @@ export default Vue.extend({
 
     onTemporaryChange ({ value }: {value: boolean}) {
       this.$emit('temporaryStateChanged', !value); // true means temporary
+    },
+
+    onPublicChange (value: boolean) {
+      this.isPublicNow = value;
+      this.$emit('publicStateChanged', value);
     },
   },
 });

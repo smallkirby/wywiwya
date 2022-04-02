@@ -89,7 +89,7 @@ export default Vue.extend({
   methods: {
     async getDiary () {
       if (!this.id) { return null; }
-      return await fetchDiaryById(this.id as string);
+      return await fetchDiaryById(this.me.uid, this.id as string);
     },
 
     setText () {

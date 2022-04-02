@@ -25,6 +25,14 @@ export const getProjectFunctions = () => {
   return functions as Functions;
 };
 
+export const getProjectAuth = () => {
+  if (auth === null) {
+    // eslint-disable-next-line no-console
+    console.error('Auth is not initialized');
+  };
+  return auth as Auth;
+};
+
 export const isAppInitialized = () => {
   return isInitialized;
 };
@@ -66,20 +74,8 @@ export const initApp = (vueConfig: any) => {
   isInitialized = true;
 };
 
-export const getNumDiaries = async (user: User): Promise<number | null> => {
-  const db = getFirestore();
-  const userDocRef = doc(db, 'users', user.uid);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    return userDocSnap.data().numDiaries;
-  } else {
-    return null;
-  }
-};
-
 export const getUser = async (uid: UID): Promise<User | null> => {
-  const db = getFirestore();
+  const db = getProjectFirestore();
   const userDocRef = doc(db, 'users', uid);
   const userDocSnap = await getDoc(userDocRef);
   if (userDocSnap.exists()) {
@@ -90,7 +86,7 @@ export const getUser = async (uid: UID): Promise<User | null> => {
 };
 
 export const setUser = async (user: User): Promise<boolean> => {
-  const db = getFirestore();
+  const db = getProjectFirestore();
   const userDocRef = doc(db, 'users', user.uid);
   const userDocSnap = await getDoc(userDocRef);
 
@@ -116,7 +112,7 @@ export const setUser = async (user: User): Promise<boolean> => {
       photoURL: user.photoURL,
       uid: user.uid,
       displayName: user.displayName,
-      numDiaries: 0,
+      diaries: [],
     }).then(() => {
       return true;
     }).catch((reason: any) => {
