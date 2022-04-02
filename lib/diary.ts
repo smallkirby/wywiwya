@@ -97,7 +97,7 @@ export const fetchMyDiaries = async (uid: string, numRequired: number): Promise<
 };
 
 export const fetchMyTemporaryDiaries = async (user: User): Promise<Diary[] | null> => {
-  const result = await queryMyDiaries(user.uid, where('IsTempoarry', '==', true), orderBy('lastUpdatedAt', 'desc'));
+  const result = await queryMyDiaries(user.uid, where('isTempoarry', '==', true), orderBy('lastUpdatedAt', 'desc'));
   if (result === null || result.length === 0) {
     return null;
   } else {

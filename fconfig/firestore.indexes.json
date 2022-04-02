@@ -2,6 +2,20 @@
   "indexes": [
     {
       "collectionGroup": "diaries",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isPublic",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "diaries",
       "queryScope": "COLLECTION",
       "fields": [
         {
