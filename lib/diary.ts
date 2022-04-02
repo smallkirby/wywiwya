@@ -37,10 +37,12 @@ const queryDiaries = async (...queryConstraints: QueryConstraint[]): Promise<Dia
 
 /* ***************************************** */
 
-export const fetchDiaryById = async (uid: string, id: string): Promise<Diary | null> => {
-  const authorDiary = await queryDiaries(where('id', '==', id), where('author', '==', uid));
-  if (authorDiary !== null && authorDiary.length !== 0) {
-    return authorDiary[0];
+export const fetchDiaryById = async (uid: string | null, id: string): Promise<Diary | null> => {
+  if (uid !== null) {
+    const authorDiary = await queryDiaries(where('id', '==', id), where('author', '==', uid));
+    if (authorDiary !== null && authorDiary.length !== 0) {
+      return authorDiary[0];
+    }
   }
   const othersDiary = await queryDiaries(
     where('id', '==', id),

@@ -59,11 +59,7 @@ export default Vue.extend({
       // @ts-ignore
       if (this.me !== null && this.isLoading) {
         // @ts-ignore
-        this.diary = await this.getDiary();
-        // @ts-ignore
-        this.isLoading = false;
-        // @ts-ignore
-        this.setText();
+        await this.prepareDiary();
       }
     },
   },
@@ -78,18 +74,29 @@ export default Vue.extend({
     // @ts-ignore
     if (this.me !== null && this.isLoading) {
       // @ts-ignore
+      await this.prepareDiary();
+    } else {
+      setTimeout(async () => {
+        // @ts-ignore
+        await this.prepareDiary();
+      }, 500);
+    }
+  },
+
+  methods: {
+    async prepareDiary () {
+      // @ts-ignore
       this.diary = await this.getDiary();
       // @ts-ignore
       this.isLoading = false;
       // @ts-ignore
       this.setText();
-    }
-  },
+    },
 
-  methods: {
     async getDiary () {
       if (!this.id) { return null; }
-      return await fetchDiaryById(this.me.uid, this.id as string);
+      const uid = this.me == null ? null : this.me.uid as string;
+      return await fetchDiaryById(uid, this.id as string);
     },
 
     setText () {

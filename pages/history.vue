@@ -72,6 +72,12 @@ export const HistoryPage = Vue.extend({
       this.fetchDiaries();
       // @ts-ignore
       this.isDiariesFetched = true;
+    } else {
+      setTimeout(() => {
+        if (this.me === null) {
+          this.$router.push('/login');
+        }
+      }, 500);
     }
   },
 

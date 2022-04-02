@@ -67,6 +67,14 @@ export default Vue.extend({
     ]),
   },
 
+  mounted () {
+    setTimeout(() => {
+      if (this.me === null) {
+        this.$router.push('/login');
+      }
+    });
+  },
+
   methods: {
     async createNewDiary () {
       this.isLoading = true;

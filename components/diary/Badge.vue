@@ -148,6 +148,8 @@ export default Vue.extend({
   methods: {
     onClick () {
       if (this.me && this.me.uid === this.diary.author) {
+        this.$router.push(`/edit/${this.diary.id}`);
+      } else {
         this.$router.push(`/view/${this.diary.id}`);
       }
     },

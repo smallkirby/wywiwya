@@ -12,7 +12,7 @@
           </div>
         </div>
 
-        <div v-show="tempDiaries !== null && tempDiaries.length === 0">
+        <div v-show="tempDiaries === null || tempDiaries.length === 0">
           書きかけの Diary はありません。
         </div>
       </div>

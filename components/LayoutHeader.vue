@@ -17,12 +17,12 @@ import { HeaderButtonEntry } from './HeaderButton.vue';
 
 const headerentriesBase: HeaderButtonEntry[] = [
   {
-    text: 'Home',
+    text: 'About',
     to: '/',
   },
   {
-    text: 'About',
-    to: '/about',
+    text: 'Profile',
+    to: '/profile',
   },
   {
     text: 'Write Diary',
@@ -71,9 +71,9 @@ export default Vue.extend({
 
   created () {
     if (this.isLoggedIn === true) {
-      this.headerEntries.push(logoutEntry);
+      this.headerEntries = this.headerEntries.concat([logoutEntry]);
     } else {
-      this.headerEntries.push(logoutEntry);
+      this.headerEntries = this.headerEntries.concat([loginEntry]);
     }
   },
 
