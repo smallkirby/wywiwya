@@ -87,7 +87,7 @@ jobs:
           FB_MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
         run: npm -w functions run build
 
-      - name: Deploy firebase rules
+      - name: Deploy functions
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only functions
