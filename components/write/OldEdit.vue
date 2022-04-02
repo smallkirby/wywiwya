@@ -22,7 +22,7 @@ import Vue, { PropType } from 'vue';
 import moment from 'moment';
 import { User } from '~/store/state';
 import { Diary } from '~/typings/diary';
-import { fetchDiaries } from '~/lib/diary';
+import { fetchMyDiaries } from '~/lib/diary';
 
 export default Vue.extend({
   name: 'OldEdit',
@@ -47,7 +47,7 @@ export default Vue.extend({
   },
 
   async mounted () {
-    const oldDiaries = await fetchDiaries(this.me.uid, 3);
+    const oldDiaries = await fetchMyDiaries(this.me.uid, 3);
     if (oldDiaries === null) {
       // eslint-disable-next-line no-console
       console.error('Failed to old diaries.');

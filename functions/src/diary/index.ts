@@ -16,6 +16,7 @@ export type Diary = {
   isTemporary: boolean,
   contentMd: string,
   author: UID,
+  id?: string,
 };
 
 type ErrorCode = 'forbidden' | 'already-exist' | 'failure-update-user';
@@ -57,7 +58,18 @@ const doCreateNewDiary = async (uid: string): Promise<DID> => {
     createdAt: firestore.FieldValue.serverTimestamp(),
     lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
   };
-  const diariesRef = await firestore().collection('users').doc(uid).collection('diaries').add(newData);
+  const diariesRef = await firestore()
+    .collection('users')
+    .doc(uid)
+    .collection('diaries')
+    .add(newData)
+    .then(async (res) => {
+      await res.set({
+        id: res.id,
+        ...newData,
+      });
+      return res;
+    });
   return diariesRef.id;
 };
 

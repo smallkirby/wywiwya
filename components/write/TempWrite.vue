@@ -24,7 +24,7 @@
 import Vue, { PropType } from 'vue';
 import moment from 'moment';
 import { User } from '~/store/state';
-import { fetchTemporaryDiaries } from '~/lib/diary';
+import { fetchMyTemporaryDiaries } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
 export default Vue.extend({
@@ -50,7 +50,7 @@ export default Vue.extend({
   },
 
   async mounted () {
-    const tempDiaries = await fetchTemporaryDiaries(this.me);
+    const tempDiaries = await fetchMyTemporaryDiaries(this.me);
     if (tempDiaries === null) {
       // eslint-disable-next-line no-console
       console.log('Failed to fetch temporary diaries.');

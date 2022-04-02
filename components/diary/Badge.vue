@@ -4,7 +4,7 @@
       v-if="author!== null"
       class="rounded-xl px-2 md:px-4 border-2 border-skgray-dark hover:border-skwhite-dark shadow-2xl pt-4 pb-1"
     >
-      <button class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left">
+      <button class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left" @click="onClick">
         <!-- LEFT -->
         <div
           class="flex flex-col md:pr-6 pb-4 md:pb-0
@@ -57,6 +57,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { mapGetters } from 'vuex';
 import { Diary } from '~/typings/diary';
 import { User } from '~/store/state';
 import { did2string } from '~/lib/util/diary';
@@ -95,6 +96,10 @@ export default Vue.extend({
       const nullableTtile = extractTitle(this.diary.contentMd);
       return nullableTtile === null ? '(no title)' : nullableTtile;
     },
+
+    ...mapGetters([
+      'me',
+    ]),
   },
 
   async created () {
@@ -138,6 +143,14 @@ export default Vue.extend({
         clearInterval(interval);
       }
     }, 100);
+  },
+
+  methods: {
+    onClick () {
+      if (this.me && this.me.uid === this.diary.author) {
+        this.$router.push(`/view/${this.diary.id}`);
+      }
+    },
   },
 });
 </script>

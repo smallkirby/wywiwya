@@ -47,7 +47,7 @@ jobs:
           projectId: wywiwya
 
 
-  deploy-firebase-rule:
+  deploy-firestore:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,6 +57,13 @@ jobs:
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only firestore:rules
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
+
+      - name: Deploy firebase rules
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only firestore:indexes
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
 

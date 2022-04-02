@@ -3,9 +3,6 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{uid} {
-      function signedIn() {
-        return request.auth.uid != null
-      }
       function isOwnPath(uid) {
         return uid == request.auth.uid
       }
@@ -32,20 +29,18 @@ service cloud.firestore {
     }
 
     match /users/{uid}/diaries/{did} {
-      function signedIn() {
-        return request.auth.uid != null
-      }
       function isOwnPath(uid) {
         return uid == request.auth.uid
       }
       function isValidUpdate(data) {
-        return data.keys().hasAll(['dateID', 'createdAt', 'lastUpdatedAt', 'isPublic', 'isTemporary', 'contentMd', 'author'])
-        && data.keys().hasOnly(['dateID', 'createdAt', 'lastUpdatedAt', 'isPublic', 'isTemporary', 'contentMd', 'author'])
+        return data.keys().hasAll(['dateID', 'createdAt', 'lastUpdatedAt', 'isPublic', 'isTemporary', 'contentMd', 'author', 'id'])
+        && data.keys().hasOnly(['dateID', 'createdAt', 'lastUpdatedAt', 'isPublic', 'isTemporary', 'contentMd', 'author', 'id'])
         && data.diff(resource.data).affectedKeys().hasOnly(['lastUpdatedAt', 'isPublic', 'contentMd', 'isTemporary'])
         && data.lastUpdatedAt is timestamp
         && data.isPublic is bool
         && data.isTemporary is bool
         && data.contentMd is string
+        && data.id is string && data.id == did
         ;
       }
       allow create: if false;
@@ -54,12 +49,27 @@ service cloud.firestore {
       allow read: if signedIn() && isOwnPath(uid);
     }
 
+    // collection group query of diaries
+    match /{path=**}/diaries/{dID} {
+      function isValidListing (data) {
+        return data.isPublic == true;
+      }
+
+      allow list: if isValidListing(resource.data);
+      allow get: if false;
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
 
     function inData() {
       return request.resource.data;
+    }
+
+    function signedIn() {
+      return request.auth.uid != null
     }
   }
 }

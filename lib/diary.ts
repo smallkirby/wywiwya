@@ -1,38 +1,44 @@
 // eslint-disable-next-line max-len
-import { collection, doc, getDoc, getDocs, getFirestore, query, where, updateDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, getFirestore, query, where, updateDoc, serverTimestamp, orderBy, limit, DocumentSnapshot, collectionGroup, QueryConstraint } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import moment from 'moment';
 import { Diary, DID } from '~/typings/diary';
 import { User } from '~/store/state';
 import { getProjectFirestore, getProjectFunctions } from '~/plugins/firebase';
+import { UID } from '~/functions/src/lib/firebase';
 
-const convertDiary = (diary: Diary): Diary => {
-  diary.lastUpdatedAt = (diary.lastUpdatedAt as any).toDate();
-  diary.createdAt = (diary.createdAt as any).toDate();
-  return diary;
+const convertDiary = (snap: DocumentSnapshot): Diary => {
+  const data = snap.data() as any;
+  data.lastUpdatedAt = (data.lastUpdatedAt as any).toDate();
+  data.createdAt = (data.createdAt as any).toDate();
+  data.id = snap.id;
+  return data;
 };
 
-export const fetchDiary = async (uid: string, did: string): Promise<Diary | null> => {
+const queryAllDiaries = async (...queryConstraints: QueryConstraint[]): Promise<Diary[] | null> => {
   const db = getProjectFirestore();
-  const diaryRef = doc(db, 'users', uid, 'diaries', did);
-  const diarySnap = await getDoc(diaryRef).then(snap => snap).catch(() => {
+  const diaryQuery = query(collectionGroup(db, 'diaries'), ...queryConstraints);
+  const diariesSnap = await getDocs(diaryQuery).then(snap => snap).catch((e: any) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
     return null;
   });
 
-  if (diarySnap === null || !diarySnap.exists()) {
+  const convertedDiaries: Diary[] = [];
+  if (diariesSnap === null || !diariesSnap.size) {
     return null;
   } else {
-    return convertDiary(diarySnap.data() as Diary);
+    diariesSnap.docs.forEach((doc) => {
+      convertedDiaries.push(convertDiary(doc));
+    });
+    return convertedDiaries;
   }
 };
 
-// fetches most recently edited diaries.
-export const fetchDiaries = async (uid: string, numRequired: number): Promise<Diary[] | null> => {
-  if (numRequired <= 0) { numRequired = 1; }
-
+const queryMyDiaries = async (uid: UID, ...queryConstraints: QueryConstraint[]): Promise<Diary[] | null> => {
   const db = getProjectFirestore();
   const diariesRef = collection(db, 'users', uid, 'diaries');
-  const diariesQuery = query(diariesRef, orderBy('lastUpdatedAt', 'desc'), limit(numRequired));
+  const diariesQuery = query(diariesRef, ...queryConstraints);
 
   const diariesSnap = await getDocs(diariesQuery).then(snap => snap).catch((e: any) => {
     // eslint-disable-next-line no-console
@@ -43,52 +49,70 @@ export const fetchDiaries = async (uid: string, numRequired: number): Promise<Di
 
   const diaries: Diary[] = [];
   diariesSnap.forEach((doc) => {
-    const data = doc.data();
-    diaries.push(convertDiary(data as Diary));
+    diaries.push(convertDiary(doc));
   });
 
   return diaries;
 };
 
-export const fetchTemporaryDiaries = async (user: User): Promise<Diary[] | null> => {
-  const db = getFirestore();
-  const diariesRef = collection(db, 'users', user.uid, 'diaries');
-  const tempDiariesQuery = query(diariesRef, where('isTemporary', '==', true));
+/* ***************************************** */
 
-  const diariesSnap = await getDocs(tempDiariesQuery).then(snap => snap).catch((e: any) => {
-    // eslint-disable-next-line no-console
-    console.error(e);
+export const fetchMyDiaryById = async (uid: string, id: string): Promise<Diary | null> => {
+  const result = await queryMyDiaries(uid, where('id', '==', id));
+  if (result === null || result.length === 0) {
     return null;
-  });
-  if (diariesSnap === null) { return null; }
+  } else {
+    return result[0];
+  }
+};
 
-  const tempDiaries: Diary[] = [];
-  diariesSnap.forEach((doc) => {
-    const data = doc.data();
-    tempDiaries.push(convertDiary(data as Diary));
-  });
-  return tempDiaries;
+export const fetchDiaryById = async (id: string): Promise<Diary | null> => {
+  const result = await queryAllDiaries(where('id', '==', id), where('isPublic', '==', true));
+  if (result === null || result.length === 0) {
+    return null;
+  } else {
+    return result[0];
+  }
+};
+
+export const fetchMyDiaryByDate = async (uid: UID, did: DID): Promise<Diary | null> => {
+  const result = await queryMyDiaries(uid, where('dateID', '==', did));
+  if (result === null || result.length === 0) {
+    return null;
+  } else {
+    return result[0];
+  }
+};
+
+// fetches most recently edited diaries.
+export const fetchMyDiaries = async (uid: string, numRequired: number): Promise<Diary[] | null> => {
+  if (numRequired <= 0) { numRequired = 1; }
+
+  const result = await queryMyDiaries(uid, orderBy('lastUpdatedAt', 'desc'), limit(numRequired));
+  if (result === null || result.length === 0) {
+    return null;
+  } else {
+    return result;
+  }
+};
+
+export const fetchMyTemporaryDiaries = async (user: User): Promise<Diary[] | null> => {
+  const result = await queryMyDiaries(user.uid, where('IsTempoarry', '==', true), orderBy('lastUpdatedAt', 'desc'));
+  if (result === null || result.length === 0) {
+    return null;
+  } else {
+    return result;
+  }
 };
 
 export const fetchTodaysDiary = async (user: User): Promise<Diary | null> => {
   const todaysDateID = moment().format('YYYY-MM-DD');
 
-  const db = getFirestore();
-  const diariesRef = collection(db, 'users', user.uid, 'diaries');
-  const todayQuery = query(diariesRef, where('dateID', '==', todaysDateID));
-
-  const diarySnap = await getDocs(todayQuery).then(snap => snap).catch((e: any) => {
-    // eslint-disable-next-line no-console
-    console.error(e);
-    return null;
-  });
-  if (diarySnap === null) { return null; }
-
-  if (diarySnap.size === 0) {
+  const result = await queryMyDiaries(user.uid, where('dateID', '==', todaysDateID));
+  if (result === null || result.length === 0) {
     return null;
   } else {
-    const diary = diarySnap.docs[0].data() as Diary;
-    return convertDiary(diary);
+    return result[0];
   }
 };
 

@@ -1,7 +1,9 @@
 <template>
   <layout-wrapper>
     <vue-loading v-show="isLoading" class="pt-20" />
-    <editor-integrated v-if="!isLoading && diary !== null" :diary="diary" />
+    <div v-if="!isLoading && diary !== null" :diary="diary">
+      <editor-preview-box ref="previewBox" />
+    </div>
 
     <layout-main-box v-if="!isLoading && diary === null">
       <div class="flex flex-col mt-4">
@@ -13,10 +15,10 @@
 
         <div class="text-center mt-12 leading-loose">
           <div>
-            ID:<span class="italic underline">{{ did }}</span> のDiaryは見つかりませんでした。
+            ID:<span class="italic underline">{{ id }}</span> のDiaryは見つかりませんでした。
           </div>
           <div>
-            Diaryが存在していないか、編集する権限を持っていない可能性があります。
+            Diaryが存在していないか、閲覧する権限を持っていない可能性があります。
           </div>
           <div>
             それかバグです。知らんけど。
@@ -30,12 +32,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import { fetchMyDiaryById } from '~/lib/diary';
+import { fetchDiaryById } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
 export default Vue.extend({
-  name: 'EditPage',
-  layout: 'full',
+  name: 'ViewPage',
 
   data () {
     return {
@@ -45,8 +46,8 @@ export default Vue.extend({
   },
 
   computed: {
-    did () {
-      return this.$route.params.did;
+    id () {
+      return this.$route.params.id;
     },
     ...mapGetters([
       'me',
@@ -62,13 +63,13 @@ export default Vue.extend({
         // @ts-ignore
         this.isLoading = false;
         // @ts-ignore
-        this.changeLayout();
+        this.setText();
       }
     },
   },
 
   created () {
-    if (this.$route.params.did === undefined) {
+    if (!this.$route.params.id) {
       this.$router.push('/');
     }
   },
@@ -79,27 +80,26 @@ export default Vue.extend({
       // @ts-ignore
       this.diary = await this.getDiary();
       // @ts-ignore
-      this.changeLayout();
-      // @ts-ignore
       this.isLoading = false;
+      // @ts-ignore
+      this.setText();
     }
   },
 
   methods: {
     async getDiary () {
-      if (this.me === null) { return null; }
-      return await fetchMyDiaryById(this.me.uid, this.$route.params.did);
+      if (!this.id) { return null; }
+      return await fetchDiaryById(this.id as string);
     },
 
-    changeLayout () {
-      // @ts-ignore
-      if (this.diary === null) {
-        // @ts-ignore
-        $nuxt.setLayout('default');
-      } else {
-        // @ts-ignore
-        $nuxt.setLayout('full');
-      }
+    setText () {
+      const interval = setInterval(() => {
+        if (this.$refs.previewBox) {
+          // @ts-ignore
+          (this.$refs.previewBox!! as any).compileWrite(this.diary.contentMd);
+          clearInterval(interval);
+        }
+      }, 500);
     },
   },
 });

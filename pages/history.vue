@@ -29,7 +29,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import { fetchDiaries } from '~/lib/diary';
+import { fetchMyDiaries } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
 export const HistoryPage = Vue.extend({
@@ -86,7 +86,7 @@ export const HistoryPage = Vue.extend({
           return;
         }
 
-        const diaries = await fetchDiaries(this.me.uid, this.me.numDiaries);
+        const diaries = await fetchMyDiaries(this.me.uid, this.me.numDiaries);
         if (diaries === null) {
           // eslint-disable-next-line no-console
           console.error('Failed to fetch diaries...');

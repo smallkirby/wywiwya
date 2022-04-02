@@ -11,4 +11,5 @@ export type Diary = {
   isTemporary: boolean,
   contentMd: string,
   author: UID,
+  id: string,
 }
