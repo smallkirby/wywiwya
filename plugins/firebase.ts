@@ -2,13 +2,15 @@ import { initializeApp } from 'firebase/app';
 import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 // eslint-disable-next-line max-len
 import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc, Firestore, serverTimestamp } from 'firebase/firestore';
+import { Analytics, getAnalytics } from 'firebase/analytics';
 import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
 import { UID, User } from '~/store/state';
 
 let isInitialized = false;
 let functions: Functions | null = null;
 let firestore: Firestore | null = null;
-let auth : Auth | null = null;
+let auth: Auth | null = null;
+let analytics: Analytics | null = null;
 
 export const getProjectFirestore = () => {
   if (firestore === null) {
@@ -71,6 +73,9 @@ export const initApp = (vueConfig: any) => {
     console.log('Using emulator for auth.');
     connectAuthEmulator(auth, 'http://localhost:9099');
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  analytics = getAnalytics(app);
 
   isInitialized = true;
 };

@@ -44,8 +44,8 @@
               </nuxt-link>
             </div>
             <div>
-              <nuxt-link to="/tou">
-                Term of Use
+              <nuxt-link to="/disclaimer">
+                Disclaimer
               </nuxt-link>
             </div>
           </div>

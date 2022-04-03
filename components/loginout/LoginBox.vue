@@ -43,15 +43,23 @@
         <vue-loading v-show="isLoading" />
       </div>
 
+      <div class="mt-2 text-sm text-skgray">
+        サインインすることで
+        <NuxtLink to="/disclaimer" class="text-skgreen-light">
+          免責事項
+        </NuxtLink>
+        に<br>同意したものと見なします。
+      </div>
+
       <div class="text-right flex flex-col text-xs mx-4 text-gray-600">
         <div class="my-1">
-          <nuxt-link to="/">
+          <nuxt-link to="/privacy">
             利用する情報について
           </nuxt-link>
         </div>
         <div class="my-1">
-          <nuxt-link to="/">
-            パスワードを忘れた場合
+          <nuxt-link to="/disclaimer">
+            免責事項
           </nuxt-link>
         </div>
       </div>
