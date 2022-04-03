@@ -29,7 +29,7 @@
         <div class="text-center md:text-left mb-8">
           Diaries: <span class="font-bold">
             {{ user.diaries.length }}
-          </span> 件 (非公開のものを含みます)
+          </span> 件 <span class="text-skgray">(件数には非公開のものを含みます)</span>
         </div>
 
         <div class="md:px-4">

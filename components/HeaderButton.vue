@@ -1,6 +1,6 @@
 <template>
   <layout-wrapper>
-    <button class="pb-1 border-b-2 md:border-0">
+    <button class="pb-1 border-b-2 md:border-0 border-skgray">
       <div
         class="md:mx-2 px-2 md:px-4 my-auto rounded hover:bg-skwhite-dark whitespace-nowrap
         text-skwhite-dark hover:text-skdark-dark"

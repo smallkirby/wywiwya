@@ -16,7 +16,7 @@
           <first-diary-prompt v-if="diaries.length === 0" class="mt-4 mb-8" />
 
           <!-- TODO: need paging -->
-          <div v-else class="mt-8 ml-2 md:ml-12 flex flex-col">
+          <div v-else class="mt-8 mx-2 md:ml-12 flex flex-col">
             <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
               <diary-badge :diary="diary" />
             </div>

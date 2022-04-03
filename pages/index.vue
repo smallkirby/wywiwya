@@ -3,15 +3,20 @@
     <layout-main-box>
       <div class="flex flex-col mx-2 md:mx-10">
         <!-- LOGO -->
-        <div class="flex justify-center items-center mb-20">
-          <img src="~/static/logo/wywiwya.png" class="w-32 h-32 mr-4">
+        <div class="flex flex-col md:flex justify-center items-center mb-20">
+          <img src="~/static/logo/wywiwya.png" class="md:w-32 md:h-32 w-2/3 mr-4">
           <div class="flex flex-col">
-            <p class="text-7xl text-[#8EC07C] font-bold tracking-widest text-center">
+            <p class=" text-7xl text-[#8EC07C] font-bold tracking-widest text-center">
               WYWIWYA
             </p>
-            <p class="text-center text-2xl text-[#427B58]">
+            <p class="text-center text-2xl text-[#427B58] hidden md:block">
               WHAT YOU WRITE IS WHAT YOU ARE
             </p>
+            <div class="text-center text-2xl text-[#427B58] md:hidden">
+              <p>WHAT YOU WRITE</p>
+              <p>IS</p>
+              <p>WHAT YOU ARE</p>
+            </div>
           </div>
         </div>
 

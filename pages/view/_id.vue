@@ -2,7 +2,7 @@
   <layout-wrapper>
     <vue-loading v-show="isLoading" class="pt-20" />
     <div v-if="!isLoading && diary !== null" :diary="diary">
-      <div v-if="author !== null" class="mb-4">
+      <div v-if="author !== null" class="">
         <user-badge :user="author" />
       </div>
       <editor-preview-box ref="previewBox" />
