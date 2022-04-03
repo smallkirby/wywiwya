@@ -23,7 +23,7 @@ service cloud.firestore {
         && data.diaries is list
         && data.createdAt is timestamp
         && data.uid == uid
-        && data.diff(resource.data).affectedKeys().hasOnly(['photoURL', 'displayName'])
+        && data.diff(resource.data).affectedKeys().hasOnly(['photoURL'])
         ;
       }
       allow create: if signedIn() && isOwnPath(uid) && isValidCreation(inData());
