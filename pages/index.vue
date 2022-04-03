@@ -1,8 +1,42 @@
 <template>
   <layout-wrapper>
     <layout-main-box>
-      <div>
-        <p>index</p>
+      <div class="flex flex-col mx-2 md:mx-10">
+        <!-- LOGO -->
+        <div class="flex justify-center items-center mb-20">
+          <img src="~/static/logo/wywiwya.png" class="w-32 h-32 mr-4">
+          <div class="flex flex-col">
+            <p class="text-7xl text-[#8EC07C] font-bold tracking-widest text-center">
+              WYWIWYA
+            </p>
+            <p class="text-center text-2xl text-[#427B58]">
+              WHAT YOU WRITE IS WHAT YOU ARE
+            </p>
+          </div>
+        </div>
+
+        <!-- WARNING -->
+        <div>
+          <div class="flex flex-col leading-relaxed">
+            <div class="text-3xl font-bold mb-4">
+              <font-awesome-icon icon="fa-solid fa-circle-exclamation" class="mr-2" />
+              注意
+            </div>
+            <div class="ml-4">
+              <p>現在、<b>WYWIWYA</b>は開発段階です。</p>
+              <p>作成したデータは予告なく削除される可能性があります。</p>
+              <p>
+                開発ステータスについては
+                <a
+                  href="https://github.com/smallkirby/wywiwya"
+                  class="font-bold text-skgreen-light"
+                  target="_blank"
+                >GitHub</a>
+                を参照してください。
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </layout-main-box>
   </layout-wrapper>
