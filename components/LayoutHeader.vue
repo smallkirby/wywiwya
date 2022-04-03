@@ -29,6 +29,10 @@ const headerentriesBase: HeaderButtonEntry[] = [
     to: '/write',
   },
   {
+    text: 'Explore',
+    to: '/explore',
+  },
+  {
     text: 'History',
     to: '/history',
   },

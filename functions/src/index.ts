@@ -6,4 +6,4 @@ process.env.TZ = 'Asia/Tokyo';
 admin.initializeApp(functions.config().firebase);
 
 export { createNewDiary } from './diary';
-export { changeUserName } from './user';
+export { changeUserName, searchUserFullMatch } from './user';

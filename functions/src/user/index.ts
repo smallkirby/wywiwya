@@ -5,6 +5,14 @@ import { isAuthed } from '../lib/auth';
 
 export type UID = string;
 
+export type User = {
+  displayName: string,
+  photoURL: string,
+  uid: UID,
+  diaries: firebase.firestore.DocumentReference[],
+  createdAt: number | null, // TODO
+}
+
 export const addDiaryRef =
   async (uid: string, newDiaryRef: firebase.firestore.DocumentReference): Promise<string | null> => {
     const userRef = firestore().collection('users').doc(uid);
@@ -27,6 +35,8 @@ export const addDiaryRef =
       return null;
     }
   };
+
+/***************************/
 
 type NameChangeError = 'duplicate-name' | 'forbidden' | 'not-exist' | 'empty' | 'invalid-chr' | null;
 type NameChangeRet = {
@@ -88,5 +98,45 @@ export const changeUserName =
     const error = await doChangeUserName(uid, data.newName);
     return {
       err: error,
+    };
+  });
+
+/***************************/
+
+type SearchError = 'invalid-query' | null;
+type SearchReturn = {
+  err: SearchError,
+  users: User[],
+}
+
+const doSearchUserFullMatch = async (searchStr: string): Promise<User[]> => {
+  const usersSnap = searchStr.length === 0
+    ? await firestore().collection('users').orderBy('createdAt', 'desc').get()
+    : await firestore().collection('users').where('displayName', '==', searchStr).get();
+
+  const users: User[] = [];
+  usersSnap.docs.forEach((doc) => {
+    const data = doc.data();
+    users.push({
+      uid: data.uid,
+      photoURL: data.photoURL,
+      displayName: data.displayName,
+      diaries: data.diaries,
+      createdAt: data.createdAt.toDate().getTime(),
+    });
+  });
+
+  return users;
+};
+
+export const searchUserFullMatch =
+  functions.region('asia-northeast1').https.onCall(async (data): Promise<SearchReturn> => {
+    // NOTE: allow unauthenticated user
+
+    const searchStr = data.searchStr;
+    const users = await doSearchUserFullMatch(searchStr);
+    return {
+      err: null,
+      users,
     };
   });

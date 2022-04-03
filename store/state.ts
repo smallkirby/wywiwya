@@ -1,4 +1,4 @@
-import { DocumentReference, FieldValue } from 'firebase/firestore';
+import { DocumentReference, Timestamp } from 'firebase/firestore';
 
 export type UID = string;
 
@@ -7,7 +7,7 @@ export type User = {
   photoURL: string,
   uid: UID,
   diaries: DocumentReference[],
-  createdAt: FieldValue | null,
+  createdAt: Timestamp | null,
 }
 
 export type LoginState = User | 'trying' | null;

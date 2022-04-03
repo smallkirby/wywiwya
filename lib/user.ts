@@ -40,3 +40,43 @@ export const changeDisplayName = async (newName: string): Promise<string | null>
     return e.toString();
   });
 };
+
+export const searchUserFullMatch = async (name: string): Promise<string | User[]> => {
+  const functions = getProjectFunctions();
+  const f = httpsCallable(functions, 'searchUserFullMatch');
+  return await f({
+    searchStr: name,
+  }).then((result) => {
+    const error = (result.data as any).err;
+    const users = (result.data as any).users;
+    if (error === null) {
+      return users;
+    } else if (error === 'invalid-query') {
+      return '検索文字列に不正な文字が含まれています。';
+    } else {
+      return '不明なエラーが発生しました。時間をおいて再度試してください。';
+    }
+  }).catch((e: any) => {
+    return e.toString();
+  });
+};
+
+export const getAllUsers = async (): Promise<string | User[]> => {
+  const functions = getProjectFunctions();
+  const f = httpsCallable(functions, 'searchUserFullMatch');
+  return await f({
+    searchStr: '',
+  }).then((result) => {
+    const error = (result.data as any).err;
+    const users = (result.data as any).users;
+    if (error === null) {
+      return users;
+    } else if (error === 'invalid-query') {
+      return '検索文字列に不正な文字が含まれています。';
+    } else {
+      return '不明なエラーが発生しました。時間をおいて再度試してください。';
+    }
+  }).catch((e: any) => {
+    return e.toString();
+  });
+};

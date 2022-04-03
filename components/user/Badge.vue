@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { FieldValue } from '@firebase/firestore';
+import { Timestamp } from '@firebase/firestore';
 import Vue, { PropType } from 'vue';
 import { serverTimestamp2string } from '~/lib/util/date';
 import { User } from '~/store/state';
@@ -60,7 +60,7 @@ export default Vue.extend({
 
   computed: {
     startDateString () {
-      return serverTimestamp2string(this.user.createdAt as FieldValue);
+      return serverTimestamp2string(this.user.createdAt as Timestamp);
     },
   },
 });
