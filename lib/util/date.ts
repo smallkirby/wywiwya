@@ -6,5 +6,6 @@ export const date2string = (date: Date): string => {
 };
 
 export const serverTimestamp2string = (timestamp: FieldValue) => {
-  return (timestamp as any).toDate();
+  const date = (timestamp as any).toDate();
+  return moment(date).format('YYYY年MM月DD日');
 };

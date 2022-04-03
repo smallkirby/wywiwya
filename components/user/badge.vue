@@ -22,8 +22,13 @@
             {{ user.displayName }}
           </div>
 
-          <div class="flex flex-col ml-4">
-            利用開始日: {{ startDateString }}
+          <div class="flex flex-col ml-4 leading-loose">
+            <div>
+              利用開始日: {{ startDateString }}
+            </div>
+            <div>
+              書いたDiaryの数: {{ user.diaries.length }}
+            </div>
           </div>
         </div>
       </div>

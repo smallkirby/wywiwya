@@ -3,9 +3,13 @@
     <layout-main-box>
       <vue-loading v-if="me === null" />
 
-      <div v-else class="flex flex-col">
-        <div class="mx-2 md:mx-12">
+      <div v-else class="flex flex-col mx-4">
+        <div class="mx-2 md:mx-12 mb-8">
           <user-badge :user="me" />
+        </div>
+
+        <div>
+          <user-setting :me="me" />
         </div>
       </div>
     </layout-main-box>

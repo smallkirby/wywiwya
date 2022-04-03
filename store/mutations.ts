@@ -8,6 +8,12 @@ const mutations = {
   commitUser: (state: State, user: LoginState) => {
     state.user = user;
   },
+
+  commitUserName: (state: State, newName: string) => {
+    if (state.user !== null && state.user !== 'trying') {
+      state.user.displayName = newName;
+    }
+  },
 };
 
 export default mutations;

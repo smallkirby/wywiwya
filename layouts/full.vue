@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center md:items-end flex-col md:flex-row">
       <wywiwya-logo />
       <div class="md:mr-8">
-        <me-badge />
+        <user-me-badge />
       </div>
     </div>
     <div class="w-full mx-auto min-h-screen h-auto">
