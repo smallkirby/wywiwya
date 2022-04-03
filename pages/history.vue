@@ -7,7 +7,7 @@
 
       <div v-else>
         <div>
-          <div>
+          <div class="text-center md:text-left">
             Diaries: {{ diaries.length }} 件
           </div>
         </div>

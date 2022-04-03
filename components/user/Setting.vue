@@ -31,7 +31,7 @@
             </p>
           </div>
           <div class="ml-4 mt-1 flex items-center">
-            <p class="mr-8">
+            <p class="mr-8 hidden md:block">
               新しい名前:
             </p>
             <input
