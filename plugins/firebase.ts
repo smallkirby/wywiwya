@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
-import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc, Firestore } from 'firebase/firestore';
+// eslint-disable-next-line max-len
+import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc, Firestore, serverTimestamp } from 'firebase/firestore';
 import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
 import { UID, User } from '~/store/state';
 
@@ -113,6 +114,7 @@ export const setUser = async (user: User): Promise<boolean> => {
       uid: user.uid,
       displayName: user.displayName,
       diaries: [],
+      createdAt: serverTimestamp(),
     }).then(() => {
       return true;
     }).catch((reason: any) => {

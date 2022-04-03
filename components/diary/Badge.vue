@@ -142,7 +142,7 @@ export default Vue.extend({
         this.$refs.badgeDiaryContent.srcdoc = html;
         clearInterval(interval);
       }
-    }, 100);
+    }, 500);
   },
 
   methods: {

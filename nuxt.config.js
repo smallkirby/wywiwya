@@ -63,7 +63,7 @@ export default {
 
   router: {
     middleware: [
-      'firebase',
+      'session',
       'loading',
     ],
   },

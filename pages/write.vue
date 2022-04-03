@@ -68,11 +68,9 @@ export default Vue.extend({
   },
 
   mounted () {
-    setTimeout(() => {
-      if (this.me === null) {
-        this.$router.push('/login');
-      }
-    });
+    if (this.me === null) {
+      this.$router.push('/login');
+    }
   },
 
   methods: {

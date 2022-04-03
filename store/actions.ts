@@ -1,38 +1,45 @@
 import { Commit, ActionContext } from 'vuex';
 import { User as FirestoreUser } from 'firebase/auth';
-import { State, User } from './state';
+import { State } from './state';
 import { Logout } from '~/lib/auth';
 import { getUser, setUser } from '~/plugins/firebase';
 
 const actions = {
   signout: async ({ commit }: {commit: Commit}) => {
-    await Logout();
     commit('clearUser');
+    await Logout();
   },
 
-  setUser: async ({ commit, dispatch }: ActionContext<State, State>, { user }: { user: FirestoreUser }) => {
-    // set in store
-    commit('setUser', { user });
+  // Fetch user information from Firestore based on provider information.
+  setUser: async ({ commit }: ActionContext<State, State>, { user }: { user: FirestoreUser }) => {
+    let me = await getUser(user.uid);
+    if (me === null) {
+      const result = await setUser({
+        uid: user.uid,
+        photoURL: user.photoURL ? user.photoURL : '',
+        displayName: user.displayName ? user.displayName : '',
+        diaries: [],
+        createdAt: null,
+      });
+      if (result === false) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to create new user...'); // TODO
+        commit('commitUser', null);
+        return;
+      }
 
-    // set to FireStore
-    const _user: User = {
-      photoURL: user.photoURL!!,
-      uid: user.uid,
-      displayName: user.displayName!!,
-      diaries: [],
-    };
-    await setUser(_user);
+      // fetch again
+      me = await getUser(user.uid);
+      if (me === null) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to create new user...'); // TODO
+        commit('commitUser', null);
+        return;
+      }
+    }
 
     // set numDiaries
-    await dispatch('fetchRemoteUser');
-  },
-
-  fetchRemoteUser: async ({ commit, getters }: ActionContext<State, State>) => {
-    const me: User = getters.me;
-    if (me === null) { return; }
-    const user = await getUser(me.uid);
-    if (user === null) { return; }
-    commit('setUserDiaries', user.diaries);
+    commit('commitUser', me);
   },
 };
 

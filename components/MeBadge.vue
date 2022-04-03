@@ -4,8 +4,14 @@
       class="bg-skdark rounded-xl shadow-xl h-13 mt-4 py-2 px-6
     border-t-2 border-b-2 border-skgray hover:bg-skdark-light"
     >
-      <nuxt-link v-if="me !== null" class="flex items-center w-full justify-center" :to="toPath">
-        <img :src="me.photoURL" class="w-8 rounded-full mr-4">
+      <nuxt-link v-if="me !== null && me !== 'trying'" class="flex items-center w-full justify-center" :to="toPath">
+        <img
+          v-if="photoUrlValid"
+          :src="me.photoURL"
+          class="w-8 rounded-full mr-4"
+          @error="photoUrlValid = !photoUrlValid"
+        >
+        <font-awesome-icon v-else icon="fa-solid fa-question" class="rounded-full w-8 text-2xl mr-2" />
         <p> {{ me.displayName }} </p>
       </nuxt-link>
       <nuxt-link v-else class="w-full mt-2 text-center" :to="toPath">
@@ -25,7 +31,9 @@ import { Login } from '@/lib/auth';
 export default Vue.extend({
   name: 'MeBadge',
   data () {
-    return {};
+    return {
+      photoUrlValid: true,
+    };
   },
 
   computed: {
@@ -40,6 +48,12 @@ export default Vue.extend({
       'me',
       'isLoggedIn',
     ]),
+  },
+
+  watch: {
+    isLoggedIn () {
+      this.photoUrlValid = true;
+    },
   },
 
   methods: {

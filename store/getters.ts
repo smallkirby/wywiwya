@@ -6,7 +6,7 @@ const getters = {
   },
 
   isLoggedIn: (state: State) => {
-    return state.user !== null && state.user.uid.length > 0;
+    return state.user !== null && state.user !== 'trying';
   },
 };
 

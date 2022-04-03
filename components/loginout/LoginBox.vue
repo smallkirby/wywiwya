@@ -4,6 +4,21 @@
       class="bg-skdark h-96 rounded-xl px-3 py-3
       shadow-2xl flex flex-col text-center justify-between border-2 border-skgray"
     >
+      <misc-dialog
+        v-show="dialogShowing"
+        :config="failDialogConfig"
+        @failAlertOk="dialogShowing = false"
+      >
+        <div class="flex flex-col">
+          <div>
+            ログインに失敗しました。
+          </div>
+          <div>
+            少し時間をおいて、画面をリロードしてから再試行してください。
+          </div>
+        </div>
+      </misc-dialog>
+
       <div>
         <div class="text-3xl text-center my-6">
           Signin with GitHub
@@ -47,6 +62,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Login } from '@/lib/auth';
+import { ConfirmDialog } from '~/components/misc/Dialog.vue';
+
+const FailDialogConfig: ConfirmDialog = {
+  typ: 'confirm',
+  title: 'ログインに失敗しました',
+  closeText: 'OK',
+  closeEmission: 'failAlertOk',
+};
 
 export default Vue.extend({
   name: 'LoginBox',
@@ -54,16 +77,22 @@ export default Vue.extend({
   data () {
     return {
       isLoading: false,
+      dialogShowing: false,
+      failDialogConfig: FailDialogConfig,
     };
   },
 
   methods: {
     async doLogin () {
       this.isLoading = true;
-      await Login();
-      this.isLoading = false;
-
-      this.$router.push('/');
+      const error = await Login();
+      if (error === null) {
+        this.isLoading = false;
+        this.$router.push('/');
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('Failed to login.');
+      }
     },
   },
 });

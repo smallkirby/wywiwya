@@ -9,7 +9,9 @@
     <div class="w-full md:w-7/12 mx-auto min-h-screen h-auto">
       <layout-header />
       <div class="my-4">
-        <Nuxt />
+        <div>
+          <Nuxt v-if="me !== 'trying'" />
+        </div>
       </div>
     </div>
     <div>
@@ -19,9 +21,24 @@
 </template>
 
 <script lang="ts">
+
+/*
+  This layout wait until `state.user` is set to null or User.
+  This means that pages has no need to wait until `state.user` is set.
+  If `state.user` is null in page component, it means user is not logged in.
+*/
+
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
+
 export default Vue.extend({
   name: 'DefaultLayout',
+
+  computed: {
+    ...mapGetters([
+      'me',
+    ]),
+  },
 });
 </script>
 

@@ -1,17 +1,24 @@
 import { GithubAuthProvider, getAuth, signInWithPopup, User } from 'firebase/auth';
+import { LoginState } from '~/store/state';
 
 const provider = new GithubAuthProvider();
 
-export const isValidUser = (user: User | null): boolean => {
+export const isValidProviderUser = (user: User | null): boolean => {
   if (user === null) { return false; }
   return !user.isAnonymous && user.uid.length !== 0 && user.providerId === 'firebase';
 };
 
-export const Login = async () => {
+export const isValidUser = (user: LoginState): boolean => {
+  return user !== 'trying' && user !== null && user.uid.length !== 0;
+};
+
+export const Login = async (): Promise<null | string> => {
   const auth = getAuth();
-  const result = await signInWithPopup(auth, provider);
-  const credential = GithubAuthProvider.credentialFromResult(result);
-  return credential;
+  return await signInWithPopup(auth, provider).then(() => {
+    return null;
+  }).catch((e: any) => {
+    return e.toString();
+  });
 };
 
 export const Logout = async () => {

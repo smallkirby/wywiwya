@@ -1,8 +1,12 @@
 <template>
   <layout-wrapper>
     <layout-main-box>
-      <div>
-        <p>profile</p>
+      <vue-loading v-if="me === null" />
+
+      <div v-else class="flex flex-col">
+        <div class="mx-2 md:mx-12">
+          <user-badge :user="me" />
+        </div>
       </div>
     </layout-main-box>
   </layout-wrapper>
@@ -22,11 +26,9 @@ export default Vue.extend({
   },
 
   mounted () {
-    setTimeout(() => {
-      if (this.me === null) {
-        this.$router.push('/login');
-      }
-    }, 500);
+    if (this.me === null) {
+      this.$router.push('/login');
+    }
   },
 });
 

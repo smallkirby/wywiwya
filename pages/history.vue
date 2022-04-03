@@ -1,29 +1,24 @@
 <template>
   <layout-wrapper>
     <layout-main-box>
-      <div v-if="me === null">
+      <div v-if="isDiariesFetched === false">
         <vue-loading />
       </div>
 
       <div v-else>
         <div>
           <div>
-            Diaries: {{ me.diaries.length }} 件
+            Diaries: {{ diaries.length }} 件
           </div>
         </div>
 
         <div>
-          <div>
-            <vue-loading v-show="!isDiariesFetched" />
-          </div>
-          <div v-show="isDiariesFetched">
-            <first-diary-prompt v-if="me.diaries.length === 0" class="mt-4 mb-8" />
+          <first-diary-prompt v-if="diaries.length === 0" class="mt-4 mb-8" />
 
-            <!-- TODO: need paging -->
-            <div v-else class="mt-8 ml-2 md:ml-12 flex flex-col">
-              <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
-                <diary-badge :diary="diary" />
-              </div>
+          <!-- TODO: need paging -->
+          <div v-else class="mt-8 ml-2 md:ml-12 flex flex-col">
+            <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
+              <diary-badge :diary="diary" />
             </div>
           </div>
         </div>
@@ -54,52 +49,22 @@ export const HistoryPage = Vue.extend({
     ]),
   },
 
-  watch: {
-    me () {
-      // @ts-ignore
-      if (!this.isDiariesFetched) {
-        // @ts-ignore
-        this.fetchDiaries();
-        // @ts-ignore
-        this.isDiariesFetched = true;
-      }
-    },
-  },
-
-  mounted () {
+  async mounted () {
     if (this.me) {
-      // @ts-ignore
-      this.fetchDiaries();
-      // @ts-ignore
-      this.isDiariesFetched = true;
-    } else {
-      setTimeout(() => {
-        if (this.me === null) {
-          this.$router.push('/login');
-        }
-      }, 500);
+      this.diaries = await this.fetchDiaries();
     }
+    this.isDiariesFetched = true;
   },
 
   methods: {
-    fetchDiaries () {
-      const interval = setInterval(async () => {
-        if (this.me) {
-          clearInterval(interval);
-        } else {
-          return;
-        }
-
-        const diaries = await fetchMyDiaries(this.me.uid, this.me.diaries.length);
-        if (diaries === null) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to fetch diaries...');
-          return;
-        }
-
-        // @ts-ignore
-        this.diaries = diaries;
-      }, 500);
+    async fetchDiaries (): Promise<Diary[]> {
+      const diaries = await fetchMyDiaries(this.me.uid, this.me.diaries.length);
+      if (diaries === null) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch diaries...');
+        return [];
+      }
+      return diaries;
     },
   },
 });

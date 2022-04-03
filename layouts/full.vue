@@ -9,7 +9,9 @@
     <div class="w-full mx-auto min-h-screen h-auto">
       <layout-header />
       <div class="my-4">
-        <Nuxt />
+        <div v-if="me !== 'trying'">
+          <Nuxt />
+        </div>
       </div>
     </div>
     <div>
@@ -20,8 +22,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
+
 export default Vue.extend({
   name: 'FullLayout',
+
+  computed: {
+    ...mapGetters([
+      'me',
+    ]),
+  },
 });
 </script>
 
