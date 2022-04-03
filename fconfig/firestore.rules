@@ -29,7 +29,7 @@ service cloud.firestore {
       allow create: if signedIn() && isOwnPath(uid) && isValidCreation(inData());
       allow delete: if false;
       allow update: if signedIn() && isOwnPath(uid) && isValidUpdate(inData());
-      allow read: if signedIn() && isOwnPath(uid);
+      allow read: if true;
     }
 
     match /diaries/{did} {

@@ -147,3 +147,17 @@ export const updateDiary = async (diary: Diary): Promise<string | null> => {
       return e.toString();
     });
 };
+
+export const fetchOthersPublicDiaries = async (uid: string): Promise<Diary[]> => {
+  const functions = getProjectFunctions();
+  const f = httpsCallable(functions, 'fetchPublicDiaries');
+  return await f({
+    uid,
+  }).then((result) => {
+    return result.data as Diary[];
+  }).catch((e: any) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    return [];
+  });
+};

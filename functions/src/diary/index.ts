@@ -106,3 +106,24 @@ export const createNewDiary =
       };
     }
   });
+
+// NOTE: CAREFUL: SECURITY
+export const fetchPublicDiaries =
+  functions.region('asia-northeast1').https.onCall(async (data): Promise<Diary[]> => {
+    // NOTE: allow unauthenticated users
+
+    const targetUid = data.uid;
+
+    const diaries = await firestore()
+      .collection('diaries')
+      .where('author', '==', targetUid)
+      .where('isPublic', '==', true)
+      .where('isTemporary', '==', false)
+      .get();
+
+    const returns: Diary[] = [];
+    diaries.docs.forEach((doc) => {
+      returns.push(doc.data() as Diary);
+    });
+    return returns;
+  });

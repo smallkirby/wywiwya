@@ -2,6 +2,9 @@
   <layout-wrapper>
     <vue-loading v-show="isLoading" class="pt-20" />
     <div v-if="!isLoading && diary !== null" :diary="diary">
+      <div v-if="author !== null" class="mb-4">
+        <user-badge :user="author" />
+      </div>
       <editor-preview-box ref="previewBox" />
     </div>
 
@@ -30,9 +33,11 @@
 </template>
 
 <script lang="ts">
+import { User } from '@firebase/auth';
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { fetchDiaryById } from '~/lib/diary';
+import { fetchUser } from '~/lib/user';
 import { Diary } from '~/typings/diary';
 
 export default Vue.extend({
@@ -42,6 +47,7 @@ export default Vue.extend({
     return {
       diary: null as Diary | null,
       isLoading: true,
+      author: null as User | null,
     };
   },
 
@@ -72,15 +78,7 @@ export default Vue.extend({
 
   async mounted () {
     // @ts-ignore
-    if (this.me !== null && this.isLoading) {
-      // @ts-ignore
-      await this.prepareDiary();
-    } else {
-      setTimeout(async () => {
-        // @ts-ignore
-        await this.prepareDiary();
-      }, 500);
-    }
+    await this.prepareDiary();
   },
 
   methods: {
@@ -96,7 +94,12 @@ export default Vue.extend({
     async getDiary () {
       if (!this.id) { return null; }
       const uid = this.me == null ? null : this.me.uid as string;
-      return await fetchDiaryById(uid, this.id as string);
+      const diary = await fetchDiaryById(uid, this.id as string);
+      if (diary !== null && diary.author !== this.me.uid) {
+        // @ts-ignore
+        this.author = await fetchUser(diary.author);
+      }
+      return diary;
     },
 
     setText () {
