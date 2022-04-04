@@ -7,8 +7,23 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
+      { hid: 'description', name: 'description', content: 'What You Write is What You Are' },
       { name: 'format-detection', content: 'telephone=no' },
+      { hid: 'og:site_name', name: 'og:site_name', content: 'WYWIWYA: what you write is what you are.' },
+      { hid: 'og:type', name: 'og:type', content: 'website' },
+      { hid: 'og:url', name: 'og:url', content: 'https://wywiwya.smallkirby.xyz' },
+      { hid: 'og:title', name: 'og:title', content: 'What You Write is What You Are.' },
+      {
+        hid: 'og:description',
+        name: 'og:description',
+        content: '書いたものがその人の全てならば、漢字の書き取りドリルをしている小学3年生は、もはや漢字そのものなのだろうか。',
+      },
+      {
+        hid: 'og:image',
+        name: 'og:image',
+        content: 'https://wywiwya.smallkirby.xyz/logo/wywiwya-mini.png',
+      },
+      { name: 'twitte:card', content: 'summary' },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
