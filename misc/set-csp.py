@@ -26,6 +26,7 @@ CSP = {
     "*.smallkirby.xyz",
     "smallkirby.xyz",
     "wywiwya.firebaseapp.com",
+    "www.googletagmanager.com",
   ],
   "child-src": ["'self'"],
   "connect-src": [
@@ -34,6 +35,7 @@ CSP = {
     "*.smallkirby.xyz",
     "wywiwya.firebaseapp.com",
     "https://asia-northeast1-wywiwya.cloudfunctions.net",
+    "www.google-analytics.com",
     "http://localhost:5001",
     "http://localhost:8081",
     "http://localhost:9099",
