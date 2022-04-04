@@ -55,6 +55,18 @@
             @change="onTemporaryChange"
           />
         </div>
+
+        <!-- Binding Box -->
+        <div class="m-1 px-1 w-18 h-full my-auto py-auto">
+          <button
+            v-tooltip="binding === 'vim' ? 'vimバインドです' : '通常のキーバインドです'"
+            class="border-2 border-skdark hover:border-skdark-light p-1 rounded-md"
+            :class="{'border-skdark-light': binding === 'vim'}"
+            @click="onRequestBindingChange"
+          >
+            <img src="~/static/3rd/other/vim.png" class="w-4 my-auto">
+          </button>
+        </div>
       </div>
     </div>
   </layout-wrapper>
@@ -62,6 +74,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { EditorBinding } from '~/components/editor/MainBox.vue';
 
 export default Vue.extend({
   name: 'Toolbar',
@@ -86,6 +99,7 @@ export default Vue.extend({
       isSaving: false,
       isShowingSuccessSave: false,
       isPublicNow: this.isPublic,
+      binding: 'vim' as EditorBinding,
     };
   },
 
@@ -109,6 +123,15 @@ export default Vue.extend({
     onPublicChange (value: boolean) {
       this.isPublicNow = value;
       this.$emit('publicStateChanged', value);
+    },
+
+    onRequestBindingChange () {
+      if (this.binding === 'vim') {
+        this.binding = 'plain';
+      } else {
+        this.binding = 'vim';
+      }
+      this.$emit('requestBindingChange', this.binding);
     },
   },
 });

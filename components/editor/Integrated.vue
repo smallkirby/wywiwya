@@ -19,6 +19,7 @@
             @requestSave="onRequestSave"
             @temporaryStateChanged="onTemporaryChange"
             @publicStateChanged="onPublicChange"
+            @requestBindingChange="onRequestBindingChange"
           />
         </div>
 
@@ -38,6 +39,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { ConfirmDialog } from '../misc/Dialog.vue';
+import { EditorBinding } from './MainBox.vue';
 import { Diary } from '~/typings/diary';
 import { getDiary, removeDiary, setDiary } from '~/lib/localstorage';
 import { updateDiary } from '~/lib/diary';
@@ -146,6 +148,14 @@ export default Vue.extend({
 
     onPublicChange (isPublic: boolean) {
       this.diaryChanged.isPublic = isPublic;
+    },
+
+    onRequestBindingChange (newBinding: EditorBinding) {
+      const mainEditor = this.$refs.mainEditor;
+      if (mainEditor) {
+        // @ts-ignore
+        mainEditor.changeBinding(newBinding);
+      }
     },
   },
 });

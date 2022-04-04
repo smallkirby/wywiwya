@@ -20,12 +20,15 @@ import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/keymap/vim.js';
 
+export type EditorBinding = 'vim' | 'plain';
+
 export default Vue.extend({
   name: 'MainBox',
 
   data () {
     return {
       editor: null as null | Editor,
+      binding: 'vim' as EditorBinding,
     };
   },
 
@@ -58,6 +61,14 @@ export default Vue.extend({
         return;
       }
       this.editor.getDoc().setValue(newMd);
+    },
+
+    changeBinding (newBinding: EditorBinding) {
+      if (newBinding === 'vim') {
+        this.editor?.setOption('keyMap', 'vim');
+      } else if (newBinding === 'plain') {
+        this.editor?.setOption('keyMap', 'default');
+      }
     },
   },
 });
