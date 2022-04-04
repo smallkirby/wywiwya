@@ -1,7 +1,12 @@
 <template>
   <layout-wrapper>
     <vue-loading v-show="isLoading" class="pt-20" />
-    <editor-integrated v-if="!isLoading && diary !== null" :diary="diary" />
+    <editor-integrated
+      v-if="!isLoading && diary !== null"
+      :diary="diary"
+      :mode="mode"
+      @requestModeChange="onRequestModeChange"
+    />
 
     <layout-main-box v-if="!isLoading && diary === null">
       <div class="flex flex-col mt-4">
@@ -33,6 +38,8 @@ import { mapGetters } from 'vuex';
 import { fetchDiaryById } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
+export type EditorMode = 'view' | 'edit';
+
 export default Vue.extend({
   name: 'EditPage',
   layout: 'full',
@@ -41,6 +48,7 @@ export default Vue.extend({
     return {
       diary: null as Diary | null,
       isLoading: true,
+      mode: 'edit',
     };
   },
 
@@ -74,6 +82,14 @@ export default Vue.extend({
   },
 
   async mounted () {
+    if (this.$route.query.mode === 'edit') {
+      // @ts-ignore
+      this.mode = 'edit';
+    } else {
+      // @ts-ignore
+      this.mode = 'view';
+    }
+
     // @ts-ignore
     if (this.me !== null && this.isLoading) {
       // @ts-ignore
@@ -100,6 +116,30 @@ export default Vue.extend({
         // @ts-ignore
         $nuxt.setLayout('full');
       }
+    },
+
+    onRequestModeChange (mode: EditorMode) {
+      if (mode === 'view') {
+        // @ts-ignore
+        this.changeModeView();
+      } else {
+        // @ts-ignore
+        this.changeModeEdit();
+      }
+    },
+
+    changeModeView () {
+      // @ts-ignore
+      this.mode = 'view';
+      // @ts-ignore
+      this.$router.push(`/edit/${this.did}?mode=view`);
+    },
+
+    changeModeEdit () {
+      // @ts-ignore
+      this.mode = 'edit';
+      // @ts-ignore
+      this.$router.push(`/edit/${this.did}?mode=edit`);
     },
   },
 });

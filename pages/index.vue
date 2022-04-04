@@ -55,7 +55,7 @@
         <!-- PRIVACY -->
         <div class="flex flex-col leading-relaxed mt-28">
           <div class="text-3xl font-bold mb-4 border-b-2 border-skdark pb-4">
-            <font-awesome-icon icon="fa-solid fa-star" class="mr-2" />
+            <font-awesome-icon icon="fa-solid fa-book" />
             その他
           </div>
           <div class="ml-4">
@@ -68,6 +68,22 @@
               <NuxtLink to="/privacy" class="text-skgreen-light">
                 プライバシーについて
               </NuxtLink>
+            </p>
+          </div>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="flex flex-col leading-relaxed mt-28">
+          <div class="text-3xl font-bold mb-4 border-b-2 border-skdark pb-4">
+            <font-awesome-icon icon="fa-solid fa-envelope" />
+            CONTACT
+          </div>
+          <div class="ml-4">
+            <p>
+              質問・お問い合わせ・要望:
+              <a href="mailto:wywiwya@gmail.com" class="text-skgreen-light">
+                wywiwya[at]gmail.com
+              </a>
             </p>
           </div>
         </div>

@@ -1,7 +1,10 @@
 <template>
   <layout-wrapper>
-    <div class="px-2 flex items-center">
-      <div class="text-lg font-bold pr-4 border-r-2 border-skgray">
+    <div class="px-2 flex flex-col md:flex-row items-center justify-center">
+      <div
+        class="text-lg font-bold pr-4 border-b-2
+        md:border-b-0 md:border-r-2  border-skgray pb-1 md:pb-0 px-2 mb-1 md:mb-0"
+      >
         {{ dateString }}
       </div>
 
@@ -43,7 +46,7 @@
         </div>
 
         <!-- MARK AS TEMP BOX -->
-        <div class="m-1 px-1 w-18 h-full">
+        <div class="mx-1 my-auto px-1 w-18 h-full">
           <toggle-button
             v-tooltip="isTemporary ? 'ドラフト状態です' : '清書状態です'"
             :value="!isTemporary"
@@ -57,7 +60,7 @@
         </div>
 
         <!-- Binding Box -->
-        <div class="m-1 px-1 w-18 h-full my-auto py-auto">
+        <div class="my-1 px-1 w-18 h-full py-auto">
           <button
             v-tooltip="binding === 'vim' ? 'vimバインドです' : '通常のキーバインドです'"
             class="border-2 border-skdark hover:border-skdark-light p-1 rounded-md"
@@ -67,6 +70,26 @@
             <img src="~/static/3rd/other/vim.png" class="w-4 my-auto">
           </button>
         </div>
+
+        <!-- Edit or View -->
+        <div class="px-1 my-1 w-10 h-full">
+          <div class="border-2 border-skdark hover:border-skdark-light rounded-md">
+            <button class="w-full h-full px-1 outline-none" @click="onRequestModeChange">
+              <font-awesome-icon
+                v-if="currentMode === 'edit'"
+                v-tooltip="'編集モードです'"
+                class="outline-none"
+                icon="fa-solid fa-pen-fancy"
+              />
+              <font-awesome-icon
+                v-else
+                v-tooltip="'閲覧モードです'"
+                class="outline-none"
+                icon="fa-solid fa-eye"
+              />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </layout-wrapper>
@@ -75,6 +98,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { EditorBinding } from '~/components/editor/MainBox.vue';
+import { EditorMode } from '~/pages/edit/_did.vue';
 
 export default Vue.extend({
   name: 'Toolbar',
@@ -92,6 +116,10 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+    mode: {
+      type: String,
+      required: true,
+    },
   },
 
   data () {
@@ -100,6 +128,7 @@ export default Vue.extend({
       isShowingSuccessSave: false,
       isPublicNow: this.isPublic,
       binding: 'vim' as EditorBinding,
+      currentMode: this.mode as EditorMode,
     };
   },
 
@@ -132,6 +161,15 @@ export default Vue.extend({
         this.binding = 'vim';
       }
       this.$emit('requestBindingChange', this.binding);
+    },
+
+    onRequestModeChange () {
+      if (this.currentMode === 'view') {
+        this.currentMode = 'edit';
+      } else {
+        this.currentMode = 'view';
+      }
+      this.$emit('requestModeChange', this.currentMode);
     },
   },
 });

@@ -9,25 +9,27 @@
         </div>
       </misc-dialog>
 
-      <div class="flex flex-col mx-2 mt-1">
+      <div class="flex flex-col md:mx-2 mt-1">
         <div>
           <editor-toolbar
             ref="toolbar"
             :date-string="dateString"
             :is-temporary="diaryChanged.isTemporary"
             :is-public="diaryChanged.isPublic"
+            :mode="mode"
             @requestSave="onRequestSave"
             @temporaryStateChanged="onTemporaryChange"
             @publicStateChanged="onPublicChange"
             @requestBindingChange="onRequestBindingChange"
+            @requestModeChange="(newMode) => $emit('requestModeChange', newMode)"
           />
         </div>
 
-        <div class="flex">
-          <div class="w-1/2">
+        <div class="flex flex-col md:flex-row items-center justify-center">
+          <div v-show="mode === 'edit'" class="w-full md:w-1/2 mt-2">
             <editor-main-box ref="mainEditor" @mdCodeChange="onCodeChange" />
           </div>
-          <div class="w-1/2 overflow-x-hidden">
+          <div class="w-full md:w-1/2 overflow-x-hidden md:block" :class="{'hidden': mode === 'edit'}">
             <editor-preview-box ref="previewBox" />
           </div>
         </div>
@@ -60,6 +62,10 @@ export default Vue.extend({
       type: Object as PropType<Diary>,
       required: true,
     },
+    mode: {
+      type: String,
+      required: true,
+    },
   },
 
   data () {
@@ -79,6 +85,7 @@ export default Vue.extend({
 
   mounted () {
     this.restoreUnsavedDiary();
+    (this.$refs.previewBox!! as any).compileWrite(this.diaryChanged.contentMd);
     this.setText(this.diaryChanged.contentMd);
   },
 
