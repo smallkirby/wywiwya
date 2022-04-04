@@ -51,6 +51,9 @@ export default {
     {
       src: '~/plugins/calendar.ts',
     },
+    {
+      src: '~/plugins/loading.ts',
+    },
   ],
 
   components: true,
@@ -82,7 +85,6 @@ export default {
   router: {
     middleware: [
       'session',
-      'loading',
     ],
   },
 
