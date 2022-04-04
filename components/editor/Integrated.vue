@@ -84,9 +84,15 @@ export default Vue.extend({
   },
 
   mounted () {
-    this.restoreUnsavedDiary();
-    (this.$refs.previewBox!! as any).compileWrite(this.diaryChanged.contentMd);
-    this.setText(this.diaryChanged.contentMd);
+    const handler = setInterval(() => {
+      if (this.$refs.previewBox) {
+        this.restoreUnsavedDiary();
+        (this.$refs.previewBox!! as any).compileWrite(this.diaryChanged.contentMd);
+        this.setText(this.diaryChanged.contentMd);
+
+        clearInterval(handler);
+      }
+    }, 500);
   },
 
   methods: {

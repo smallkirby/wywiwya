@@ -48,6 +48,9 @@ export default {
     {
       src: '~/plugins/toggle.ts',
     },
+    {
+      src: '~/plugins/calendar.ts',
+    },
   ],
 
   components: true,

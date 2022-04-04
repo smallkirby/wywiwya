@@ -16,7 +16,8 @@
         </button>
         <input
           v-model="searchStr"
-          class="border-skgray focus:border-skwhite-dark border-[1px] focus:outline-none p-1 rounded-md w-3/5 px-2"
+          class="border-skgray focus:border-skwhite-dark border-[1px] focus:outline-none
+          p-1 rounded-md w-3/5 px-2 bg-skdark"
         >
       </div>
     </div>
