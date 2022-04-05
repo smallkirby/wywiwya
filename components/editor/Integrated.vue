@@ -71,6 +71,7 @@ export default Vue.extend({
   data () {
     return {
       diaryChanged: this.diary as Diary,
+      latestString: this.diary.contentMd,
       failDialogConfig: FailDialogConfig,
       isUpdateFailShowing: false,
     };
@@ -100,6 +101,11 @@ export default Vue.extend({
       (this.$refs.previewBox!! as any).compileWrite(mdCode);
       this.diaryChanged.contentMd = mdCode;
       this.saveDiaryLocal();
+
+      if (this.latestString !== mdCode && this.$refs.toolbar !== undefined) {
+        // @ts-ignore
+        this.$refs.toolbar.setDirty();
+      }
     },
 
     restoreUnsavedDiary () {
@@ -133,6 +139,11 @@ export default Vue.extend({
           }
           (mainEditor as any).setText(newText);
 
+          if (this.latestString !== newText && this.$refs.toolbar !== undefined) {
+            // @ts-ignore
+            this.$refs.toolbar.setDirty();
+          }
+
           clearInterval(interval);
         }
       }, 100);
@@ -145,7 +156,13 @@ export default Vue.extend({
         console.error(`Failed to update diary: ${result}`);
         this.isUpdateFailShowing = true;
       } else {
+        const toolbar = this.$refs.toolbar;
         removeDiary(this.diary.dateID);
+        this.latestString = this.diaryChanged.contentMd;
+        if (toolbar !== undefined) {
+          // @ts-ignore
+          toolbar.unsetDirty();
+        }
       }
 
       (this.$refs.toolbar!! as any).onSaveComplete();

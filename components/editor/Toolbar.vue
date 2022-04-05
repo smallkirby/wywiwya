@@ -91,6 +91,27 @@
           </div>
         </div>
       </div>
+
+      <!--  Dirty Indicator -->
+      <div
+        class="text-lg font-bold pr-8 border-b-2
+        md:border-b-0 md:border-l-2  border-skgray pb-1 md:pb-0 px-2 mb-1 md:mb-0"
+      >
+        <div class="w-7 h-7 text-center">
+          <font-awesome-icon
+            v-if="isDirty"
+            v-tooltip="'サーバに保存していない変更があります'"
+            icon="fa-solid fa-circle-exclamation"
+            class="px-auto mx-auto"
+          />
+          <font-awesome-icon
+            v-else
+            v-tooltip="'サーバに保存された最新版と同期しています'"
+            icon="fa-solid fa-star-of-david"
+            class="px-auto mx-auto"
+          />
+        </div>
+      </div>
     </div>
   </layout-wrapper>
 </template>
@@ -129,6 +150,7 @@ export default Vue.extend({
       isPublicNow: this.isPublic,
       binding: 'vim' as EditorBinding,
       currentMode: this.mode as EditorMode,
+      isDirty: false,
     };
   },
 
@@ -170,6 +192,14 @@ export default Vue.extend({
         this.currentMode = 'view';
       }
       this.$emit('requestModeChange', this.currentMode);
+    },
+
+    setDirty () {
+      this.isDirty = true;
+    },
+
+    unsetDirty () {
+      this.isDirty = false;
     },
   },
 });
