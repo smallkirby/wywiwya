@@ -2,6 +2,7 @@ body {
   font-family: 'Ubuntu Mono';
   color: #EBDBB2;
   background-color: #130F1A;
+  overflow-wrap: break-word;
 }
 
 h1,h2,h3,h4,h5 {

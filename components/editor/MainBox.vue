@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { EditorConfiguration, Editor, fromTextArea, Position } from 'codemirror';
+import { EditorConfiguration, Editor, fromTextArea, Position, countColumn } from 'codemirror';
 import { v4 as uuidv4 } from 'uuid';
 import { uploadImage } from '~/lib/gyazo';
 import '~/static/css/wywiwya.css';
@@ -21,6 +21,11 @@ import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/keymap/vim.js';
+import 'codemirror/addon/edit/continuelist.js';
+import 'codemirror/addon/fold/markdown-fold.js';
+import 'codemirror/addon/fold/foldcode.js';
+import 'codemirror/addon/fold/foldgutter.js';
+import 'codemirror/addon/fold/foldgutter.css';
 
 export type EditorBinding = 'vim' | 'plain';
 
@@ -47,7 +52,16 @@ export default Vue.extend({
       indentUnit: 2,
       smartIndent: true,
       indentWithTabs: false,
+      lineWrapping: true,
       keyMap: 'vim',
+      foldGutter: true,
+      gutters: [
+        'CodeMirror-linenumbers',
+        'CodeMirror-foldgutter',
+      ],
+      extraKeys: {
+        Enter: 'newlineAndIndentContinueMarkdownList',
+      },
     };
     this.editor = fromTextArea(editor, config);
 
@@ -59,6 +73,13 @@ export default Vue.extend({
     this.editor.on('drop', (editor, event) => {
       if (this.editor === null) { return; }
       this.handleImageDrop(editor, event);
+    });
+
+    const charWidth = this.editor.defaultCharWidth();
+    this.editor.on('renderLine', (editor, line, elt) => {
+      const off = countColumn(line.text, null, editor.getOption('tabSize')!!) * charWidth;
+      elt.style.textIndent = '-' + off + 'px';
+      elt.style.paddingLeft = (4 + off) + 'px';
     });
   },
 
@@ -147,6 +168,10 @@ export default Vue.extend({
 .CodeMirror-line {
   font-family: 'Ubuntu Mono' !important;
   font-size: 1.0rem !important;
+}
+
+.CodeMirror-foldgutter-open {
+  color: #B16286;
 }
 
 </style>
