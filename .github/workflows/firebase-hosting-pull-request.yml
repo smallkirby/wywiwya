@@ -51,14 +51,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Deploy firebase rules
+      - name: Deploy firestore rules
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only firestore:rules -f
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
 
-      - name: Deploy firebase indexes
+      - name: Deploy firestore indexes
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only firestore:indexes -f
@@ -73,6 +73,12 @@ jobs:
 
       - name: install deps
         run: npm ci && npm -w functions ci
+
+      - name: generate .env file
+        run: |
+          cd ./functions
+          touch .env
+          echo GYAZO_ACCESS_TOKEN=${{ secrets.GYAZO_ACCESS_TOKEN }} >> .env
 
       - name: lint and build
         env:
@@ -91,4 +97,3 @@ jobs:
           args: deploy --only functions -f
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WYWIWYA }}
-

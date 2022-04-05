@@ -82,12 +82,12 @@ export default Vue.extend({
   },
 
   async mounted () {
-    if (this.$route.query.mode === 'edit') {
-      // @ts-ignore
-      this.mode = 'edit';
-    } else {
+    if (this.$route.query.mode === 'view') {
       // @ts-ignore
       this.mode = 'view';
+    } else {
+      // @ts-ignore
+      this.mode = 'edit';
     }
 
     // @ts-ignore

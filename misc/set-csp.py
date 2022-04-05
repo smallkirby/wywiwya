@@ -36,6 +36,7 @@ CSP = {
     "wywiwya.firebaseapp.com",
     "https://asia-northeast1-wywiwya.cloudfunctions.net",
     "www.google-analytics.com",
+    "upload.gyazo.com",
     "http://localhost:5001",
     "http://localhost:8081",
     "http://localhost:9099",

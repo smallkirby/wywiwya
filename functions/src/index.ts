@@ -7,3 +7,4 @@ admin.initializeApp(functions.config().firebase);
 
 export { createNewDiary, fetchPublicDiaries } from './diary';
 export { changeUserName, searchUserFullMatch } from './user';
+export { uploadImage } from './gyazo';

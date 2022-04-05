@@ -38,3 +38,7 @@ code {
 a {
   color: #076678;
 }
+
+img {
+  max-width: 100%;
+}

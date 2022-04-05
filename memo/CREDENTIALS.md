@@ -14,6 +14,7 @@ GitHub has below information as secrets:
 | `FB_APPID` | No | Firebase application ID |
 | `FB_MEASUREMENTID` | No | not used |
 | `FIREBASE_SERVICE_ACCOUNT_WYWIWYA` | Yes | GCP service account secret |
+| `GYAZO_ACCESS_TOKEN` | Yes | Gyazo access token of WYWIWYA for annonymous image upload |
 
 - If `Must be Secret` is `No`, there is no need to keep it secret essentially.
   - But Google and GitGuradian annoy me by saying that the secrets are leaked, if they are hardcoded.

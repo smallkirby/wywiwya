@@ -1,6 +1,6 @@
 <template>
   <layout-wrapper>
-    <div>
+    <div class="w-full">
       <textarea
         id="editor"
         ref="mdTextarea"
@@ -12,7 +12,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { EditorConfiguration, Editor, fromTextArea } from 'codemirror';
+import { EditorConfiguration, Editor, fromTextArea, Position } from 'codemirror';
+import { v4 as uuidv4 } from 'uuid';
+import { uploadImage } from '~/lib/gyazo';
 import '~/static/css/wywiwya.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown.js';
@@ -53,6 +55,11 @@ export default Vue.extend({
       if (this.editor === null) { return; }
       this.$emit('mdCodeChange', this.editor.getDoc().getValue());
     });
+
+    this.editor.on('drop', (editor, event) => {
+      if (this.editor === null) { return; }
+      this.handleImageDrop(editor, event);
+    });
   },
 
   methods: {
@@ -68,6 +75,48 @@ export default Vue.extend({
         this.editor?.setOption('keyMap', 'vim');
       } else if (newBinding === 'plain') {
         this.editor?.setOption('keyMap', 'default');
+      }
+    },
+
+    handleImageDrop (editor: Editor, event: DragEvent) {
+      if (!event.dataTransfer) { return; }
+      const files = event.dataTransfer.files;
+      if (!files) { return; }
+
+      // move cursor
+      editor.focus();
+      const visualPosition = {
+        x: event.pageX,
+        y: event.pageY,
+      };
+      editor.setCursor(editor.coordsChar({
+        left: visualPosition.x,
+        top: visualPosition.y,
+      }));
+
+      const targetRange = {
+        start: editor.getCursor('head'),
+        end: editor.getCursor('end'),
+      };
+
+      // upload each files
+      for (const file of Array.from(files)) {
+        if (!file.type.match(/image.*/)) {
+          continue;
+        }
+
+        // set temporary string
+        const uuid = uuidv4();
+        const tempStr = `[Uploading image as ${uuid}...] `;
+        editor.replaceRange(tempStr, targetRange.start, targetRange.end);
+        const currentEnd: Position = {
+          ch: targetRange.end.ch + tempStr.length,
+          line: targetRange.end.line,
+        };
+
+        // upload
+        uploadImage(file, editor, { start: targetRange.start, end: currentEnd });
+        targetRange.start = currentEnd;
       }
     },
   },

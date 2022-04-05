@@ -1,13 +1,13 @@
 <template>
   <div
     class="border-t-2 border-b-2 border-skgray-dark rounded-2xl
-  pt-6 pb-2 px-2 ml-2 mr-4 h-full w-full bg-skdark-dark"
+  pt-6 pb-2 px-2 ml-2 mr-4 h-full w-full bg-skdark-dark overflow-x-hidden"
   >
     <iframe
       id="previewBox"
       ref="previewBox"
       sandbox="allow-same-origin allow-popups"
-      class="h-full w-full pl-2 pr-8 ml-4 mr-4 overflow-y-scroll"
+      class="h-full w-full pl-2 pr-8 ml-4 mr-4 overflow-y-scroll overflow-x-hidden"
     />
   </div>
 </template>
