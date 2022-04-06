@@ -29,7 +29,13 @@
           <div v-show="mode === 'edit'" class="w-full md:w-1/2 mt-2">
             <editor-main-box ref="mainEditor" @mdCodeChange="onCodeChange" />
           </div>
-          <div class="w-full md:w-1/2 overflow-x-hidden md:block" :class="{'hidden': mode === 'edit'}">
+          <div
+            class="w-full md:w-1/2 overflow-x-hidden md:block"
+            :class="{
+              'hidden': mode === 'edit',
+              'pr-2': mode === 'view',
+            }"
+          >
             <editor-preview-box
               ref="previewBox"
               :adjust-height="mode === 'view'"
