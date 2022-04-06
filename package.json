@@ -1,6 +1,6 @@
 {
   "name": "wywiwya",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "FB_FIRESTORE_EMULATE=1 && FB_FUNCTIONS_EMULATE=1 && FB_AUTH_EMULATE=1 && nuxt",

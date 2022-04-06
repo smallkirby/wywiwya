@@ -1,16 +1,12 @@
 # WYWIWYA
 
-🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧
-
-(UNDER CONSTRUCTION)
-
-🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧🚧
-
-
+![](https://img.shields.io/badge/version-0.0.1-blueviolet.svg)
+![Build](https://github.com/smallkirby/wywiwya/actions/workflows/ci.yml/badge.svg)
+![Hosting](https://github.com/smallkirby/wywiwya/actions/workflows/firebase-hosting-merge.yml/badge.svg)
 
 WHAT YOU WRITE IS WHAT YOU ARE.
 
-![logo](static/logo/wyiwya-full-black.png)
+![logo](static/logo/wywiwya-horizontal.png)
 
 ## Development
 
