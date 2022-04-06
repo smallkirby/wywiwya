@@ -7,23 +7,33 @@ service cloud.firestore {
         return uid == request.auth.uid
       }
       function isValidCreation(data) {
-        return data.keys().hasAll(['uid', 'photoURL', 'displayName', 'diaries', 'createdAt'])
-        && data.keys().hasOnly(['uid', 'photoURL', 'displayName', 'diaries', 'createdAt'])
+        return data.keys().hasAll(['uid', 'photoURL', 'displayName', 'diaries', 'createdAt', 'kusa', 'readNotifications'])
+        && data.keys().hasOnly(['uid', 'photoURL', 'displayName', 'diaries', 'createdAt', 'kusa', 'readNotifications'])
         && data.uid is string && data.photoURL is string && data.displayName is string
         && data.diaries is list
         && data.createdAt is timestamp
+        && data.kusa is list
+        && data.readNotifications is list
         && data.uid == uid
         && data.diaries.size() == 0
+        && data.kusa.size() == 0
+        && data.readNotifications.size() == 0
         ;
       }
       function isValidUpdate(data) {
         return data.keys().hasAll(['uid', 'photoURL', 'displayName', 'diaries', 'createdAt'])
-        && data.keys().hasOnly(['uid', 'photoURL', 'displayName', 'diaries', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'photoURL', 'displayName', 'diaries', 'createdAt', 'kusa', 'readNotifications'])
         && data.uid is string && data.photoURL is string && data.displayName is string
         && data.diaries is list
         && data.createdAt is timestamp
+        && (
+          !data.keys().hasAll(['kusa']) || data.kusa is list
+        )
+        && (
+          !data.keys().hasAll(['readNotifications']) || data.readNotifications is list
+        )
         && data.uid == uid
-        && data.diff(resource.data).affectedKeys().hasOnly(['photoURL'])
+        && data.diff(resource.data).affectedKeys().hasOnly(['photoURL', 'readNotifications'])
         ;
       }
       allow create: if signedIn() && isOwnPath(uid) && isValidCreation(inData());

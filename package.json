@@ -38,6 +38,7 @@
     "firebase": "^9.6.10",
     "js-yaml": "^4.1.0",
     "markdown-it": "^12.3.2",
+    "microcms-js-sdk": "^2.0.0",
     "moment": "^2.29.1",
     "nuxt": "^2.15.8",
     "nuxt-webfontloader": "^1.1.0",

@@ -16,7 +16,7 @@
       </nuxt-link>
       <nuxt-link v-else class="w-full mt-2 text-center" :to="toPath">
         <p class="mt-1 ml-2">
-          not logged in
+          ログインしていません
         </p>
       </nuxt-link>
     </div>
