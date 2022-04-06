@@ -148,3 +148,14 @@ export const getAllUsers = async (): Promise<string | User[]> => {
     return e.toString();
   });
 };
+
+export const setUserNotificationRead = async (uid: string, readNotifications: string[]) => {
+  const db = getFirestore();
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, {
+    readNotifications,
+  }).catch((e: any) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  });
+};

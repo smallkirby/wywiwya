@@ -26,6 +26,14 @@ const getters = {
       }) === -1;
     });
   },
+
+  readNotifications: (state: State): string[] => {
+    const user = state.user;
+    if (user === null || user === 'trying') {
+      return [];
+    }
+    return user.readNotifications;
+  },
 };
 
 export default getters;

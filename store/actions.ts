@@ -2,7 +2,7 @@ import { Commit, ActionContext } from 'vuex';
 import { User as FirestoreUser } from 'firebase/auth';
 import { State } from './state';
 import { Logout } from '~/lib/auth';
-import { fetchUser, setUser } from '~/lib/user';
+import { fetchUser, setUser, setUserNotificationRead } from '~/lib/user';
 
 const actions = {
   signout: async ({ commit }: {commit: Commit}) => {
@@ -42,6 +42,11 @@ const actions = {
 
     // set numDiaries
     commit('commitUser', me);
+  },
+
+  markReadNotification: async ({ commit, getters }: ActionContext<State, State>, nid: string) => {
+    commit('commitMarkReadNotification', nid);
+    await setUserNotificationRead(getters.me.uid, getters.readNotifications);
   },
 };
 

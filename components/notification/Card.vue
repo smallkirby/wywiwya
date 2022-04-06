@@ -7,7 +7,7 @@
         'border-skwhite-dark': isRead === false,
       }"
     >
-      <button class="w-full h-full text-left flex flex-col">
+      <button class="w-full h-full text-left flex flex-col" @click="onClicked">
         <div class="flex flex-col md:flex-row justify-between w-full items-center mb-4">
           <div class="text-2xl mb-2">
             {{ notification.title }}
@@ -67,6 +67,14 @@ export default Vue.extend({
     ...mapGetters([
       'unreadNotifications',
     ]),
+  },
+
+  methods: {
+    onClicked () {
+      if (!this.isRead) {
+        this.$store.dispatch('markReadNotification', this.notification.id);
+      }
+    },
   },
 });
 </script>
