@@ -1,4 +1,5 @@
 import { LoginState, State } from '~/store/state';
+import { Notification } from '~/typings/notification';
 
 const mutations = {
   clearUser: (state: State) => {
@@ -13,6 +14,10 @@ const mutations = {
     if (state.user !== null && state.user !== 'trying') {
       state.user.displayName = newName;
     }
+  },
+
+  commitNotifications: (state: State, notifications: Notification[]) => {
+    state.fetchedNotifications = notifications;
   },
 };
 

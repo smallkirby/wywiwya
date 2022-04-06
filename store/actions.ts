@@ -21,6 +21,7 @@ const actions = {
         diaries: [],
         createdAt: null,
         kusa: [],
+        readNotifications: [],
       });
       if (result === false) {
         // eslint-disable-next-line no-console

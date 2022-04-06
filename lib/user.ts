@@ -13,17 +13,19 @@ function convertServerUser (user: any): any {
   if (user.constructor === Array) {
     return user.map((ent) => {
       if (ent.kusa === undefined) {
-        return {
-          kusa: [],
-          ...ent,
-        };
-      } else {
-        return ent;
+        ent.kusa = [];
       }
+      if (ent.readNotifications === undefined) {
+        ent.readNotifications = [];
+      }
+      return ent;
     });
   } else {
     if (user.kusa === undefined) {
       user.kusa = [];
+    }
+    if (user.readNotifications === undefined) {
+      user.readNotifications = [];
     }
     return user;
   }
@@ -57,6 +59,8 @@ export const setUser = async (user: User): Promise<boolean> => {
       uid: user.uid,
       displayName: user.displayName,
       diaries: [],
+      kusa: [],
+      readNotifications: [],
       createdAt: serverTimestamp(),
     }).then(() => {
       return true;
