@@ -5,7 +5,12 @@
       <div v-if="author !== null" class="">
         <user-badge :user="author" />
       </div>
-      <editor-preview-box ref="previewBox" />
+      <editor-preview-box
+        ref="previewBox"
+        class="mt-8 mb-4"
+        :adjust-height="true"
+        :side-border="true"
+      />
     </div>
 
     <layout-main-box v-if="!isLoading && diary === null">
