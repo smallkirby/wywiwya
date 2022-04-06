@@ -29,8 +29,18 @@
           <div v-show="mode === 'edit'" class="w-full md:w-1/2 mt-2">
             <editor-main-box ref="mainEditor" @mdCodeChange="onCodeChange" />
           </div>
-          <div class="w-full md:w-1/2 overflow-x-hidden md:block" :class="{'hidden': mode === 'edit'}">
-            <editor-preview-box ref="previewBox" />
+          <div
+            class="w-full md:w-1/2 overflow-x-hidden md:block"
+            :class="{
+              'hidden': mode === 'edit',
+              'pr-2': mode === 'view',
+            }"
+          >
+            <editor-preview-box
+              ref="previewBox"
+              :adjust-height="mode === 'view'"
+              :side-border="mode === 'view'"
+            />
           </div>
         </div>
       </div>
@@ -81,6 +91,18 @@ export default Vue.extend({
     dateString () {
       const parts = this.diary.dateID.split('-');
       return `${parts[0]}年${parts[1]}月${parts[2]}日`;
+    },
+  },
+
+  watch: {
+    mode () {
+      const previewBox = this.$refs.previewBox;
+      if (!previewBox) { return; }
+      if (this.mode === 'view') {
+        (previewBox as any).doAdjustHeight();
+      } else {
+        (previewBox as any).doShrinkHeight();
+      }
     },
   },
 

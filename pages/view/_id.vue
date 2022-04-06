@@ -3,9 +3,17 @@
     <vue-loading v-show="isLoading" class="pt-20" />
     <div v-if="!isLoading && diary !== null" :diary="diary">
       <div v-if="author !== null" class="">
-        <user-badge :user="author" />
+        <user-badge
+          :user="author"
+          class="mx-4 md:mx-auto md:w-max"
+        />
       </div>
-      <editor-preview-box ref="previewBox" />
+      <editor-preview-box
+        ref="previewBox"
+        :adjust-height="true"
+        :side-border="true"
+        class="mt-4"
+      />
     </div>
 
     <layout-main-box v-if="!isLoading && diary === null">
