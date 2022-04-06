@@ -21,7 +21,7 @@ export default {
       {
         hid: 'og:image',
         name: 'og:image',
-        content: 'https://wywiwya.smallkirby.xyz/logo/wywiwya-mini.png',
+        content: 'https://wywiwya.smallkirby.xyz/logo/wywiwya-horizontal.png',
       },
       { name: 'twitte:card', content: 'summary' },
     ],

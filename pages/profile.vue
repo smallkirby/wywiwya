@@ -9,7 +9,7 @@
         </div>
 
         <div>
-          <user-kusa class="mb-12" />
+          <user-kusa class="mb-12" :user="me" />
         </div>
 
         <div>

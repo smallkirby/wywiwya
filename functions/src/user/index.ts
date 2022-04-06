@@ -36,6 +36,61 @@ export const addDiaryRef =
     }
   };
 
+// NOTE: costy
+const recalculateKusa = async (uid: UID): Promise<string | null> => {
+  const userRef = firestore().collection('users').doc(uid);
+  const userSnap = await userRef.get();
+  const diariesSnap = await firestore().collection('diaries').where('author', '==', uid).get();
+
+  if (!userSnap.exists) {
+    return 'while re-calculating kusa, user not found.';
+  }
+  const kusa: Date[] = [];
+  diariesSnap.docs.forEach((doc) => {
+    kusa.push(doc.data().createdAt.toDate() as Date);
+  });
+
+  await userRef.update({
+    kusa,
+  });
+
+  return null;
+};
+
+export const addKusa = async (uid: UID): Promise<string | null> => {
+  const userRef = firestore().collection('users').doc(uid);
+  const userSnap = await userRef.get();
+  if (!userSnap.exists) {
+    return `User with uid ${uid} not found.`;
+  } else {
+    const user = userSnap.data();
+    if (user === undefined) {
+      return 'Somehow, failed to fetch user snapshot.';
+    }
+
+    let existingKusa = user.kusa;
+    if (existingKusa === undefined || existingKusa === null) {
+      existingKusa = [new Date()];
+    } else {
+      existingKusa.push(new Date());
+    }
+
+    await userRef.update({
+      kusa: existingKusa,
+    });
+
+    // re-calculate kusa if needed
+    if (user.diaries.length !== existingKusa.length) {
+      const result = await recalculateKusa(uid);
+      if (result !== null) {
+        return result;
+      }
+    }
+
+    return null;
+  }
+};
+
 /***************************/
 
 type NameChangeError = 'duplicate-name' | 'forbidden' | 'not-exist' | 'empty' | 'invalid-chr' | null;

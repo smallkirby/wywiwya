@@ -1,4 +1,5 @@
 import { DocumentReference, Timestamp } from 'firebase/firestore';
+import { Kusa } from '~/lib/kusa';
 
 export type UID = string;
 
@@ -8,6 +9,7 @@ export type User = {
   uid: UID,
   diaries: DocumentReference[],
   createdAt: Timestamp | null,
+  kusa: Kusa,
 }
 
 export type LoginState = User | 'trying' | null;

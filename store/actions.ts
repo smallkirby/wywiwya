@@ -20,6 +20,7 @@ const actions = {
         displayName: user.displayName ? user.displayName : '',
         diaries: [],
         createdAt: null,
+        kusa: [],
       });
       if (result === false) {
         // eslint-disable-next-line no-console

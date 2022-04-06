@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import firebase from 'firebase-admin';
 import moment from 'moment';
 import { firestore } from '../lib/firebase';
-import { addDiaryRef, UID } from '../user';
+import { addDiaryRef, addKusa, UID } from '../user';
 import { isAuthed } from '../lib/auth';
 
 // @typings/diary.d.ts
@@ -19,7 +19,7 @@ export type Diary = {
   id?: string,
 };
 
-type ErrorCode = 'forbidden' | 'already-exist' | 'failure-update-user';
+type ErrorCode = 'forbidden' | 'already-exist' | 'failure-update-user' | 'failure-update-kusa';
 
 type ReturnType = {
   err: ErrorCode | null,
@@ -91,20 +91,31 @@ export const createNewDiary =
     const newDiary = await doCreateNewDiary(context.auth!!.uid);
 
     // add reference of newly created diary into user
-    const result = await addDiaryRef(context.auth!!.uid, newDiary);
-    if (result !== null) {
+    const resultAddRef = await addDiaryRef(context.auth!!.uid, newDiary);
+    if (resultAddRef !== null) {
       // eslint-disable-next-line no-console
-      console.error(result);
+      console.error(resultAddRef);
       return {
         err: 'failure-update-user',
         did: newDiary.id,
       };
-    } else {
+    }
+
+    // add kusa
+    const resultAddKusa = await addKusa(context.auth!!.uid);
+    if (resultAddKusa !== null) {
+      // eslint-disable-next-line no-console
+      console.error(resultAddKusa);
       return {
-        err: null,
+        err: 'failure-update-kusa', // TODO should remove new diary and ref
         did: newDiary.id,
       };
     }
+
+    return {
+      err: null,
+      did: newDiary.id,
+    };
   });
 
 // NOTE: CAREFUL: SECURITY

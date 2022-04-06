@@ -11,8 +11,20 @@ function convertServerUser (user: User[]): User[];
 // eslint-disable-next-line no-redeclare
 function convertServerUser (user: any): any {
   if (user.constructor === Array) {
-    return user;
+    return user.map((ent) => {
+      if (ent.kusa === undefined) {
+        return {
+          kusa: [],
+          ...ent,
+        };
+      } else {
+        return ent;
+      }
+    });
   } else {
+    if (user.kusa === undefined) {
+      user.kusa = [];
+    }
     return user;
   }
 };
