@@ -31,6 +31,7 @@ jobs:
           FB_MESSAGINGSENDERID: ${{ secrets.FB_MESSAGINGSENDERID }}
           FB_APPID: ${{ secrets.FB_APPID }}
           FB_MEASUREMENTID: ${{ secrets.FB_MEASUREMENTID }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
         run: npm ci && npm run build
 
       - name: Add CSP meta tag
