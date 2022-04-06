@@ -1,10 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
-// eslint-disable-next-line max-len
-import { getFirestore, doc, getDoc, connectFirestoreEmulator, setDoc, updateDoc, Firestore, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator, Firestore } from 'firebase/firestore';
 import { Analytics, getAnalytics } from 'firebase/analytics';
 import { Auth, connectAuthEmulator, getAuth } from 'firebase/auth';
-import { UID, User } from '~/store/state';
 
 let isInitialized = false;
 let functions: Functions | null = null;
@@ -78,56 +76,6 @@ export const initApp = (vueConfig: any) => {
   analytics = getAnalytics(app);
 
   isInitialized = true;
-};
-
-export const getUser = async (uid: UID): Promise<User | null> => {
-  const db = getProjectFirestore();
-  const userDocRef = doc(db, 'users', uid);
-  const userDocSnap = await getDoc(userDocRef);
-  if (userDocSnap.exists()) {
-    return userDocSnap.data() as User;
-  } else {
-    return null;
-  }
-};
-
-export const setUser = async (user: User): Promise<boolean> => {
-  const db = getProjectFirestore();
-  const userDocRef = doc(db, 'users', user.uid);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    const existingUser = userDocSnap.data();
-    if (existingUser === user) {
-      return true;
-    } else {
-      return await updateDoc(userDocRef, {
-        photoURL: user.photoURL,
-        displayName: user.displayName,
-      }).then(() => {
-        return true;
-      }).catch((reason: any) => {
-        // eslint-disable-next-line no-console
-        console.error(reason);
-        return false;
-      });
-    }
-  } else {
-    // create new user
-    return await setDoc(doc(db, 'users', user.uid), {
-      photoURL: user.photoURL,
-      uid: user.uid,
-      displayName: user.displayName,
-      diaries: [],
-      createdAt: serverTimestamp(),
-    }).then(() => {
-      return true;
-    }).catch((reason: any) => {
-      // eslint-disable-next-line no-console
-      console.error(reason);
-      return false;
-    });
-  }
 };
 
 export default ({ $config }: {$config: any}) => {

@@ -1,8 +1,60 @@
 // eslint-disable-next-line max-len
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { doc, getDoc, getFirestore, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { getProjectFunctions } from '~/plugins/firebase';
+import { getProjectFunctions, getProjectFirestore } from '~/plugins/firebase';
 import { User, UID } from '~/store/state';
+
+// convert user in the server user.
+function convertServerUser (user: User): User;
+// eslint-disable-next-line no-redeclare
+function convertServerUser (user: User[]): User[];
+// eslint-disable-next-line no-redeclare
+function convertServerUser (user: any): any {
+  if (user.constructor === Array) {
+    return user;
+  } else {
+    return user;
+  }
+};
+
+export const setUser = async (user: User): Promise<boolean> => {
+  const db = getProjectFirestore();
+  const userDocRef = doc(db, 'users', user.uid);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (userDocSnap.exists()) {
+    const existingUser = userDocSnap.data();
+    if (existingUser === user) {
+      return true;
+    } else {
+      return await updateDoc(userDocRef, {
+        photoURL: user.photoURL,
+        displayName: user.displayName,
+      }).then(() => {
+        return true;
+      }).catch((reason: any) => {
+        // eslint-disable-next-line no-console
+        console.error(reason);
+        return false;
+      });
+    }
+  } else {
+    // create new user
+    return await setDoc(doc(db, 'users', user.uid), {
+      photoURL: user.photoURL,
+      uid: user.uid,
+      displayName: user.displayName,
+      diaries: [],
+      createdAt: serverTimestamp(),
+    }).then(() => {
+      return true;
+    }).catch((reason: any) => {
+      // eslint-disable-next-line no-console
+      console.error(reason);
+      return false;
+    });
+  }
+};
 
 export const fetchUser = async (uid: UID): Promise<User | null> => {
   const db = getFirestore();
@@ -12,7 +64,7 @@ export const fetchUser = async (uid: UID): Promise<User | null> => {
   if (!userSnap.exists()) {
     return null;
   } else {
-    return userSnap.data() as User;
+    return convertServerUser(userSnap.data() as User);
   }
 };
 
@@ -50,7 +102,7 @@ export const searchUserFullMatch = async (name: string): Promise<string | User[]
     const error = (result.data as any).err;
     const users = (result.data as any).users;
     if (error === null) {
-      return users;
+      return convertServerUser(users);
     } else if (error === 'invalid-query') {
       return '検索文字列に不正な文字が含まれています。';
     } else {
@@ -70,7 +122,7 @@ export const getAllUsers = async (): Promise<string | User[]> => {
     const error = (result.data as any).err;
     const users = (result.data as any).users;
     if (error === null) {
-      return users;
+      return convertServerUser(users);
     } else if (error === 'invalid-query') {
       return '検索文字列に不正な文字が含まれています。';
     } else {
