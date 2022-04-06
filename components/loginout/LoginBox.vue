@@ -43,7 +43,7 @@
         <vue-loading v-show="isLoading" />
       </div>
 
-      <div class="mt-2 text-sm text-skgray">
+      <div v-if="!isLoading" class="mt-2 text-sm text-skgray">
         サインインすることで
         <NuxtLink to="/disclaimer" class="text-skgreen-light">
           免責事項
