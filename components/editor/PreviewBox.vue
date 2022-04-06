@@ -3,8 +3,8 @@
     class="border-t-2 border-b-2 border-skgray-dark rounded-2xl
     pt-6 pb-2 px-2 ml-2 mr-4 h-min w-full bg-skdark-dark overflow-x-hidden"
     :class="{
-      'border-l-2': sideBorder === true,
-      'border-r-2': sideBorder === true,
+      'md:border-l-2': sideBorder === true,
+      'md:border-r-2': sideBorder === true,
       'border-t-0': sideBorder === true,
       'border-b-0': sideBorder === true,
     }"
@@ -13,7 +13,7 @@
       id="previewBox"
       ref="previewBox"
       sandbox="allow-same-origin allow-popups"
-      class="w-full pl-2 pr-4 ml-4 mr-4 overflow-x-hidden h-min"
+      class="w-full pl-2 pr-4 md:ml-4 mr-4 overflow-x-hidden h-min"
     />
   </div>
 </template>

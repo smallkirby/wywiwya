@@ -3,13 +3,16 @@
     <vue-loading v-show="isLoading" class="pt-20" />
     <div v-if="!isLoading && diary !== null" :diary="diary">
       <div v-if="author !== null" class="">
-        <user-badge :user="author" />
+        <user-badge
+          :user="author"
+          class="mx-4 md:mx-auto md:w-max"
+        />
       </div>
       <editor-preview-box
         ref="previewBox"
-        class="mt-8 mb-4"
         :adjust-height="true"
         :side-border="true"
+        class="mt-4"
       />
     </div>
 
