@@ -95,7 +95,7 @@ export default Vue.extend({
       if (!this.id) { return null; }
       const uid = this.me == null ? null : this.me.uid as string;
       const diary = await fetchDiaryById(uid, this.id as string);
-      if (diary !== null && diary.author !== this.me.uid) {
+      if (diary !== null && diary.author !== uid) {
         // @ts-ignore
         this.author = await fetchUser(diary.author);
       }
