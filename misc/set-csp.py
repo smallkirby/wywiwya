@@ -37,7 +37,7 @@ CSP = {
     "https://asia-northeast1-wywiwya.cloudfunctions.net",
     "www.google-analytics.com",
     "upload.gyazo.com",
-    "wywiwya.microcms.com",
+    "wywiwya.microcms.io",
     "http://localhost:5001",
     "http://localhost:8081",
     "http://localhost:9099",
