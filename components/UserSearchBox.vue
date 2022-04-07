@@ -4,8 +4,8 @@
       <div class="text-center">
         ユーザ名の全体または一部を入力してユーザを検索する
       </div>
-      <div class="text-center text-skgray">
-        (現在は、完全一致による検索のみサポートしています)
+      <div class="text-center text-skgray mt-2">
+        (部分検索にはレートリミットが設定されています: 30回/日)
       </div>
       <div class="text-center text-skgray">
         (空白のまま検索すると、ユーザ全員を表示します。この機能は削除予定です。)
