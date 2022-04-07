@@ -91,6 +91,19 @@ export const addKusa = async (uid: UID): Promise<string | null> => {
   }
 };
 
+export const fetchUsers = async (uids: UID[]): Promise<User[]> => {
+  const result: User[] = [];
+  // TODO: too costy
+  for (const uid of uids) {
+    const userSnap = await firestore().collection('users').doc(uid).get();
+    if (userSnap.exists) {
+      result.push(userSnap.data() as User);
+    }
+  }
+
+  return result;
+};
+
 /***************************/
 
 type NameChangeError = 'duplicate-name' | 'forbidden' | 'not-exist' | 'empty' | 'invalid-chr' | null;

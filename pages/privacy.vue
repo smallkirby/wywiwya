@@ -95,6 +95,34 @@
 
           <div class="mt-16">
             <div class="text-2xl border-b-2 border-skdark pb-2 mb-4">
+              <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
+              Algoliaとの連携について
+            </div>
+            <div class="md:mx-4">
+              <p class="mt-4">
+                また、ユーザ名の部分文字列検索のために
+                <a href="https://www.algolia.com/" class="text-skgreen-light">Algolia</a>
+                を利用しています。
+              </p>
+              <p>
+                Algoliaには、ユーザ情報の内以下の情報だけを登録しています:
+                <ul class="list-decimal ml-8 mb-2">
+                  <li>WYWIWYAにおけるユーザID</li>
+                  <li>WYWIWYAにおける表示名</li>
+                </ul>
+              </p>
+              <p>
+                なお、Algoliaの検索にはAPIキーが必要であり、このAPIキーはWYWIWYAのシークレットとして秘匿されているため、
+                第三者が直接Algolia APIを呼び出して検索することはできないようになっています。
+              </p>
+              <p>
+                また、現在のところAlgoliaのユーザがAlgolia APIを使って検索できる回数は、一日あたり30回に制限されています。
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-16">
+            <div class="text-2xl border-b-2 border-skdark pb-2 mb-4">
               <font-awesome-icon icon="fa-solid fa-house" />
               ユーザデータの取り扱いについて
             </div>
@@ -138,7 +166,7 @@
 
           <div class="mt-20 text-right flex flex-col">
             <div>
-              2022年04月04日 WYWIWYA
+              2022年04月07日 WYWIWYA
             </div>
           </div>
         </div>

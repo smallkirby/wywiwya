@@ -11,7 +11,7 @@ jobs:
       - name: Check if raw Markdown compiler is not used.
         run: bash ./misc/check-raw-md.bash
 
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

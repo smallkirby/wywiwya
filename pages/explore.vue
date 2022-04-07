@@ -1,6 +1,21 @@
 <template>
   <layout-wrapper>
     <layout-main-box>
+      <misc-dialog
+        v-show="dialogShowing"
+        :config="failDialogConfig"
+        @failAlertOk="dialogShowing = false"
+      >
+        <div class="flex flex-col">
+          <div>
+            ユーザの検索に失敗しました。
+          </div>
+          <div>
+            {{ errMsg }}
+          </div>
+        </div>
+      </misc-dialog>
+
       <div class="flex flex-col mt-2 mx-2 md:mx-10">
         <div class="text-3xl font-bold">
           <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
@@ -27,7 +42,15 @@
 <script lang="ts">
 import { User } from '@firebase/auth';
 import Vue from 'vue';
-import { getAllUsers, searchUserFullMatch } from '~/lib/user';
+import { getAllUsers, searchUserPartialMatch } from '~/lib/user';
+import { ConfirmDialog } from '~/components/misc/Dialog.vue';
+
+const FailDialogConfig: ConfirmDialog = {
+  typ: 'confirm',
+  title: 'ユーザの検索に失敗しました',
+  closeText: 'OK',
+  closeEmission: 'failAlertOk',
+};
 
 export default Vue.extend({
   name: 'ExplorePage',
@@ -36,6 +59,9 @@ export default Vue.extend({
     return {
       resultUsers: null as User[] | null,
       isSearching: false,
+      failDialogConfig: FailDialogConfig,
+      dialogShowing: false,
+      errMsg: '',
     };
   },
 
@@ -45,10 +71,12 @@ export default Vue.extend({
 
       const result = searchStr.length === 0
         ? await getAllUsers()
-        : await searchUserFullMatch(searchStr);
+        : await searchUserPartialMatch(searchStr);
       if (typeof result === 'string') {
         // eslint-disable-next-line no-console
         console.error('Failed to search users: ', result);
+        this.errMsg = result;
+        this.dialogShowing = true;
       } else {
         // @ts-ignore
         this.resultUsers = result;
