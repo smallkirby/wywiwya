@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import algoliasearch from 'algoliasearch';
 import { User, UID, fetchUsers } from '../user';
+import { tryConsumeRatelimit } from '../lib/ratelimit';
 
 const algoliaClient = algoliasearch(process.env.ALGOLIA_APP_ID!!, process.env.ALGOLIA_SEARCH_KEY!!);
 const algoliaIndex = algoliaClient.initIndex('firestore_users');
@@ -13,9 +14,15 @@ type UserSearchRet = {
 }
 
 export const searchUserPartial =
-  functions.region('asia-northeast1').https.onCall(async (data): Promise<UserSearchRet> => {
+  functions.region('asia-northeast1').https.onCall(async (data, context): Promise<UserSearchRet> => {
     // NOTE: allow unauthenticated users
-    // TODO: DO RATE LIMIT
+
+    if (!tryConsumeRatelimit(context.rawRequest.ip, 'searchUserPartial', 30)) {
+      return {
+        err: 'rate-limit',
+        users: [],
+      };
+    }
 
     if (typeof data.searchStr !== 'string') {
       return {
