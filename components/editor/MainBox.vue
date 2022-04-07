@@ -12,8 +12,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { EditorConfiguration, Editor, fromTextArea, Position, countColumn } from 'codemirror';
+import { EditorConfiguration, Editor, fromTextArea, Position } from 'codemirror';
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
 import { uploadImage } from '~/lib/gyazo';
 import '~/static/css/wywiwya.css';
 import 'codemirror/lib/codemirror.css';
@@ -65,21 +66,14 @@ export default Vue.extend({
     };
     this.editor = fromTextArea(editor, config);
 
-    this.editor.on('change', () => {
+    this.editor.on('change', _.throttle(() => {
       if (this.editor === null) { return; }
       this.$emit('mdCodeChange', this.editor.getDoc().getValue());
-    });
+    }, 500));
 
     this.editor.on('drop', (editor, event) => {
       if (this.editor === null) { return; }
       this.handleImageDrop(editor, event);
-    });
-
-    const charWidth = this.editor.defaultCharWidth();
-    this.editor.on('renderLine', (editor, line, elt) => {
-      const off = countColumn(line.text, null, editor.getOption('tabSize')!!) * charWidth;
-      elt.style.textIndent = '-' + off + 'px';
-      elt.style.paddingLeft = (4 + off) + 'px';
     });
   },
 
