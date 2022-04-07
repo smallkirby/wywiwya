@@ -50,6 +50,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import _ from 'lodash';
 import { ConfirmDialog } from '../misc/Dialog.vue';
 import { EditorBinding } from './MainBox.vue';
 import { Diary } from '~/typings/diary';
@@ -122,7 +123,7 @@ export default Vue.extend({
     onCodeChange (mdCode: string) {
       (this.$refs.previewBox!! as any).compileWrite(mdCode);
       this.diaryChanged.contentMd = mdCode;
-      this.saveDiaryLocal();
+      this.saveDiaryLocal(this.diaryChanged);
 
       if (this.latestString !== mdCode && this.$refs.toolbar !== undefined) {
         // @ts-ignore
@@ -147,9 +148,10 @@ export default Vue.extend({
       this.diaryChanged.isTemporary = diary.isTemporary;
     },
 
-    saveDiaryLocal () {
-      setDiary(this.diaryChanged);
-    },
+    // save on local storage has no need to be done frequently.
+    saveDiaryLocal: _.throttle((diaryToSave: Diary) => {
+      setDiary(diaryToSave);
+    }, 1000 * 10),
 
     setText (newText: string) {
       // dirty workaround
