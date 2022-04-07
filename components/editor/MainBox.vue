@@ -66,7 +66,7 @@ export default Vue.extend({
     };
     this.editor = fromTextArea(editor, config);
 
-    this.editor.on('change', _.debounce(() => {
+    this.editor.on('change', _.throttle(() => {
       if (this.editor === null) { return; }
       this.$emit('mdCodeChange', this.editor.getDoc().getValue());
     }, 500));
