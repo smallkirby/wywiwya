@@ -16,6 +16,8 @@ GitHub has below information as secrets:
 | `FIREBASE_SERVICE_ACCOUNT_WYWIWYA` | Yes | GCP service account secret |
 | `GYAZO_ACCESS_TOKEN` | Yes | Gyazo access token of WYWIWYA for annonymous image upload |
 | `MICROCMS_API_KEY` | No | MicroCMS API key, whose permission is restricted only to GET |
+| `ALGOLIA_APP_ID` | No | Algolia's app ID for WYWIWYA |
+| `ALGOLIA_SEARCH_KEY` | Yes/No | Algolia API key, whose permission is restricted only to GET of `users` |
 
 - If `Must be Secret` is `No`, there is no need to keep it secret essentially.
   - But Google and GitGuradian annoy me by saying that the secrets are leaked, if they are hardcoded.

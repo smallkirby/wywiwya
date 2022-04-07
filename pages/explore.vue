@@ -27,7 +27,7 @@
 <script lang="ts">
 import { User } from '@firebase/auth';
 import Vue from 'vue';
-import { getAllUsers, searchUserFullMatch } from '~/lib/user';
+import { getAllUsers, searchUserPartialMatch } from '~/lib/user';
 
 export default Vue.extend({
   name: 'ExplorePage',
@@ -45,7 +45,7 @@ export default Vue.extend({
 
       const result = searchStr.length === 0
         ? await getAllUsers()
-        : await searchUserFullMatch(searchStr);
+        : await searchUserPartialMatch(searchStr);
       if (typeof result === 'string') {
         // eslint-disable-next-line no-console
         console.error('Failed to search users: ', result);
