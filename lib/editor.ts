@@ -1,4 +1,5 @@
 import { Editor } from 'codemirror';
+import _ from 'lodash';
 
 export class Syncher {
   private editor: Editor;
@@ -17,7 +18,7 @@ export class Syncher {
     this.enabled = true;
   }
 
-  private buildBlockMap (mdCode: string): Record<number, number> {
+  private buildBlockMapNotThrottled (mdCode: string): Record<number, number> {
     const tmpBlockMap: Record<number, number> = {};
     let currentLineNum = 0;
     let currentBlockNum = 0;
@@ -46,7 +47,7 @@ export class Syncher {
     return tmpBlockMap;
   }
 
-  private buildScrollMap (elms: HTMLCollection, window: Window): Record<number, number> {
+  private buildScrollMapNotThrottled (elms: HTMLCollection, window: Window): Record<number, number> {
     const tmpScrollMap: Record<number, number> = {};
     tmpScrollMap[0] = 0;
     if (elms.length === 0) {
@@ -65,6 +66,16 @@ export class Syncher {
     return tmpScrollMap;
   }
 
+  private buildBlockMap = _.throttle((mdContent, callback) => {
+    this.blockMap = this.buildBlockMapNotThrottled(mdContent);
+    callback();
+  }, 100);
+
+  private buildScrollMap = _.throttle((elms, window, callback) => {
+    this.scrollMap = this.buildScrollMapNotThrottled(elms, window);
+    callback();
+  }, 100);
+
   private getPreviewElements (): HTMLCollection {
     return this.preview.contentDocument!!.children[0].getElementsByTagName('body')[0].children;
   };
@@ -82,14 +93,21 @@ export class Syncher {
 
     // Build mapping if editor is marked as dirty
     if (this.blockMap === null || this.isEditorDirty) {
-      this.blockMap = this.buildBlockMap(this.editor.getValue());
+      this.buildBlockMap(this.editor.getValue(), () => {
+        this.syncToPreview(window);
+      });
     }
     if (this.scrollMap === null || this.isEditorDirty) {
-      this.scrollMap = this.buildScrollMap(elements, window);
+      this.buildScrollMap(elements, window, () => {
+        this.syncToPreview(window);
+      });
     }
     this.isEditorDirty = false;
 
     // Get corresponding preview element
+    if (!this.blockMap || !this.scrollMap) {
+      return;
+    }
     let currentElementIx = this.blockMap[currentLineNum];
     if (currentElementIx === undefined) {
       currentElementIx = elements.length - 1;
