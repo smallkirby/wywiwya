@@ -42,7 +42,7 @@ describe('Test of block counts', () => {
       9,
       9,
     ];
-    const blockMap = (syncher as any).buildBlockMap(mdCode);
+    const blockMap = (syncher as any).buildBlockMapNotThrottled(mdCode);
     for (const ix of Array(answer.length)) {
       expect(answer[ix] === blockMap[ix]);
     }
