@@ -17,11 +17,13 @@
             :is-temporary="diaryChanged.isTemporary"
             :is-public="diaryChanged.isPublic"
             :mode="mode"
+            :synched="true"
             @requestSave="onRequestSave"
             @temporaryStateChanged="onTemporaryChange"
             @publicStateChanged="onPublicChange"
             @requestBindingChange="onRequestBindingChange"
             @requestModeChange="(newMode) => $emit('requestModeChange', newMode)"
+            @requestSyncChange="onSyncChanged"
           />
         </div>
 
@@ -250,6 +252,14 @@ export default Vue.extend({
     onEditorScrolled () {
       if (this.syncher !== null) {
         this.syncher.syncToPreview(window);
+      }
+    },
+
+    onSyncChanged (value: boolean) {
+      if (value) {
+        this.syncher?.enable();
+      } else {
+        this.syncher?.disable();
       }
     },
   },

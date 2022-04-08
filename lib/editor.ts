@@ -6,6 +6,7 @@ export class Syncher {
   private blockMap: Record<number, number> | null;
   private scrollMap: Record<number, number> | null;
   private isEditorDirty: boolean;
+  private enabled: boolean;
 
   constructor (editor: Editor, iframe: HTMLIFrameElement) {
     this.editor = editor;
@@ -13,6 +14,7 @@ export class Syncher {
     this.blockMap = null;
     this.scrollMap = null;
     this.isEditorDirty = true;
+    this.enabled = true;
   }
 
   private buildBlockMap (mdCode: string): Record<number, number> {
@@ -69,6 +71,10 @@ export class Syncher {
 
   // Currently, it only supports CommonMarkdown newline syntax. (single '\n' doesn't insert newline)
   syncToPreview (window: Window) {
+    if (!this.enabled) {
+      return;
+    }
+
     const scrollInfo = this.editor.getScrollInfo();
     const defaultHeight = (scrollInfo.height - 50) / this.editor.lineCount(); // 50px is padding-bottom
     const currentLineNum = Math.round(scrollInfo.top / defaultHeight);
@@ -94,5 +100,13 @@ export class Syncher {
 
   markAsDirty () {
     this.isEditorDirty = true;
+  }
+
+  enable () {
+    this.enabled = true;
+  }
+
+  disable () {
+    this.enabled = false;
   }
 }

@@ -8,7 +8,7 @@
         {{ dateString }}
       </div>
 
-      <div class="flex ml-2">
+      <div class="flex ml-2 items-begin">
         <!-- SAVE BOX -->
         <div class="m-1 border-2 border-skdark hover:border-skdark-light rounded-md h-full px-2">
           <div v-show="isSaving" class="w-14 h-6">
@@ -63,7 +63,7 @@
         <div class="my-1 px-1 w-18 h-full py-auto">
           <button
             v-tooltip="binding === 'vim' ? 'vimバインドです' : '通常のキーバインドです'"
-            class="border-2 border-skdark hover:border-skdark-light p-1 rounded-md"
+            class="border-2 border-skdark-dark hover:border-skdark-light p-1 rounded-md"
             :class="{'border-skdark-light': binding === 'vim'}"
             @click="onRequestBindingChange"
           >
@@ -71,10 +71,27 @@
           </button>
         </div>
 
+        <!-- Preview Sync -->
+        <div v-if="currentMode === 'edit'" class="pl-1 mr-1 my-1 w-8 h-full hidden md:block">
+          <div class="rounded-md outline-none">
+            <button
+              v-tooltip="currentSynched ? 'プレビューとエディタはSyncしています' : 'プレビューとエディタはSyncしていません'"
+              class="border-2 px-1 rounded-md"
+              :class="{
+                'border-skdark-light': currentSynched,
+                'border-skdark-dark': !currentSynched,
+              }"
+              @click="onRequestSyncChange"
+            >
+              <font-awesome-icon icon="fa-brands fa-nfc-symbol" />
+            </button>
+          </div>
+        </div>
+
         <!-- Edit or View -->
         <div class="px-1 my-1 w-10 h-full">
-          <div class="border-2 border-skdark hover:border-skdark-light rounded-md">
-            <button class="w-full h-full px-1 outline-none" @click="onRequestModeChange">
+          <div class="border-2 border-skdark-dark hover:border-skdark-light rounded-md">
+            <button class="w-full h-full outline-none" @click="onRequestModeChange">
               <font-awesome-icon
                 v-if="currentMode === 'edit'"
                 v-tooltip="'編集モードです'"
@@ -95,7 +112,7 @@
       <!--  Dirty Indicator -->
       <div
         class="text-lg font-bold pr-8 border-b-2
-        md:border-b-0 md:border-l-2  border-skgray pb-1 md:pb-0 px-2 mb-1 md:mb-0"
+        md:border-b-0 md:border-l-2  border-skgray pb-1 md:pb-0 ml-2 px-2 mb-1 md:mb-0"
       >
         <div class="w-7 h-7 text-center">
           <font-awesome-icon
@@ -141,6 +158,10 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    synched: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data () {
@@ -150,6 +171,7 @@ export default Vue.extend({
       isPublicNow: this.isPublic,
       binding: 'vim' as EditorBinding,
       currentMode: this.mode as EditorMode,
+      currentSynched: this.synched,
       isDirty: false,
     };
   },
@@ -192,6 +214,11 @@ export default Vue.extend({
         this.currentMode = 'view';
       }
       this.$emit('requestModeChange', this.currentMode);
+    },
+
+    onRequestSyncChange () {
+      this.currentSynched = !this.currentSynched;
+      this.$emit('requestSyncChange', this.currentSynched);
     },
 
     setDirty () {
