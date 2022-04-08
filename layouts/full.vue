@@ -2,7 +2,8 @@
   <div class="bg-skdark-dark w-full min-h-full h-auto text-skwhite-dark">
     <div class="flex justify-between items-center md:items-end flex-col md:flex-row">
       <wywiwya-logo />
-      <div class="md:mr-8">
+      <div class="md:mr-8 flex justify-center items-center">
+        <notification-badge />
         <user-me-badge />
       </div>
     </div>
