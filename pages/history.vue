@@ -29,7 +29,7 @@
           <!-- TODO: need paging -->
           <div v-else class="mt-8 mx-2 md:ml-12 flex flex-col">
             <div v-for="(diary, ix) in filteredDiaries" :key="ix" class="mb-2 md:pr-4">
-              <diary-badge :diary="diary" />
+              <diary-badge :diary="diary" class="mb-6" />
             </div>
           </div>
         </div>
