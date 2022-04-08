@@ -17,17 +17,19 @@
             :is-temporary="diaryChanged.isTemporary"
             :is-public="diaryChanged.isPublic"
             :mode="mode"
+            :synched="true"
             @requestSave="onRequestSave"
             @temporaryStateChanged="onTemporaryChange"
             @publicStateChanged="onPublicChange"
             @requestBindingChange="onRequestBindingChange"
             @requestModeChange="(newMode) => $emit('requestModeChange', newMode)"
+            @requestSyncChange="onSyncChanged"
           />
         </div>
 
         <div class="flex flex-col md:flex-row items-center justify-center">
           <div v-show="mode === 'edit'" class="w-full md:w-1/2 mt-2">
-            <editor-main-box ref="mainEditor" @mdCodeChange="onCodeChange" />
+            <editor-main-box ref="mainEditor" @mdCodeChange="onCodeChange" @editorScrolled="onEditorScrolled" />
           </div>
           <div
             class="w-full md:w-1/2 overflow-x-hidden md:block"
@@ -51,11 +53,13 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import _ from 'lodash';
+import { Editor } from 'codemirror';
 import { ConfirmDialog } from '../misc/Dialog.vue';
 import { EditorBinding } from './MainBox.vue';
 import { Diary } from '~/typings/diary';
 import { getDiary, removeDiary, setDiary } from '~/lib/localstorage';
 import { updateDiary } from '~/lib/diary';
+import { Syncher } from '~/lib/editor';
 
 const FailDialogConfig: ConfirmDialog = {
   typ: 'confirm',
@@ -85,6 +89,7 @@ export default Vue.extend({
       latestString: this.diary.contentMd,
       failDialogConfig: FailDialogConfig,
       isUpdateFailShowing: false,
+      syncher: null as Syncher | null,
     };
   },
 
@@ -109,10 +114,17 @@ export default Vue.extend({
 
   mounted () {
     const handler = setInterval(() => {
-      if (this.$refs.previewBox) {
+      if (this.$refs.previewBox && this.$refs.mainEditor) {
+        // Restore and compile a diary in local storage
         this.restoreUnsavedDiary();
         (this.$refs.previewBox!! as any).compileWrite(this.diaryChanged.contentMd);
         this.setText(this.diaryChanged.contentMd);
+
+        // Instantiate syncher
+        this.syncher = new Syncher(
+          (this.$refs.mainEditor as any).getEditorInstance(),
+          (this.$refs.previewBox as any).getIframe(),
+        );
 
         clearInterval(handler);
       }
@@ -121,13 +133,18 @@ export default Vue.extend({
 
   methods: {
     onCodeChange (mdCode: string) {
-      (this.$refs.previewBox!! as any).compileWrite(mdCode);
+      const previewBox = this.$refs.previewBox;
+      if (!previewBox) { return; }
+      (previewBox as any).compileWrite(mdCode);
       this.diaryChanged.contentMd = mdCode;
       this.saveDiaryLocal(this.diaryChanged);
 
       if (this.latestString !== mdCode && this.$refs.toolbar !== undefined) {
         // @ts-ignore
         this.$refs.toolbar.setDirty();
+      }
+      if (this.syncher) {
+        this.syncher.markAsDirty();
       }
     },
 
@@ -209,6 +226,40 @@ export default Vue.extend({
       if (mainEditor) {
         // @ts-ignore
         mainEditor.changeBinding(newBinding);
+      }
+    },
+
+    getEditorInstance (): Editor | null {
+      const mainEditor = this.$refs.mainEditor;
+      if (mainEditor) {
+        // @ts-ignore
+        return mainEditor.getEditorInstance();
+      } else {
+        return null;
+      }
+    },
+
+    getIframeInstance (): HTMLIFrameElement | null {
+      const previewBox = this.$refs.previewBox;
+      if (previewBox) {
+        // @ts-ignore
+        return previewBox.getIframe();
+      } else {
+        return null;
+      }
+    },
+
+    onEditorScrolled () {
+      if (this.syncher !== null) {
+        this.syncher.syncToPreview(window);
+      }
+    },
+
+    onSyncChanged (value: boolean) {
+      if (value) {
+        this.syncher?.enable();
+      } else {
+        this.syncher?.disable();
       }
     },
   },

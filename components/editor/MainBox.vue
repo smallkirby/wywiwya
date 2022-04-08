@@ -75,6 +75,11 @@ export default Vue.extend({
       if (this.editor === null) { return; }
       this.handleImageDrop(editor, event);
     });
+
+    this.editor.on('scroll', _.throttle(() => {
+      if (this.editor === null) { return; }
+      this.$emit('editorScrolled');
+    }, 10));
   },
 
   methods: {
@@ -133,6 +138,10 @@ export default Vue.extend({
         uploadImage(file, editor, { start: targetRange.start, end: currentEnd });
         targetRange.start = currentEnd;
       }
+    },
+
+    getEditorInstance (): Editor | null {
+      return this.editor;
     },
   },
 });

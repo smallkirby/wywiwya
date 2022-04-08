@@ -42,8 +42,14 @@ export default Vue.extend({
   methods: {
     compileWrite (mdCode: string) {
       const code = compile2mdStyled(mdCode);
+      const elmUndefinable = this.$refs.previewBox;
+      if (!elmUndefinable) { return; }
       const elm = (this.$refs.previewBox!! as HTMLIFrameElement);
+      const currentY = elm.contentWindow!!.scrollY;
       elm.srcdoc = code;
+      elm.onload = () => {
+        elm.contentWindow!!.scrollTo(0, currentY);
+      };
 
       if (this.adjustHeight === true) {
         this.doAdjustHeight();
@@ -66,6 +72,10 @@ export default Vue.extend({
           elm.style.height = 'calc(100vh - 195px)';
         }
       }, 100);
+    },
+
+    getIframe (): HTMLIFrameElement | null {
+      return this.$refs.previewBox as HTMLIFrameElement | null;
     },
   },
 });
