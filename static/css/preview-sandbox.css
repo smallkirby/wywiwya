@@ -6,6 +6,18 @@ body {
   padding-right: 0.2rem;
 }
 
+body::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+body::-webkit-scrollbar-track {
+  background: #130F1A;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #EBDBB2;
+}
+
 h1,h2,h3,h4,h5 {
   margin-top: 0.8rem;
   margin-bottom: 1.2rem;

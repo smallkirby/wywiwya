@@ -177,4 +177,15 @@ export default Vue.extend({
   color: #B16286;
 }
 
+.CodeMirror ::-webkit-scrollbar {
+  width: 0.5em;
+}
+.CodeMirror ::-webkit-scrollbar-track {
+  color: #130F1A;
+  background: #130F1A;
+}
+.CodeMirror ::-webkit-scrollbar-thumb {
+  background: #EBDBB2;
+}
+
 </style>

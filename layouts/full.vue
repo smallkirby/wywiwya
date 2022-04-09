@@ -43,4 +43,16 @@ export default Vue.extend({
 body {
   font-family: 'Ubuntu Mono';
 }
+
+body::-webkit-scrollbar {
+  width: 0.7em;
+}
+
+body::-webkit-scrollbar-track {
+  background: #130F1A;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #172131;
+}
 </style>
