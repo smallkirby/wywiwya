@@ -32,7 +32,8 @@
           </span> 件 <span class="text-skgray">(件数には非公開のものを含みます)</span>
         </div>
 
-        <div class="md:px-4">
+        <vue-loading v-if="isLoadingDiaries" class="pt-20" />
+        <div v-else class="md:px-4">
           <div v-if="diaries.length !== 0">
             <div v-for="(diary, ix) in diaries" :key="ix" class="mb-4">
               <diary-badge :diary="diary" />
@@ -60,6 +61,7 @@ export default Vue.extend({
   data () {
     return {
       isLoading: true,
+      isLoadingDiaries: false,
       user: null as User | null,
       uid: '',
       diaries: [] as Diary[],
@@ -81,7 +83,9 @@ export default Vue.extend({
       this.isLoading = false;
     }
 
+    this.isLoadingDiaries = true;
     this.diaries = await fetchOthersPublicDiaries(this.uid);
+    this.isLoadingDiaries = false;
   },
 });
 
