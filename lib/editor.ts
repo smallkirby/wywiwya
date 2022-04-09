@@ -1,6 +1,8 @@
 import { Editor } from 'codemirror';
 import _ from 'lodash';
 
+type BlockIncrementFlag = 'imm' | 'lazy' | 'cont';
+
 export class Syncher {
   private editor: Editor;
   private preview: HTMLIFrameElement;
@@ -23,22 +25,34 @@ export class Syncher {
     let currentLineNum = 0;
     let currentBlockNum = 0;
     let isPreviousLineEmpty = false;
+    let blockIncFlag: BlockIncrementFlag = 'cont';
 
     for (const _line of mdCode.split('\n')) {
-      tmpBlockMap[currentLineNum] = currentBlockNum;
       const line = _line.trim();
+      if (line.length !== 0 && blockIncFlag === 'lazy' && isPreviousLineEmpty) {
+        ++currentBlockNum;
+        blockIncFlag = 'cont';
+      }
+      tmpBlockMap[currentLineNum] = currentBlockNum;
 
       if (line.startsWith('#') || line.startsWith('- ')) {
         // Unconditionally increment block
-        ++currentBlockNum;
+        blockIncFlag = 'imm';
         isPreviousLineEmpty = false;
       } else if (line.length !== 0 && isPreviousLineEmpty) {
-        ++currentBlockNum;
+        blockIncFlag = 'lazy';
         isPreviousLineEmpty = false;
       } else if (line.length !== 0) {
+        blockIncFlag = 'cont';
         isPreviousLineEmpty = false;
-      } else {
+      } else if (line.length === 0) {
+        // @ts-ignore
+        blockIncFlag = blockIncFlag === 'lazy' ? 'lazy' : 'cont';
         isPreviousLineEmpty = true;
+      }
+
+      if (blockIncFlag === 'imm') {
+        ++currentBlockNum;
       }
 
       ++currentLineNum;
@@ -47,19 +61,39 @@ export class Syncher {
     return tmpBlockMap;
   }
 
-  private buildScrollMapNotThrottled (elms: HTMLCollection, window: Window): Record<number, number> {
-    const tmpScrollMap: Record<number, number> = {};
-    tmpScrollMap[0] = 0;
-    if (elms.length === 0) {
-      return tmpScrollMap;
+  private getRecursiveScrollMap (elm: Element, window: Window, currentMap: number[]): number[] {
+    if (elm.tagName.toLowerCase() === 'ul') {
+      const children = elm.children;
+      for (const ix of Array(children.length).keys()) {
+        const child = children.item(ix);
+        if (child !== null) {
+          currentMap = this.getRecursiveScrollMap(child, window, currentMap);
+        }
+      }
+    } else {
+      const marginBottom = window.getComputedStyle(elm).marginBottom.split('px')[0];
+      currentMap.push(currentMap[currentMap.length - 1] + elm.clientHeight + Number(marginBottom));
     }
+
+    return currentMap;
+  }
+
+  private buildScrollMapNotThrottled (elms: HTMLCollection, window: Window): Record<number, number> {
+    if (elms.length === 0) {
+      return {
+        0: 0,
+      };
+    }
+
+    let tmpScrollMap: number[] = [];
+    tmpScrollMap.push(0);
+
     for (const ix of Array(elms.length - 1).keys()) {
       const elm = elms.item(ix);
       if (elm === null) {
-        tmpScrollMap[ix + 1] = tmpScrollMap[ix];
+        tmpScrollMap.push(tmpScrollMap[tmpScrollMap.length - 1]);
       } else {
-        const marginBottom = window.getComputedStyle(elm).marginBottom.split('px')[0];
-        tmpScrollMap[ix + 1] = tmpScrollMap[ix] + elm.clientHeight + Number(marginBottom);
+        tmpScrollMap = this.getRecursiveScrollMap(elm, window, tmpScrollMap);
       }
     }
 
@@ -80,15 +114,19 @@ export class Syncher {
     return this.preview.contentDocument!!.children[0].getElementsByTagName('body')[0].children;
   };
 
+  // Get actual top line number.
+  // Here, `line` means multiple sentence split by '\n'
+  private getTopLineNum (): number {
+    const topOffset = this.editor.heightAtLine(0);
+    return this.editor.lineAtHeight(this.editor.getScrollInfo().top + topOffset);
+  }
+
   // Currently, it only supports CommonMarkdown newline syntax. (single '\n' doesn't insert newline)
   syncToPreview (window: Window) {
     if (!this.enabled) {
       return;
     }
 
-    const scrollInfo = this.editor.getScrollInfo();
-    const defaultHeight = (scrollInfo.height - 50) / this.editor.lineCount(); // 50px is padding-bottom
-    const currentLineNum = Math.round(scrollInfo.top / defaultHeight);
     const elements = this.getPreviewElements();
 
     // Build mapping if editor is marked as dirty
@@ -103,6 +141,8 @@ export class Syncher {
       });
     }
     this.isEditorDirty = false;
+
+    const currentLineNum = this.getTopLineNum();
 
     // Get corresponding preview element
     if (!this.blockMap || !this.scrollMap) {

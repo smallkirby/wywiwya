@@ -21,7 +21,48 @@ describe('Test of block counts', () => {
 
     ## subtitle2
 
-    \`waiwai\``;
+    \`waiwai\`
+    hogehoge
+    fugafuga`;
+
+    const answer = [
+      0,
+      1,
+      1,
+      1,
+      2,
+      3,
+      3,
+      3,
+      4,
+      5,
+      6,
+      6,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9,
+      9,
+      9,
+    ];
+    const blockMap = (syncher as any).buildBlockMapNotThrottled(mdCode);
+    for (const ix of Array(answer.length).keys()) {
+      expect(answer[ix]).toBe(blockMap[ix]);
+    }
+  });
+
+  test('Simple block parser check2', () => {
+    const syncher = new Syncher(null as any, null as any);
+    const mdCode = `# kirby
+
+    ## ほげほげ
+
+    ふがふが
+
+    ほげほげほげ
+    ふがふがふが`;
 
     const answer = [
       0,
@@ -29,22 +70,13 @@ describe('Test of block counts', () => {
       1,
       2,
       2,
+      2,
       3,
       3,
-      4,
-      5,
-      6,
-      6,
-      7,
-      7,
-      8,
-      8,
-      9,
-      9,
     ];
     const blockMap = (syncher as any).buildBlockMapNotThrottled(mdCode);
-    for (const ix of Array(answer.length)) {
-      expect(answer[ix] === blockMap[ix]);
+    for (const ix of Array(answer.length).keys()) {
+      expect(answer[ix]).toBe(blockMap[ix]);
     }
   });
 });
