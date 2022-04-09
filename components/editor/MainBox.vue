@@ -27,6 +27,7 @@ import 'codemirror/addon/fold/markdown-fold.js';
 import 'codemirror/addon/fold/foldcode.js';
 import 'codemirror/addon/fold/foldgutter.js';
 import 'codemirror/addon/fold/foldgutter.css';
+import 'codemirror/addon/selection/active-line.js';
 
 export type EditorBinding = 'vim' | 'plain';
 
@@ -54,6 +55,7 @@ export default Vue.extend({
       smartIndent: true,
       indentWithTabs: false,
       lineWrapping: true,
+      styleActiveLine: true,
       keyMap: 'vim',
       foldGutter: true,
       gutters: [
