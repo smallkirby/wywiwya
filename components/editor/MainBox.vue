@@ -16,6 +16,7 @@ import { EditorConfiguration, Editor, fromTextArea, Position } from 'codemirror'
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { uploadImage } from '~/lib/gyazo';
+import { tabHandler } from '~/lib/editor';
 import '~/static/css/wywiwya.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown.js';
@@ -66,6 +67,7 @@ export default Vue.extend({
       ],
       extraKeys: {
         Enter: 'newlineAndIndentContinueMarkdownList',
+        Tab: tabHandler,
       },
     };
     this.editor = fromTextArea(editor, config);
