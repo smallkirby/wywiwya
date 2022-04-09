@@ -28,6 +28,7 @@ import 'codemirror/addon/fold/foldcode.js';
 import 'codemirror/addon/fold/foldgutter.js';
 import 'codemirror/addon/fold/foldgutter.css';
 import 'codemirror/addon/selection/active-line.js';
+import 'codemirror/addon/edit/closebrackets.js';
 
 export type EditorBinding = 'vim' | 'plain';
 
@@ -57,6 +58,7 @@ export default Vue.extend({
       lineWrapping: true,
       styleActiveLine: true,
       keyMap: 'vim',
+      autoCloseBrackets: true,
       foldGutter: true,
       gutters: [
         'CodeMirror-linenumbers',
