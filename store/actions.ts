@@ -2,7 +2,7 @@ import { Commit, ActionContext } from 'vuex';
 import { User as FirestoreUser } from 'firebase/auth';
 import { State } from './state';
 import { Logout } from '~/lib/auth';
-import { fetchUser, setUser, setUserNotificationRead } from '~/lib/user';
+import { fetchUser, setUser, setUserNotificationRead, tryMigrateKusa } from '~/lib/user';
 
 const actions = {
   signout: async ({ commit }: {commit: Commit}) => {
@@ -39,6 +39,7 @@ const actions = {
         return;
       }
     }
+    me.kusa = await tryMigrateKusa(me);
 
     // set numDiaries
     commit('commitUser', me);

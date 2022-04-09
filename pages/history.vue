@@ -17,16 +17,30 @@
           <diary-search-box @requestDateSearch="onRequestDateSearch" />
         </div>
 
-        <div>
-          <div class="text-center md:text-left mt-8">
-            Diaries: {{ filteredDiaries.length }} 件
+        <div class="flex mt-8">
+          <div class="text-center md:text-left">
+            Diaries: {{ me.diaries.length }} 件
           </div>
         </div>
 
-        <div>
-          <first-diary-prompt v-if="diaries.length === 0" class="mt-4 mb-8" />
+        <!-- PAGINATION -->
+        <div class="flex items-center mt-2 mx-auto">
+          <button
+            v-for="ix in Array(Math.ceil(me.diaries.length / 5)).keys()"
+            :key="ix"
+            class="border-2 rounded-md px-2 mx-1 hover:border-skwhite-dark"
+            :class="{
+              'border-skdark-light': page === ix,
+              'border-skdark': page !== ix,
+            }"
+          >
+            {{ ix + 1 }}
+          </button>
+        </div>
 
-          <!-- TODO: need paging -->
+        <div>
+          <first-diary-prompt v-if="diaries.length === 0 && page === 0" class="mt-4 mb-8" />
+
           <div v-else class="mt-8 mx-2 md:ml-12 flex flex-col">
             <div v-for="(diary, ix) in filteredDiaries" :key="ix" class="mb-2 md:pr-4">
               <diary-badge :diary="diary" class="mb-6" />
@@ -44,6 +58,8 @@ import { mapGetters } from 'vuex';
 import { fetchMyDiaries } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
+const DATA_BLOCK_LIMIT = 10;
+
 export const HistoryPage = Vue.extend({
   name: 'HistoryPage',
 
@@ -52,6 +68,7 @@ export const HistoryPage = Vue.extend({
       diaries: [] as Diary[],
       filteredDiaries: [] as Diary[],
       isDiariesFetched: false,
+      page: 0,
     };
   },
 
@@ -72,7 +89,7 @@ export const HistoryPage = Vue.extend({
 
   methods: {
     async fetchDiaries (): Promise<Diary[]> {
-      const diaries = await fetchMyDiaries(this.me.uid, this.me.diaries.length);
+      const diaries = await fetchMyDiaries(this.me.uid, DATA_BLOCK_LIMIT);
       if (diaries === null) {
         // eslint-disable-next-line no-console
         console.error('Failed to fetch diaries...');

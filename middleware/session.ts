@@ -1,12 +1,13 @@
 import { onAuthStateChanged, Unsubscribe } from 'firebase/auth';
 import { Store } from 'vuex';
 import { isValidProviderUser, isValidUser } from '~/lib/auth';
+import { tryMigrateKusa } from '~/lib/user';
 import { getProjectAuth, isAppInitialized } from '~/plugins/firebase';
 import { State } from '~/store/state';
 
 let unsubscribe: null | Unsubscribe = null;
 
-export default ({ store }: {store: Store<State>}) => {
+export default async ({ store }: {store: Store<State>}) => {
   if (!isAppInitialized()) {
     return;
   }
@@ -33,6 +34,7 @@ export default ({ store }: {store: Store<State>}) => {
       store.commit('commitUser', me);
     }
   } else {
+    me.kusa = await tryMigrateKusa(me);
     store.commit('commitUser', me);
   }
 };

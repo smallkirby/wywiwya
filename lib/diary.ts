@@ -1,5 +1,16 @@
-// eslint-disable-next-line max-len
-import { collection, getDocs, getFirestore, query, where, updateDoc, serverTimestamp, orderBy, limit, DocumentSnapshot, QueryConstraint } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+  updateDoc,
+  serverTimestamp,
+  orderBy,
+  limit,
+  DocumentSnapshot,
+  QueryConstraint,
+} from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import moment from 'moment';
 import { Diary, DID } from '~/typings/diary';
@@ -66,9 +77,8 @@ export const fetchMyDiaryByDate = async (uid: UID, did: DID): Promise<Diary | nu
 };
 
 // fetches most recently edited diaries.
-export const fetchMyDiaries = async (uid: string, numRequired: number): Promise<Diary[] | null> => {
+export const fetchMyDiaries = async (uid: UID, numRequired: number): Promise<Diary[] | null> => {
   if (numRequired <= 0) { numRequired = 1; }
-
   const result = await queryDiaries(where('author', '==', uid), orderBy('lastUpdatedAt', 'desc'), limit(numRequired));
   if (result === null || result.length === 0) {
     return null;

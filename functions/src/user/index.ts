@@ -36,8 +36,13 @@ export const addDiaryRef =
     }
   };
 
+type Kusa = {
+  date: Date,
+  did: string,
+};
+
 // NOTE: costy
-const recalculateKusa = async (uid: UID): Promise<string | null> => {
+const recalculateKusa = async (uid: UID): Promise<Kusa[] | string> => {
   const userRef = firestore().collection('users').doc(uid);
   const userSnap = await userRef.get();
   const diariesSnap = await firestore().collection('diaries').where('author', '==', uid).get();
@@ -45,19 +50,23 @@ const recalculateKusa = async (uid: UID): Promise<string | null> => {
   if (!userSnap.exists) {
     return 'while re-calculating kusa, user not found.';
   }
-  const kusa: Date[] = [];
+  const kusa: Kusa[] = [];
+
   diariesSnap.docs.forEach((doc) => {
-    kusa.push(doc.data().createdAt.toDate() as Date);
+    kusa.push({
+      date: doc.data().createdAt.toDate() as Date,
+      did: doc.data().id,
+    });
   });
 
   await userRef.update({
     kusa,
   });
 
-  return null;
+  return kusa;
 };
 
-export const addKusa = async (uid: UID): Promise<string | null> => {
+export const addKusa = async (uid: UID, did: string): Promise<string | null> => {
   const userRef = firestore().collection('users').doc(uid);
   const userSnap = await userRef.get();
   if (!userSnap.exists) {
@@ -70,9 +79,15 @@ export const addKusa = async (uid: UID): Promise<string | null> => {
 
     let existingKusa = user.kusa;
     if (existingKusa === undefined || existingKusa === null) {
-      existingKusa = [new Date()];
+      existingKusa = [{
+        date: new Date(),
+        did,
+      }];
     } else {
-      existingKusa.push(new Date());
+      existingKusa.push({
+        date: new Date(),
+        did,
+      });
     }
 
     await userRef.update({
@@ -82,7 +97,7 @@ export const addKusa = async (uid: UID): Promise<string | null> => {
     // re-calculate kusa if needed
     if (user.diaries.length !== existingKusa.length) {
       const result = await recalculateKusa(uid);
-      if (result !== null) {
+      if (typeof result === 'string') {
         return result;
       }
     }
@@ -206,5 +221,31 @@ export const searchUserFullMatch =
     return {
       err: null,
       users,
+    };
+  });
+
+type MigrateKusaRet = {
+  err: 'auth' | 'update' | null,
+};
+
+export const migrateKusa =
+  functions.region('asia-northeast1').https.onCall(async (_, context): Promise<MigrateKusaRet> => {
+    if (!isAuthed(context.auth!!)) {
+      return {
+        err: 'auth',
+      };
+    }
+
+    const newKusa = await recalculateKusa(context.auth!!.uid);
+    if (typeof newKusa === 'string') {
+      // eslint-disable-next-line no-console
+      console.error(newKusa);
+      return {
+        err: 'update',
+      };
+    }
+
+    return {
+      err: null,
     };
   });

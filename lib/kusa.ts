@@ -1,8 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 import moment, { Moment } from 'moment';
 import { serverTimestamp2moment } from './util/date';
-
-export type Kusa = Date[];
+import { Kusa } from '~/typings/kusa';
 
 export type KusaEntry = {
   isWritten: boolean,
@@ -11,7 +10,7 @@ export type KusaEntry = {
 
 export const getKusaEntries = (kusa: Kusa): KusaEntry[][] => {
   const kusaMoments = kusa.map((ent) => {
-    return serverTimestamp2moment(ent as any as Timestamp);
+    return serverTimestamp2moment(ent.date as any as Timestamp);
   });
 
   // TODO: for now, show only this year's.

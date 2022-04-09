@@ -1,6 +1,7 @@
 // eslint-disable-next-line max-len
 import { doc, getDoc, getFirestore, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
+import { Kusa } from '~/typings/kusa';
 import { getProjectFunctions, getProjectFirestore } from '~/plugins/firebase';
 import { User, UID } from '~/store/state';
 
@@ -28,6 +29,41 @@ function convertServerUser (user: any): any {
       user.readNotifications = [];
     }
     return user;
+  }
+};
+
+export const kusaNeedMigration = (user: User): boolean => {
+  for (const kusa of user.kusa) {
+    if (kusa.did === undefined) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const tryMigrateKusa = async (user: User): Promise<Kusa> => {
+  if (kusaNeedMigration(user)) {
+    const functions = getProjectFunctions();
+    const f = httpsCallable(functions, 'migrateKusa');
+    return await f({}).then(async (result) => {
+      const error = (result.data as any).err;
+      if (error !== null) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to migrate kusa', error);
+        return [];
+      } else {
+        // fetch kusa again
+        const db = getProjectFirestore();
+        const data = await getDoc(doc(db, 'users', user.uid));
+        return (data.data() as any).kusa;
+      }
+    }).catch((e: any) => {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      return [];
+    });
+  } else {
+    return user.kusa;
   }
 };
 
