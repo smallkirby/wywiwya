@@ -26,13 +26,14 @@
         <!-- PAGINATION -->
         <div class="flex items-center mt-2 mx-auto">
           <button
-            v-for="ix in Array(Math.ceil(me.diaries.length / 5)).keys()"
+            v-for="ix in Array(Math.ceil(me.diaries.length / pageLimit)).keys()"
             :key="ix"
             class="border-2 rounded-md px-2 mx-1 hover:border-skwhite-dark"
             :class="{
               'border-skdark-light': page === ix,
               'border-skdark': page !== ix,
             }"
+            @click="page !== ix && reloadPaginate(ix)"
           >
             {{ ix + 1 }}
           </button>
@@ -42,7 +43,8 @@
           <first-diary-prompt v-if="diaries.length === 0 && page === 0" class="mt-4 mb-8" />
 
           <div v-else class="mt-8 mx-2 md:ml-12 flex flex-col">
-            <div v-for="(diary, ix) in filteredDiaries" :key="ix" class="mb-2 md:pr-4">
+            <!-- TODO: filter diaries -->
+            <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
               <diary-badge :diary="diary" class="mb-6" />
             </div>
           </div>
@@ -58,7 +60,7 @@ import { mapGetters } from 'vuex';
 import { fetchMyDiaries } from '~/lib/diary';
 import { Diary } from '~/typings/diary';
 
-const DATA_BLOCK_LIMIT = 10;
+const DATA_BLOCK_LIMIT = 5; // TODO: 10
 
 export const HistoryPage = Vue.extend({
   name: 'HistoryPage',
@@ -68,6 +70,7 @@ export const HistoryPage = Vue.extend({
       diaries: [] as Diary[],
       filteredDiaries: [] as Diary[],
       isDiariesFetched: false,
+      pageLimit: DATA_BLOCK_LIMIT,
       page: 0,
     };
   },
@@ -88,8 +91,13 @@ export const HistoryPage = Vue.extend({
   },
 
   methods: {
+    async reloadPaginate (newPage: number): Promise<void> {
+      this.page = newPage;
+      this.diaries = await this.fetchDiaries();
+    },
+
     async fetchDiaries (): Promise<Diary[]> {
-      const diaries = await fetchMyDiaries(this.me.uid, DATA_BLOCK_LIMIT);
+      const diaries = await fetchMyDiaries(this.me, this.pageLimit, this.page);
       if (diaries === null) {
         // eslint-disable-next-line no-console
         console.error('Failed to fetch diaries...');

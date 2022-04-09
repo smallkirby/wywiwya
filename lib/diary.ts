@@ -1,5 +1,6 @@
 import {
   collection,
+  getDoc,
   getDocs,
   getFirestore,
   query,
@@ -10,13 +11,17 @@ import {
   limit,
   DocumentSnapshot,
   QueryConstraint,
+  startAfter,
+  doc,
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import moment from 'moment';
+import { serverTimestamp2moment } from './util/date';
 import { Diary, DID } from '~/typings/diary';
 import { User } from '~/store/state';
 import { getProjectFirestore, getProjectFunctions } from '~/plugins/firebase';
 import { UID } from '~/functions/src/lib/firebase';
+import { Kusa } from '~/typings/kusa';
 
 const convertDiary = (snap: DocumentSnapshot): Diary => {
   const data = snap.data() as any;
@@ -76,10 +81,53 @@ export const fetchMyDiaryByDate = async (uid: UID, did: DID): Promise<Diary | nu
   }
 };
 
+const beforeThePage = (page: number, pageLimit: number, kusa: Kusa): DID | null => {
+  const kusaMoments = kusa.map((ent) => {
+    return {
+      date: serverTimestamp2moment(ent.date as any),
+      did: ent.did ? ent.did : '',
+    };
+  });
+  if (page === 0) {
+    return null;
+  }
+  if (pageLimit * page > kusa.length) {
+    return null;
+  }
+  const sortedKusa = kusaMoments.sort((a, b) => {
+    return a.date.unix() - b.date.unix();
+  });
+
+  return sortedKusa[pageLimit * page - 1].did;
+};
+
 // fetches most recently edited diaries.
-export const fetchMyDiaries = async (uid: UID, numRequired: number): Promise<Diary[] | null> => {
-  if (numRequired <= 0) { numRequired = 1; }
-  const result = await queryDiaries(where('author', '==', uid), orderBy('lastUpdatedAt', 'desc'), limit(numRequired));
+export const fetchMyDiaries = async (user: User, numRequired: number, page: number): Promise<Diary[] | null> => {
+  if (numRequired <= 0) { numRequired = 0; }
+
+  let query = [
+    where('author', '==', user.uid),
+    orderBy('createdAt', 'desc'),
+  ];
+  if (page === 0) {
+    query = query.concat([
+      limit(numRequired),
+    ]);
+  } else {
+    const beforeDid = beforeThePage(page, numRequired, user.kusa);
+    if (beforeDid === null) {
+      return null;
+    }
+
+    const db = getProjectFirestore();
+    const beforeSnap = await getDoc(doc(db, 'diaries', beforeDid));
+    query = query.concat([
+      startAfter(beforeSnap),
+      limit(numRequired),
+    ]);
+  }
+
+  const result = await queryDiaries(...query);
   if (result === null || result.length === 0) {
     return null;
   } else {
