@@ -81,40 +81,58 @@ export const fetchMyDiaryByDate = async (uid: UID, did: DID): Promise<Diary | nu
   }
 };
 
-const beforeThePage = (page: number, pageLimit: number, kusa: Kusa): DID | null => {
-  const kusaMoments = kusa.map((ent) => {
+const beforeThePage = (page: number, pageLimit: number, kusa: Kusa, dateQuery: {
+  start: Date,
+  end: Date,
+} | null): DID | null => {
+  if (page === 0) {
+    return null;
+  }
+  let kusaMoments = kusa.map((ent) => {
     return {
       date: serverTimestamp2moment(ent.date as any),
       did: ent.did ? ent.did : '',
     };
   });
-  if (page === 0) {
-    return null;
+  if (dateQuery !== null) {
+    kusaMoments = kusaMoments.filter((ent) => {
+      return ent.date.isAfter(moment(dateQuery.start)) && ent.date.isBefore(moment(dateQuery.end));
+    });
   }
+
   if (pageLimit * page > kusa.length) {
     return null;
   }
   const sortedKusa = kusaMoments.sort((a, b) => {
-    return a.date.unix() - b.date.unix();
+    return b.date.unix() - a.date.unix();
   });
 
   return sortedKusa[pageLimit * page - 1].did;
 };
 
 // fetches most recently edited diaries.
-export const fetchMyDiaries = async (user: User, numRequired: number, page: number): Promise<Diary[] | null> => {
+export const fetchMyDiaries = async (user: User, numRequired: number, page: number, dateQuery: {
+  start: Date,
+  end: Date,
+} | null = null): Promise<Diary[] | null> => {
   if (numRequired <= 0) { numRequired = 0; }
 
   let query = [
     where('author', '==', user.uid),
     orderBy('createdAt', 'desc'),
   ];
+  if (dateQuery !== null) {
+    query = query.concat([
+      where('createdAt', '>=', dateQuery.start),
+      where('createdAt', '<=', dateQuery.end),
+    ]);
+  }
   if (page === 0) {
     query = query.concat([
       limit(numRequired),
     ]);
   } else {
-    const beforeDid = beforeThePage(page, numRequired, user.kusa);
+    const beforeDid = beforeThePage(page, numRequired, user.kusa, dateQuery);
     if (beforeDid === null) {
       return null;
     }
