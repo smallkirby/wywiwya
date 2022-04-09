@@ -102,7 +102,7 @@ export const createNewDiary =
     }
 
     // add kusa
-    const resultAddKusa = await addKusa(context.auth!!.uid);
+    const resultAddKusa = await addKusa(context.auth!!.uid, newDiary.id);
     if (resultAddKusa !== null) {
       // eslint-disable-next-line no-console
       console.error(resultAddKusa);

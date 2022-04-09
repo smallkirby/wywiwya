@@ -17,18 +17,33 @@
           <diary-search-box @requestDateSearch="onRequestDateSearch" />
         </div>
 
-        <div>
-          <div class="text-center md:text-left mt-8">
-            Diaries: {{ filteredDiaries.length }} 件
+        <div class="flex mt-8">
+          <div class="text-center md:text-left">
+            Diaries: {{ targetDiariesNum }} 件
           </div>
         </div>
 
-        <div>
-          <first-diary-prompt v-if="diaries.length === 0" class="mt-4 mb-8" />
+        <!-- PAGINATION -->
+        <div class="flex items-center mt-2 mx-auto">
+          <button
+            v-for="ix in Array(Math.ceil(targetDiariesNum / pageLimit)).keys()"
+            :key="ix"
+            class="border-2 rounded-md px-2 mx-1 hover:border-skwhite-dark"
+            :class="{
+              'border-skdark-light': page === ix,
+              'border-skdark': page !== ix,
+            }"
+            @click="page !== ix && reloadPaginate(ix)"
+          >
+            {{ ix + 1 }}
+          </button>
+        </div>
 
-          <!-- TODO: need paging -->
+        <div>
+          <first-diary-prompt v-if="diaries.length === 0 && page === 0 && dateQuery === null" class="mt-4 mb-8" />
+
           <div v-else class="mt-8 mx-2 md:ml-12 flex flex-col">
-            <div v-for="(diary, ix) in filteredDiaries" :key="ix" class="mb-2 md:pr-4">
+            <div v-for="(diary, ix) in diaries" :key="ix" class="mb-2 md:pr-4">
               <diary-badge :diary="diary" class="mb-6" />
             </div>
           </div>
@@ -42,7 +57,10 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { fetchMyDiaries } from '~/lib/diary';
+import { serverTimestamp2moment } from '~/lib/util/date';
 import { Diary } from '~/typings/diary';
+
+const DATA_BLOCK_LIMIT = 5; // TODO: 10
 
 export const HistoryPage = Vue.extend({
   name: 'HistoryPage',
@@ -50,12 +68,29 @@ export const HistoryPage = Vue.extend({
   data () {
     return {
       diaries: [] as Diary[],
-      filteredDiaries: [] as Diary[],
       isDiariesFetched: false,
+      pageLimit: DATA_BLOCK_LIMIT,
+      dateQuery: null as null | {
+        start: Date,
+        end: Date,
+      },
+      page: 0,
     };
   },
 
   computed: {
+    targetDiariesNum (): number {
+      if (this.dateQuery === null) {
+        return this.me.diaries.length;
+      } else {
+        return this.me.kusa.filter((ent: any) => {
+          const date = serverTimestamp2moment(ent.date).toDate();
+          return this.dateQuery!!.start.getTime() <= date.getTime() &&
+            date.getTime() <= this.dateQuery!!.end.getTime();
+        }).length;
+      }
+    },
+
     ...mapGetters([
       'me',
     ]),
@@ -64,15 +99,19 @@ export const HistoryPage = Vue.extend({
   async mounted () {
     if (this.me) {
       this.diaries = await this.fetchDiaries();
-      this.filteredDiaries = this.diaries;
       this.sortDiaries();
     }
     this.isDiariesFetched = true;
   },
 
   methods: {
+    async reloadPaginate (newPage: number): Promise<void> {
+      this.page = newPage;
+      this.diaries = await this.fetchDiaries();
+    },
+
     async fetchDiaries (): Promise<Diary[]> {
-      const diaries = await fetchMyDiaries(this.me.uid, this.me.diaries.length);
+      const diaries = await fetchMyDiaries(this.me, this.pageLimit, this.page, this.dateQuery);
       if (diaries === null) {
         // eslint-disable-next-line no-console
         console.error('Failed to fetch diaries...');
@@ -81,7 +120,7 @@ export const HistoryPage = Vue.extend({
       return diaries;
     },
 
-    onRequestDateSearch (range: { start: Date | null, end: Date | null }) {
+    async onRequestDateSearch (range: { start: Date | null, end: Date | null }) {
       if (range.start === null || range.end === null) {
         return;
       }
@@ -91,15 +130,18 @@ export const HistoryPage = Vue.extend({
       range.end.setHours(0);
       range.end.setMinutes(0);
       range.end.setSeconds(0);
-      this.filteredDiaries = this.diaries.filter((diary: Diary) => {
-        const time = diary.createdAt.getTime();
-        return range.start!!.getTime() <= time && time <= range.end!!.getTime();
-      });
+
+      this.page = 0;
+      this.dateQuery = {
+        start: range.start,
+        end: range.end,
+      };
+      this.diaries = await this.fetchDiaries();
       this.sortDiaries();
     },
 
     sortDiaries () {
-      this.filteredDiaries = this.filteredDiaries.sort((a: Diary, b: Diary) => {
+      this.diaries = this.diaries.sort((a: Diary, b: Diary) => {
         return b.createdAt.getTime() - a.createdAt.getTime();
       });
     },

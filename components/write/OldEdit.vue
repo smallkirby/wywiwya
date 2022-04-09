@@ -47,7 +47,7 @@ export default Vue.extend({
   },
 
   async mounted () {
-    const oldDiaries = await fetchMyDiaries(this.me.uid, 3);
+    const oldDiaries = await fetchMyDiaries(this.me, 3, 0);
     if (oldDiaries === null) {
       // eslint-disable-next-line no-console
       console.error('Failed to old diaries.');

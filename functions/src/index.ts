@@ -6,7 +6,7 @@ process.env.TZ = 'Asia/Tokyo';
 admin.initializeApp(functions.config().firebase);
 
 export { createNewDiary, fetchPublicDiaries } from './diary';
-export { changeUserName, searchUserFullMatch } from './user';
+export { changeUserName, searchUserFullMatch, migrateKusa } from './user';
 export { uploadImage } from './gyazo';
 export { searchUserPartial } from './algolia';
 

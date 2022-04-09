@@ -1,5 +1,5 @@
 import { DocumentReference, Timestamp } from 'firebase/firestore';
-import { Kusa } from '~/lib/kusa';
+import { Kusa } from '~/typings/kusa';
 import { Notification } from '~/typings/notification';
 
 export type UID = string;
