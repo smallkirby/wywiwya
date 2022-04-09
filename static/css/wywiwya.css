@@ -29,16 +29,28 @@
 .cm-s-wywiwya .CodeMirror-selected { background: rgba(255, 255, 255, 0.10); }
 .cm-s-wywiwya .CodeMirror-line::selection, .cm-s-wywiwya .CodeMirror-line > span::selection, .cm-s-wywiwya .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.10); }
 .cm-s-wywiwya .CodeMirror-line::-moz-selection, .cm-s-wywiwya .CodeMirror-line > span::-moz-selection, .cm-s-wywiwya .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.10); }
-.cm-s-wywiwya span.cm-comment { color: #6272A4; }
+.cm-s-wywiwya span.cm-comment { color: #B8BB26; }
 .cm-s-wywiwya span.cm-string, .cm-s-wywiwya span.cm-string-2 { color: #F1FA8C; }
 .cm-s-wywiwya span.cm-strong { color: #B16286 !important}
-.cm-s-wywiwya span.cm-em { color: #FBEBC2}
+.cm-s-wywiwya span.cm-em { color: #FBEBC2; }
+.cm-s-wywiwya span.cm-header {
+  text-decoration: underline;
+  font-weight: bold;
+}
+.cm-s-wywiwya span.cm-header-1 { color: #8EC07C; }
+.cm-s-wywiwya span.cm-header-2 { color: #83af73; }
+.cm-s-wywiwya span.cm-header-3 { color: #83af73; }
+.cm-s-wywiwya span.cm-header-4 { color: #83af73; }
+.cm-s-wywiwya span.cm-header-5 { color: #83af73; }
 .cm-s-wywiwya span.cm-number { color: #BD93F9; }
 .cm-s-wywiwya span.cm-variable { color: #50FA7B; }
 .cm-s-wywiwya span.cm-variable-2 { color: #6272A4; }
 .cm-s-wywiwya span.cm-def { color: #50FA7B; }
+.cm-s-wywiwya span.cm-url { color: #458588; }
+.cm-s-wywiwya span.cm-image-alt-text { color: #FABD2F; }
+.cm-s-wywiwya span.cm-image-marker { color: #D3869B; font-weight: bold; }
 .cm-s-wywiwya span.cm-operator { color: #FF79C6; }
-.cm-s-wywiwya span.cm-keyword { color: #0F574E; }
+.cm-s-wywiwya span.cm-keyword { color: #076678; }
 .cm-s-wywiwya span.cm-atom { color: #BD93F9; }
 .cm-s-wywiwya span.cm-meta { color: #F8F8F2; }
 .cm-s-wywiwya span.cm-tag { color: #FF79C6; }
@@ -66,5 +78,6 @@
   color: #374151;
 }
 
-.cm-s-wywiwya .CodeMirror-activeline-background { background: rgba(255,255,255,0.2); }
+.cm-s-wywiwya .CodeMirror-activeline-background { background: rgba(255,255,255,0.1); }
 .cm-s-wywiwya .CodeMirror-matchingbracket { text-decoration: underline; color: white !important; }
+
