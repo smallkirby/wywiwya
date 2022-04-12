@@ -127,8 +127,17 @@ export class Syncher {
     callback();
   }, 100);
 
-  private getPreviewElements (): HTMLCollection {
-    return this.preview.contentDocument!!.children[0].getElementsByTagName('body')[0].children;
+  private getPreviewElements (): HTMLCollection | null {
+    if (!this.preview.contentDocument || this.preview.contentDocument.children.length === 0) {
+      return null;
+    } else {
+      const children = this.preview.contentDocument.children;
+      if (children[0].getElementsByTagName('body').length === 0) {
+        return null;
+      } else {
+        return children[0].getElementsByTagName('body')[0].children;
+      }
+    }
   };
 
   // Get actual top line number.
@@ -145,14 +154,15 @@ export class Syncher {
     }
 
     const elements = this.getPreviewElements();
+    if (elements === null) { return; }
 
     // Build mapping if editor is marked as dirty
-    if (this.blockMap === null || this.isEditorDirty) {
+    if (this.blockMap === null && this.isEditorDirty) {
       this.buildBlockMap(this.editor.getValue(), () => {
         this.syncToPreview(window);
       });
     }
-    if (this.scrollMap === null || this.isEditorDirty) {
+    if (this.scrollMap === null && this.isEditorDirty) {
       this.buildScrollMap(elements, window, () => {
         this.syncToPreview(window);
       });

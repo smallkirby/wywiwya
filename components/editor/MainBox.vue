@@ -44,55 +44,59 @@ export default Vue.extend({
   },
 
   mounted () {
-    const editor: HTMLTextAreaElement | null = document.querySelector('#editor');
-    if (editor === null) {
-      return;
-    }
-    const config: EditorConfiguration = {
-      theme: 'wywiwya',
-      lineNumbers: true,
-      mode: 'markdown',
-      showHint: true,
-      indentUnit: 2,
-      smartIndent: true,
-      indentWithTabs: false,
-      lineWrapping: true,
-      styleActiveLine: true,
-      keyMap: 'vim',
-      autoCloseBrackets: true,
-      foldGutter: true,
-      gutters: [
-        'CodeMirror-linenumbers',
-        'CodeMirror-foldgutter',
-      ],
-      extraKeys: {
-        Enter: 'newlineAndIndentContinueMarkdownList',
-        Tab: tabHandler,
-      },
-    };
-    this.editor = fromTextArea(editor, config);
-
-    this.editor.on('change', _.throttle(() => {
-      if (this.editor === null) { return; }
-      this.$emit('mdCodeChange', this.editor.getDoc().getValue());
-    }, 500));
-
-    this.editor.on('drop', (editor, event) => {
-      if (this.editor === null) { return; }
-      this.handleImageDrop(editor, event);
-    });
-
-    this.editor.on('scroll', _.throttle(() => {
-      if (this.editor === null) { return; }
-      this.$emit('editorScrolled');
-    }, 10));
+    const interval = setInterval(() => {
+      const textarea: HTMLTextAreaElement | null = document.querySelector('#editor');
+      if (textarea !== null) {
+        clearInterval(interval);
+        this.initEditor(textarea);
+      }
+    }, 50);
   },
 
   methods: {
+    initEditor (textarea: HTMLTextAreaElement) {
+      const config: EditorConfiguration = {
+        theme: 'wywiwya',
+        lineNumbers: true,
+        mode: 'markdown',
+        showHint: true,
+        indentUnit: 2,
+        smartIndent: true,
+        indentWithTabs: false,
+        lineWrapping: true,
+        styleActiveLine: true,
+        keyMap: 'vim',
+        autoCloseBrackets: true,
+        foldGutter: true,
+        gutters: [
+          'CodeMirror-linenumbers',
+          'CodeMirror-foldgutter',
+        ],
+        extraKeys: {
+          Enter: 'newlineAndIndentContinueMarkdownList',
+          Tab: tabHandler,
+        },
+      };
+      this.editor = fromTextArea(textarea, config);
+
+      this.editor.on('change', _.throttle(() => {
+        if (this.editor === null) { return; }
+        this.$emit('mdCodeChange', this.editor.getDoc().getValue());
+      }, 500)); // TODO: tunning throttle value
+
+      this.editor.on('drop', (editor, event) => {
+        if (this.editor === null) { return; }
+        this.handleImageDrop(editor, event);
+      });
+
+      this.editor.on('scroll', _.throttle(() => {
+        if (this.editor === null) { return; }
+        this.$emit('editorScrolled');
+      }, 10)); // TODO: tunning throttle value
+    },
+
     setText (newMd: string) {
-      if (this.editor === null) {
-        return;
-      }
+      if (this.editor === null) { return; }
       this.editor.getDoc().setValue(newMd);
     },
 
