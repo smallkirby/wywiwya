@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import _ from 'lodash';
 import { compile2mdStyled } from '~/lib/md';
 
 export default Vue.extend({
@@ -41,38 +42,43 @@ export default Vue.extend({
 
   methods: {
     compileWrite (mdCode: string) {
-      const code = compile2mdStyled(mdCode);
-      const elmUndefinable = this.$refs.previewBox;
+      const elmUndefinable = this.getIframe();
       if (!elmUndefinable) { return; }
-      const elm = (this.$refs.previewBox!! as HTMLIFrameElement);
-      const currentY = elm.contentWindow!!.scrollY;
+      // compile preview
+      const code = compile2mdStyled(mdCode);
+
+      // write compiled and sanitized HTML into src
+      const elm = (elmUndefinable as HTMLIFrameElement);
+      if (!elm.contentWindow) { return; }
+      const currentY = elm.contentWindow.scrollY;
       elm.srcdoc = code;
-      elm.onload = () => {
-        elm.contentWindow!!.scrollTo(0, currentY);
-      };
 
+      // adjust preview height if needed
       if (this.adjustHeight === true) {
-        this.doAdjustHeight();
+        this.doAdjustHeight(elm);
       }
+
+      // scroll to previous Y position when load finishes
+      elm.onload = () => {
+        elm.contentWindow?.scrollTo(0, currentY);
+      };
     },
 
-    doAdjustHeight () {
-      const elm = (this.$refs.previewBox!! as HTMLIFrameElement);
+    doAdjustHeight: _.throttle((preview: HTMLIFrameElement) => {
       setTimeout(() => {
-        if (elm.contentWindow !== null) {
-          elm.style.height = elm.contentWindow.document.body.clientHeight + 100 + 'px';
+        if (preview.contentWindow !== null) {
+          preview.style.height = preview.contentWindow.document.body.clientHeight + 100 + 'px';
         }
       }, 100);
-    },
+    }, 100),
 
-    doShrinkHeight () {
-      const elm = (this.$refs.previewBox!! as HTMLIFrameElement);
+    doShrinkHeight: _.throttle((preview: HTMLIFrameElement) => {
       setTimeout(() => {
-        if (elm.contentWindow !== null) {
-          elm.style.height = 'calc(100vh - 195px)';
+        if (preview.contentWindow !== null) {
+          preview.style.height = 'calc(100vh - 195px)';
         }
       }, 100);
-    },
+    }, 100),
 
     getIframe (): HTMLIFrameElement | null {
       return this.$refs.previewBox as HTMLIFrameElement | null;

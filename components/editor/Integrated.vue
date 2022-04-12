@@ -68,6 +68,8 @@ const FailDialogConfig: ConfirmDialog = {
   closeEmission: 'failAlertOk',
 };
 
+const SAVE_LOCAL_THROTTLE_MS = 1000 * 5;
+
 export default Vue.extend({
   name: 'Integrated',
 
@@ -117,7 +119,7 @@ export default Vue.extend({
       if (this.$refs.previewBox && this.$refs.mainEditor) {
         // Restore and compile a diary in local storage
         this.restoreUnsavedDiary();
-        (this.$refs.previewBox!! as any).compileWrite(this.diaryChanged.contentMd);
+        (this.$refs.previewBox as any).compileWrite(this.diaryChanged.contentMd);
         this.setText(this.diaryChanged.contentMd);
 
         // Instantiate syncher
@@ -128,21 +130,27 @@ export default Vue.extend({
 
         clearInterval(handler);
       }
-    }, 500);
+    }, 100);
   },
 
   methods: {
     onCodeChange (mdCode: string) {
+      // write compiled code into preview
       const previewBox = this.$refs.previewBox;
       if (!previewBox) { return; }
       (previewBox as any).compileWrite(mdCode);
+
+      // save locasl change in local storage
       this.diaryChanged.contentMd = mdCode;
       this.saveDiaryLocal(this.diaryChanged);
 
+      // update toolbar dirty status
       if (this.latestString !== mdCode && this.$refs.toolbar !== undefined) {
         // @ts-ignore
         this.$refs.toolbar.setDirty();
       }
+
+      // mark syncher as dirty
       if (this.syncher) {
         this.syncher.markAsDirty();
       }
@@ -168,24 +176,26 @@ export default Vue.extend({
     // save on local storage has no need to be done frequently.
     saveDiaryLocal: _.throttle((diaryToSave: Diary) => {
       setDiary(diaryToSave);
-    }, 1000 * 10),
+    }, SAVE_LOCAL_THROTTLE_MS),
 
     setText (newText: string) {
-      // dirty workaround
+      let currentTry = 0;
       const interval = setInterval(() => {
+        if (++currentTry >= 10) {
+          clearInterval(interval);
+          return;
+        }
         if (this.$refs.mainEditor) {
+          clearInterval(interval);
+
           const mainEditor = this.$refs.mainEditor;
-          if (mainEditor === undefined) {
-            return;
-          }
+          if (mainEditor === undefined) { return; }
           (mainEditor as any).setText(newText);
 
           if (this.latestString !== newText && this.$refs.toolbar !== undefined) {
             // @ts-ignore
             this.$refs.toolbar.setDirty();
           }
-
-          clearInterval(interval);
         }
       }, 100);
     },
@@ -206,7 +216,9 @@ export default Vue.extend({
         }
       }
 
-      (this.$refs.toolbar!! as any).onSaveComplete();
+      if (this.$refs.toolbar) {
+        (this.$refs.toolbar as any).onSaveComplete();
+      }
     },
 
     onFailDialogClosed () {
