@@ -25,19 +25,26 @@ export class Syncher {
   private preview: HTMLIFrameElement;
   private blockMap: Record<number, number> | null;
   private scrollMap: Record<number, number> | null;
-  private isEditorDirty: boolean;
+  private isBlockMapDirty: boolean;
+  private isScrollMapDirty: boolean;
   private enabled: boolean;
+  private nowCreatingBlockMap: boolean;
+  private nowCreatingScrollMap: boolean;
 
   constructor (editor: Editor, iframe: HTMLIFrameElement) {
     this.editor = editor;
     this.preview = iframe;
     this.blockMap = null;
     this.scrollMap = null;
-    this.isEditorDirty = true;
+    this.isBlockMapDirty = true;
+    this.isScrollMapDirty = true;
     this.enabled = true;
+    this.nowCreatingBlockMap = false;
+    this.nowCreatingScrollMap = false;
   }
 
   private buildBlockMapNotThrottled (mdCode: string): Record<number, number> {
+    this.nowCreatingBlockMap = true;
     const tmpBlockMap: Record<number, number> = {};
     let currentLineNum = 0;
     let currentBlockNum = 0;
@@ -60,7 +67,8 @@ export class Syncher {
         blockIncFlag = 'lazy';
         isPreviousLineEmpty = false;
       } else if (line.length !== 0) {
-        blockIncFlag = 'cont';
+        // @ts-ignore
+        blockIncFlag = blockIncFlag === 'lazy' ? 'lazy' : 'cont';
         isPreviousLineEmpty = false;
       } else if (line.length === 0) {
         // @ts-ignore
@@ -75,16 +83,34 @@ export class Syncher {
       ++currentLineNum;
     }
 
+    this.nowCreatingBlockMap = false;
     return tmpBlockMap;
   }
 
   private getRecursiveScrollMap (elm: Element, window: Window, currentMap: number[]): number[] {
-    if (elm.tagName.toLowerCase() === 'ul') {
-      const children = elm.children;
-      for (const ix of Array(children.length).keys()) {
-        const child = children.item(ix);
-        if (child !== null) {
-          currentMap = this.getRecursiveScrollMap(child, window, currentMap);
+    if (['ul'].includes(elm.tagName.toLowerCase())) {
+      const lisCollection = elm.children;
+      for (const ix of Array(lisCollection.length).keys()) {
+        const li = lisCollection.item(ix);
+        if (li !== null) {
+          const currentHeightAmount = currentMap.length !== 0 ? currentMap[currentMap.length - 1] : 0;
+          currentMap.push(0);
+          const tmpIndex = currentMap.length - 1;
+
+          const liChildCollection = li.children;
+          for (const jx of Array(liChildCollection.length)) {
+            const liChild = liChildCollection.item(jx);
+            if (liChild !== null) {
+              currentMap = this.getRecursiveScrollMap(liChild, window, currentMap);
+            }
+          }
+
+          const marginBottom = window.getComputedStyle(li).marginBottom.split('px')[0];
+          const liEntireHeight = li.clientHeight + Number(marginBottom);
+          const firstLineHeight = liEntireHeight - currentMap[currentMap.length - 1];
+          for (const jx of Array(currentMap.length - tmpIndex).keys()) {
+            currentMap[tmpIndex + jx] += firstLineHeight + currentHeightAmount;
+          }
         }
       }
     } else {
@@ -96,6 +122,7 @@ export class Syncher {
   }
 
   private buildScrollMapNotThrottled (elms: HTMLCollection, window: Window): Record<number, number> {
+    this.nowCreatingScrollMap = true;
     if (elms.length === 0) {
       return {
         0: 0,
@@ -114,16 +141,19 @@ export class Syncher {
       }
     }
 
+    this.nowCreatingScrollMap = false;
     return tmpScrollMap;
   }
 
   private buildBlockMap = _.throttle((mdContent, callback) => {
     this.blockMap = this.buildBlockMapNotThrottled(mdContent);
+    this.isBlockMapDirty = false;
     callback();
   }, 100);
 
   private buildScrollMap = _.throttle((elms, window, callback) => {
     this.scrollMap = this.buildScrollMapNotThrottled(elms, window);
+    this.isBlockMapDirty = false;
     callback();
   }, 100);
 
@@ -152,27 +182,33 @@ export class Syncher {
     if (!this.enabled) {
       return;
     }
+    if (this.nowCreatingBlockMap || this.nowCreatingScrollMap) {
+      return;
+    }
 
     const elements = this.getPreviewElements();
     if (elements === null) { return; }
 
     // Build mapping if editor is marked as dirty
-    if (this.blockMap === null && this.isEditorDirty) {
+    if (this.blockMap === null || this.isBlockMapDirty) {
       this.buildBlockMap(this.editor.getValue(), () => {
         this.syncToPreview(window);
       });
+      return;
     }
-    if (this.scrollMap === null && this.isEditorDirty) {
+    if (this.scrollMap === null || this.isBlockMapDirty) {
       this.buildScrollMap(elements, window, () => {
         this.syncToPreview(window);
       });
+      return;
     }
-    this.isEditorDirty = false;
 
     const currentLineNum = this.getTopLineNum();
 
     // Get corresponding preview element
     if (!this.blockMap || !this.scrollMap) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to build block/scroll mapping...');
       return;
     }
     let currentElementIx = this.blockMap[currentLineNum];
@@ -184,7 +220,8 @@ export class Syncher {
   }
 
   markAsDirty () {
-    this.isEditorDirty = true;
+    this.isBlockMapDirty = true;
+    this.isScrollMapDirty = true;
   }
 
   enable () {
