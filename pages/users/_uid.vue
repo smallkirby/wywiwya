@@ -26,10 +26,13 @@
       <div v-if="!isLoading && user !== null" class="flex flex-col">
         <user-badge :user="user" class="mb-8" />
 
-        <div class="text-center md:text-left mb-8">
-          Diaries: <span class="font-bold">
-            {{ user.diaries.length }}
-          </span> 件 <span class="text-skgray">(件数には非公開のものを含みます)</span>
+        <div class="text-center mb-8">
+          <div>
+            Diaries: <span class="font-bold"> {{ user.diaries.length }} </span> 件
+          </div>
+          <div class="text-skgray mt-2">
+            (件数には非公開のものを含みます)
+          </div>
         </div>
 
         <vue-loading v-if="isLoadingDiaries" class="pt-20" />

@@ -2,12 +2,16 @@
   <layout-wrapper>
     <div
       v-if="author!== null"
-      class="rounded-xl px-2 md:px-4 border-2 border-skgray-dark hover:border-skwhite-dark shadow-2xl pt-4 pb-1"
+      class="rounded-xl px-2 md:px-4 border-2 border-skgray-dark hover:border-skwhite-dark
+      shadow-2xl pt-4 pb-1 relative"
     >
-      <button class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left" @click="onClick">
+      <!-- CLICKABLE OVERLAY -->
+      <button class="absolute h-full w-full z-50 " @click="onClick" />
+
+      <div class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left">
         <!-- LEFT -->
         <div
-          class="flex flex-col md:pr-6 pb-4 md:pb-0
+          class="flex flex-col md:pr-6 pb-4 md:pb-0 pl-2
         border-b-2 md:border-b-0 md:border-r-2 border-skgray-dark whitespace-nowrap mb-2 w-full md:w-auto pr-2"
         >
           <div class="flex">
@@ -39,18 +43,15 @@
 
         <!-- RIGHT -->
         <div class="w-full h-full flex flex-col md:mx-4 pt-4 md:pt-0">
-          <div class="text-2xl mb-2">
-            {{ title }}
-          </div>
           <div class="ml-4 overflow-hidden h-full text-ellipsis pb-0">
             <iframe
               ref="badgeDiaryContent"
               sandbox="allow-same-origin allow-popups"
-              class="w-full h-[4.8rem] overflow-hidden sandboxedPreview"
+              class="w-full h-[9.0rem] overflow-hidden sandboxedPreview"
             />
           </div>
         </div>
-      </button>
+      </div>
     </div>
   </layout-wrapper>
 </template>
@@ -63,7 +64,7 @@ import { User } from '~/store/state';
 import { did2string } from '~/lib/util/diary';
 import { fetchUser } from '~/lib/user';
 import { serverTimestamp2moment } from '~/lib/util/date';
-import { extractTitle, extractContentHtmlStyled } from '~/lib/md';
+import { compile2mdStyled } from '~/lib/md';
 
 export default Vue.extend({
   name: 'DiaryBadge',
@@ -91,12 +92,6 @@ export default Vue.extend({
       return serverTimestamp2moment(this.diary.lastUpdatedAt as any).format('YYYY年MM月DD日 HH:mm');
     },
 
-    title () {
-      // @ts-ignore
-      const nullableTtile = extractTitle(this.diary.contentMd);
-      return nullableTtile === null ? '(no title)' : nullableTtile;
-    },
-
     ...mapGetters([
       'me',
     ]),
@@ -114,12 +109,13 @@ export default Vue.extend({
       // @ts-ignore
       if (this.$refs.badgeDiaryContent) {
         // @ts-ignore
-        let html = extractContentHtmlStyled(this.diary.contentMd);
+        let html = compile2mdStyled(this.diary.contentMd);
         html = html + `
           <style>
             body {
               line-height: 1;
               overflow: hidden;
+              margin-right: 0 !important;
             }
             p {
               margin-bottom: 0.2rem !important;
@@ -128,9 +124,11 @@ export default Vue.extend({
             .blurFilter {
               position: absolute;
               filter: blur(4px);
-              top: 3.8rem;
+              top: 7.4rem;
               width: 100%;
               height: 100%;
+              margin-left: 0;
+              padding-left: 0;
               z-index: 99;
               background-color: #130F1A !important;
               opacity: 0.8;

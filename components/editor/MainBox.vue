@@ -196,6 +196,7 @@ export default Vue.extend({
 }
 .CodeMirror ::-webkit-scrollbar-thumb {
   background: #EBDBB2;
+  border-radius: 0.375rem;
 }
 
 </style>
