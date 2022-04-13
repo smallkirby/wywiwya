@@ -2,9 +2,13 @@
   <layout-wrapper>
     <div
       v-if="author!== null"
-      class="rounded-xl px-2 md:px-4 border-2 border-skgray-dark hover:border-skwhite-dark shadow-2xl pt-4 pb-1"
+      class="rounded-xl px-2 md:px-4 border-2 border-skgray-dark hover:border-skwhite-dark
+      shadow-2xl pt-4 pb-1 relative"
     >
-      <button class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left" @click="onClick">
+      <!-- CLICKABLE OVERLAY -->
+      <button class="absolute h-full w-full z-50 " @click="onClick" />
+
+      <div class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left">
         <!-- LEFT -->
         <div
           class="flex flex-col md:pr-6 pb-4 md:pb-0
@@ -47,7 +51,7 @@
             />
           </div>
         </div>
-      </button>
+      </div>
     </div>
   </layout-wrapper>
 </template>
@@ -122,6 +126,8 @@ export default Vue.extend({
               top: 3.8rem;
               width: 100%;
               height: 100%;
+              margin-left: 0;
+              padding-left: 0;
               z-index: 99;
               background-color: #130F1A !important;
               opacity: 0.8;
