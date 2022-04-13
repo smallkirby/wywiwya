@@ -1,6 +1,10 @@
 module.exports = {
   mode: 'jit',
   theme: {
+    screens: {
+      md: '830px',
+    },
+
     extend: {
       colors: {
         skwhite: {
