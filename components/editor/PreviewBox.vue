@@ -1,7 +1,7 @@
 <template>
   <div
     class="border-t-2 border-b-2 border-skgray-dark rounded-2xl
-    pt-6 pb-2 px-2 ml-2 mr-4 h-min w-full bg-skdark-dark overflow-x-hidden"
+    pt-6 pb-2 md:px-2 ml-2 mr-4 h-min w-full bg-skdark-dark overflow-x-hidden"
     :class="{
       'md:border-l-2': sideBorder === true,
       'md:border-r-2': sideBorder === true,
