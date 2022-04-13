@@ -1,6 +1,6 @@
 # WYWIWYA
 
-![](https://img.shields.io/badge/version-0.2.1-blueviolet.svg)
+![](https://img.shields.io/badge/version-0.2.2-blueviolet.svg)
 ![Build](https://github.com/smallkirby/wywiwya/actions/workflows/ci.yml/badge.svg)
 ![Hosting](https://github.com/smallkirby/wywiwya/actions/workflows/firebase-hosting-merge.yml/badge.svg)
 
