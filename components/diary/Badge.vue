@@ -62,7 +62,7 @@ import { Diary } from '~/typings/diary';
 import { User } from '~/store/state';
 import { did2string } from '~/lib/util/diary';
 import { fetchUser } from '~/lib/user';
-import { date2string } from '~/lib/util/date';
+import { serverTimestamp2moment } from '~/lib/util/date';
 import { extractTitle, extractContentHtmlStyled } from '~/lib/md';
 
 export default Vue.extend({
@@ -88,7 +88,7 @@ export default Vue.extend({
     },
 
     lastUpdateString () {
-      return date2string(this.diary.lastUpdatedAt);
+      return serverTimestamp2moment(this.diary.lastUpdatedAt as any).format('YYYY年MM月DD日 HH:mm');
     },
 
     title () {

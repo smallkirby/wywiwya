@@ -134,7 +134,12 @@ export const fetchPublicDiaries =
 
     const returns: Diary[] = [];
     diaries.docs.forEach((doc) => {
-      returns.push(doc.data() as Diary);
+      const data = doc.data() as Diary;
+      returns.push({
+        ...data,
+        lastUpdatedAt: (data.lastUpdatedAt as any).toDate().getTime(),
+        createdAt: (data.createdAt as any).toDate().getTime(),
+      });
     });
     return returns;
   });

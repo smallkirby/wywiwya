@@ -230,6 +230,7 @@ export const fetchOthersPublicDiaries = async (uid: string): Promise<Diary[]> =>
   return await f({
     uid,
   }).then((result) => {
+    // @ts-ignore
     return result.data as Diary[];
   }).catch((e: any) => {
     // eslint-disable-next-line no-console
