@@ -1,6 +1,6 @@
 <template>
   <layout-wrapper>
-    <layout-main-box>
+    <layout-main-box v-if="me !== null">
       <div v-if="isDiariesFetched === false">
         <vue-loading />
       </div>
@@ -60,7 +60,7 @@ import { fetchMyDiaries } from '~/lib/diary';
 import { serverTimestamp2moment } from '~/lib/util/date';
 import { Diary } from '~/typings/diary';
 
-const DATA_BLOCK_LIMIT = 5; // TODO: 10
+const DATA_BLOCK_LIMIT = 10;
 
 export const HistoryPage = Vue.extend({
   name: 'HistoryPage',
@@ -100,6 +100,8 @@ export const HistoryPage = Vue.extend({
     if (this.me) {
       this.diaries = await this.fetchDiaries();
       this.sortDiaries();
+    } else {
+      this.$router.push('/login');
     }
     this.isDiariesFetched = true;
   },
