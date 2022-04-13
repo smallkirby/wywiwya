@@ -85,7 +85,16 @@ export default Vue.extend({
 
     this.isLoadingDiaries = true;
     this.diaries = await fetchOthersPublicDiaries(this.uid);
+    this.sortDiaries();
     this.isLoadingDiaries = false;
+  },
+
+  methods: {
+    sortDiaries () {
+      this.diaries = this.diaries.sort((a: Diary, b: Diary) => {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+    },
   },
 });
 

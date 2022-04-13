@@ -9,7 +9,6 @@ import {
   serverTimestamp,
   orderBy,
   limit,
-  DocumentSnapshot,
   QueryConstraint,
   startAfter,
   doc,
@@ -23,12 +22,20 @@ import { getProjectFirestore, getProjectFunctions } from '~/plugins/firebase';
 import { UID } from '~/functions/src/lib/firebase';
 import { Kusa } from '~/typings/kusa';
 
-const convertDiary = (snap: DocumentSnapshot): Diary => {
-  const data = snap.data() as any;
-  data.lastUpdatedAt = (data.lastUpdatedAt as any).toDate();
-  data.createdAt = (data.createdAt as any).toDate();
-  data.id = snap.id;
-  return data;
+function convertDiary(data: Diary): Diary;
+// eslint-disable-next-line no-redeclare
+function convertDiary(data: Diary[]): Diary[];
+// eslint-disable-next-line no-redeclare
+function convertDiary (data: any): any {
+  if (data.constructor === Array) {
+    return data.map((ent) => {
+      return convertDiary(ent as Diary);
+    });
+  } else {
+    data.lastUpdatedAt = serverTimestamp2moment(data.lastUpdatedAt).toDate();
+    data.createdAt = serverTimestamp2moment(data.createdAt).toDate();
+    return data;
+  }
 };
 
 const queryDiaries = async (...queryConstraints: QueryConstraint[]): Promise<Diary[] | null> => {
@@ -45,7 +52,7 @@ const queryDiaries = async (...queryConstraints: QueryConstraint[]): Promise<Dia
 
   const diaries: Diary[] = [];
   diariesSnap.forEach((doc) => {
-    diaries.push(convertDiary(doc));
+    diaries.push(convertDiary(doc.data() as Diary));
   });
 
   return diaries;
@@ -230,7 +237,8 @@ export const fetchOthersPublicDiaries = async (uid: string): Promise<Diary[]> =>
   return await f({
     uid,
   }).then((result) => {
-    return result.data as Diary[];
+    // @ts-ignore
+    return convertDiary(result.data as Diary[]);
   }).catch((e: any) => {
     // eslint-disable-next-line no-console
     console.error(e);
