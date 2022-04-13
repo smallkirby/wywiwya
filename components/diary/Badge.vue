@@ -39,14 +39,11 @@
 
         <!-- RIGHT -->
         <div class="w-full h-full flex flex-col md:mx-4 pt-4 md:pt-0">
-          <div class="text-2xl mb-2">
-            {{ title }}
-          </div>
           <div class="ml-4 overflow-hidden h-full text-ellipsis pb-0">
             <iframe
               ref="badgeDiaryContent"
               sandbox="allow-same-origin allow-popups"
-              class="w-full h-[4.8rem] overflow-hidden sandboxedPreview"
+              class="w-full h-[7.0rem] overflow-hidden sandboxedPreview"
             />
           </div>
         </div>
@@ -63,7 +60,7 @@ import { User } from '~/store/state';
 import { did2string } from '~/lib/util/diary';
 import { fetchUser } from '~/lib/user';
 import { serverTimestamp2moment } from '~/lib/util/date';
-import { extractTitle, extractContentHtmlStyled } from '~/lib/md';
+import { compile2mdStyled } from '~/lib/md';
 
 export default Vue.extend({
   name: 'DiaryBadge',
@@ -91,12 +88,6 @@ export default Vue.extend({
       return serverTimestamp2moment(this.diary.lastUpdatedAt as any).format('YYYY年MM月DD日 HH:mm');
     },
 
-    title () {
-      // @ts-ignore
-      const nullableTtile = extractTitle(this.diary.contentMd);
-      return nullableTtile === null ? '(no title)' : nullableTtile;
-    },
-
     ...mapGetters([
       'me',
     ]),
@@ -114,7 +105,7 @@ export default Vue.extend({
       // @ts-ignore
       if (this.$refs.badgeDiaryContent) {
         // @ts-ignore
-        let html = extractContentHtmlStyled(this.diary.contentMd);
+        let html = compile2mdStyled(this.diary.contentMd);
         html = html + `
           <style>
             body {
