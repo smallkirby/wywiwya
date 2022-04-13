@@ -101,6 +101,11 @@ export default Vue.extend({
     }
   },
 
+  destroyed () {
+    // @ts-ignore
+    $nuxt.setLayout('default');
+  },
+
   methods: {
     async getDiary () {
       if (this.me === null) { return null; }
