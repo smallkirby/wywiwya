@@ -89,3 +89,18 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  width: 0.7em;
+}
+
+::-webkit-scrollbar-track {
+  background: #130F1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #172131;
+  border-radius: 0.375rem;
+}
+</style>
