@@ -2,13 +2,13 @@
   <layout-wrapper>
     <vue-loading v-show="isLoading" class="pt-20" />
     <editor-integrated
-      v-if="!isLoading && diary !== null"
+      v-if="!isLoading && diary !== null && mode !== null"
       :diary="diary"
       :mode="mode"
       @requestModeChange="onRequestModeChange"
     />
 
-    <layout-main-box v-if="!isLoading && diary === null">
+    <layout-main-box v-if="!isLoading && diary === null && mode !== null">
       <div class="flex flex-col mt-4">
         <div class="text-center text-2xl">
           <font-awesome-icon icon="fa-solid fa-circle-xmark" />
@@ -48,7 +48,7 @@ export default Vue.extend({
     return {
       diary: null as Diary | null,
       isLoading: true,
-      mode: 'edit',
+      mode: 'edit' as EditorMode | null,
     };
   },
 
@@ -101,6 +101,11 @@ export default Vue.extend({
     }
   },
 
+  destroyed () {
+    // @ts-ignore
+    $nuxt.setLayout('default');
+  },
+
   methods: {
     async getDiary () {
       if (this.me === null) { return null; }
@@ -131,15 +136,11 @@ export default Vue.extend({
     changeModeView () {
       // @ts-ignore
       this.mode = 'view';
-      // @ts-ignore
-      this.$router.push(`/edit/${this.did}?mode=view`);
     },
 
     changeModeEdit () {
       // @ts-ignore
       this.mode = 'edit';
-      // @ts-ignore
-      this.$router.push(`/edit/${this.did}?mode=edit`);
     },
   },
 });

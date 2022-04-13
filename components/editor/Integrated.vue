@@ -34,7 +34,6 @@
           <div
             class="w-full md:w-1/2 overflow-x-hidden md:block"
             :class="{
-              'hidden': mode === 'edit',
               'pr-2': mode === 'view',
             }"
           >
@@ -105,11 +104,12 @@ export default Vue.extend({
   watch: {
     mode () {
       const previewBox = this.$refs.previewBox;
-      if (!previewBox) { return; }
+      const preview = this.getIframeInstance();
+      if (!previewBox || !preview) { return; }
       if (this.mode === 'view') {
-        (previewBox as any).doAdjustHeight();
+        (previewBox as any).doAdjustHeight(preview);
       } else {
-        (previewBox as any).doShrinkHeight();
+        (previewBox as any).doShrinkHeight(preview);
       }
     },
   },
