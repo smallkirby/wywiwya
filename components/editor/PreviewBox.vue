@@ -49,8 +49,9 @@ export default Vue.extend({
 
       // write compiled and sanitized HTML into src
       const elm = (elmUndefinable as HTMLIFrameElement);
-      if (!elm.contentWindow) { return; }
-      const currentY = elm.contentWindow.scrollY;
+      const contentWindow = elm.contentWindow;
+      if (!contentWindow) { return; }
+      const currentY = contentWindow.scrollY;
       elm.srcdoc = code;
 
       // adjust preview height if needed
@@ -66,7 +67,7 @@ export default Vue.extend({
 
     doAdjustHeight: _.throttle((preview: HTMLIFrameElement) => {
       setTimeout(() => {
-        if (preview.contentWindow !== null) {
+        if (preview && preview.contentWindow) {
           preview.style.height = preview.contentWindow.document.body.clientHeight + 100 + 'px';
         }
       }, 100);
@@ -74,7 +75,7 @@ export default Vue.extend({
 
     doShrinkHeight: _.throttle((preview: HTMLIFrameElement) => {
       setTimeout(() => {
-        if (preview.contentWindow !== null) {
+        if (preview && preview.contentWindow) {
           preview.style.height = 'calc(100vh - 195px)';
         }
       }, 100);
