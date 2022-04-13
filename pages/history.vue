@@ -17,9 +17,9 @@
           <diary-search-box @requestDateSearch="onRequestDateSearch" />
         </div>
 
-        <div class="flex mt-8">
-          <div class="text-center md:text-left">
-            Diaries: {{ targetDiariesNum }} 件
+        <div class="flex mt-4 mb-3">
+          <div class="text-center mx-auto">
+            Diaries: <span class="font-bold">{{ targetDiariesNum }}</span> 件
           </div>
         </div>
 

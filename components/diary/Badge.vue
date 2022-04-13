@@ -11,7 +11,7 @@
       <div class="w-full h-full flex flex-col md:flex-row justify-between items-lfet text-left">
         <!-- LEFT -->
         <div
-          class="flex flex-col md:pr-6 pb-4 md:pb-0
+          class="flex flex-col md:pr-6 pb-4 md:pb-0 pl-2
         border-b-2 md:border-b-0 md:border-r-2 border-skgray-dark whitespace-nowrap mb-2 w-full md:w-auto pr-2"
         >
           <div class="flex">
@@ -47,7 +47,7 @@
             <iframe
               ref="badgeDiaryContent"
               sandbox="allow-same-origin allow-popups"
-              class="w-full h-[7.0rem] overflow-hidden sandboxedPreview"
+              class="w-full h-[9.0rem] overflow-hidden sandboxedPreview"
             />
           </div>
         </div>
@@ -115,6 +115,7 @@ export default Vue.extend({
             body {
               line-height: 1;
               overflow: hidden;
+              margin-right: 0 !important;
             }
             p {
               margin-bottom: 0.2rem !important;
@@ -123,7 +124,7 @@ export default Vue.extend({
             .blurFilter {
               position: absolute;
               filter: blur(4px);
-              top: 3.8rem;
+              top: 7.4rem;
               width: 100%;
               height: 100%;
               margin-left: 0;

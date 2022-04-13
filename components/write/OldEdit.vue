@@ -10,7 +10,7 @@
           まだ Diary を書いていません。
         </div>
         <div v-for="(diary, ix) in oldDiaries" v-else :key="ix" class="mb-2 md:pr-4">
-          <diary-badge :diary="diary" />
+          <diary-badge :diary="diary" class="mb-6" />
         </div>
       </div>
     </div>
