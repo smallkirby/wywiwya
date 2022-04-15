@@ -82,7 +82,7 @@ export default Vue.extend({
       this.editor.on('change', _.throttle(() => {
         if (this.editor === null) { return; }
         this.$emit('mdCodeChange', this.editor.getDoc().getValue());
-      }, 500)); // TODO: tunning throttle value
+      }, 500));
 
       this.editor.on('drop', (editor, event) => {
         if (this.editor === null) { return; }
@@ -92,7 +92,7 @@ export default Vue.extend({
       this.editor.on('scroll', _.throttle(() => {
         if (this.editor === null) { return; }
         this.$emit('editorScrolled');
-      }, 10)); // TODO: tunning throttle value
+      }, 50));
     },
 
     setText (newMd: string) {

@@ -116,16 +116,18 @@ export default Vue.extend({
 
   mounted () {
     const handler = setInterval(() => {
-      if (this.$refs.previewBox && this.$refs.mainEditor) {
+      const editor = this.getEditorInstance();
+      const iframe = this.getIframeInstance();
+      if (editor && iframe) {
         // Restore and compile a diary in local storage
         this.restoreUnsavedDiary();
-        (this.$refs.previewBox as any).compileWrite(this.diaryChanged.contentMd);
+        (this.$refs.previewBox as any)?.compileWrite(this.diaryChanged.contentMd);
         this.setText(this.diaryChanged.contentMd);
 
         // Instantiate syncher
         this.syncher = new Syncher(
-          (this.$refs.mainEditor as any).getEditorInstance(),
-          (this.$refs.previewBox as any).getIframe(),
+          editor,
+          iframe,
         );
 
         clearInterval(handler);
