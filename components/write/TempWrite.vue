@@ -51,10 +51,7 @@ export default Vue.extend({
 
   async mounted () {
     const tempDiaries = await fetchMyTemporaryDiaries(this.me);
-    if (tempDiaries === null) {
-      // eslint-disable-next-line no-console
-      console.log('Failed to fetch temporary diaries.');
-    } else {
+    if (tempDiaries !== null) {
       this.tempDiaries = tempDiaries;
     }
   },
