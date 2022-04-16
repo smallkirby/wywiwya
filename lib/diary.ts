@@ -288,6 +288,30 @@ export const updateDiary = async (diary: Diary): Promise<string | null> => {
 };
 
 /*
+ * Remove diary. returns true if success.
+ */
+
+export const removeDiary = async (did: string): Promise<boolean> => {
+  const functions = getProjectFunctions();
+  const f = httpsCallable(functions, 'removeDiary');
+  return await f({
+    did,
+  }).then((result) => {
+    const err = (result.data as any).err;
+    if (err !== null) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to update diary', err);
+      return false;
+    }
+    return true;
+  }).catch((e: any) => {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    return false;
+  });
+};
+
+/*
  * Fetch public diaries including others'.
  */
 export const fetchOthersPublicDiaries = async (uid: string): Promise<Diary[]> => {

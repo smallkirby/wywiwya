@@ -1,11 +1,32 @@
 <template>
   <layout-wrapper>
     <div class="px-4">
-      <misc-dialog v-show="isUpdateFailShowing" :config="failDialogConfig" @failAlertOk="onFailDialogClosed">
-        <div class="flex flex-col">
+      <misc-dialog
+        v-show="isUpdateDialogShowing || isRemoveDialogShowing"
+        :config="failDialogConfig"
+        @failAlertOk="onFailDialogClosed"
+      >
+        <div v-if="isUpdateDialogShowing" class="flex flex-col">
           <div>Diaryの更新に失敗しました。</div>
           <div>時間をおいて再試行してみてください。</div>
           <div>なお、保存結果はローカルにも保存されており、次回編集時に読み込まれます。</div>
+        </div>
+
+        <div v-if="isRemoveDialogShowing" class="flex flex-col">
+          <div>Diaryの削除に失敗しました。</div>
+          <div>時間をおいて再試行してみてください。</div>
+        </div>
+      </misc-dialog>
+
+      <misc-dialog
+        v-show="isRemoveAskDialogShowing"
+        :config="askDialogConfig"
+        @doRemoveDialog="onDoRemoveDialog"
+        @cancelRemoveDialog="onCancelRemoveDialog"
+      >
+        <div class="flex flex-col">
+          <div>削除したDiaryは復元することができません</div>
+          <div>本当に削除してもよろしいですか?</div>
         </div>
       </misc-dialog>
 
@@ -24,6 +45,7 @@
             @requestBindingChange="onRequestBindingChange"
             @requestModeChange="(newMode) => $emit('requestModeChange', newMode)"
             @requestSyncChange="onSyncChanged"
+            @requestRemove="onRequestRemove"
           />
         </div>
 
@@ -53,18 +75,34 @@
 import Vue, { PropType } from 'vue';
 import _ from 'lodash';
 import { Editor } from 'codemirror';
-import { ConfirmDialog } from '../misc/Dialog.vue';
+import { ChooseDialog, ConfirmDialog, Dialog } from '../misc/Dialog.vue';
 import { EditorBinding } from './MainBox.vue';
 import { Diary } from '~/typings/diary';
 import { getDiary, removeDiary, setDiary } from '~/lib/localstorage';
-import { updateDiary } from '~/lib/diary';
+import { removeDiary as remoteRemoveDiary, updateDiary } from '~/lib/diary';
 import { Syncher } from '~/lib/editor';
 
-const FailDialogConfig: ConfirmDialog = {
+const FailUpdateDialogConfig: ConfirmDialog = {
   typ: 'confirm',
   title: 'Diaryの更新に失敗しました',
   closeText: 'OK',
   closeEmission: 'failAlertOk',
+};
+
+const FailRemoveDialogConfig: ConfirmDialog = {
+  typ: 'confirm',
+  title: 'Diaryの削除に失敗しました',
+  closeText: 'OK',
+  closeEmission: 'failAlertOk',
+};
+
+const askRemoveDialogConfig: ChooseDialog = {
+  typ: 'choose',
+  title: '本当に削除しますか?',
+  okText: '削除',
+  okEmission: 'doRemoveDialog',
+  cancelText: 'キャンセル',
+  cancelEmission: 'cancelRemoveDialog',
 };
 
 const SAVE_LOCAL_THROTTLE_MS = 1000 * 5;
@@ -88,8 +126,11 @@ export default Vue.extend({
     return {
       diaryChanged: this.diary as Diary,
       latestString: this.diary.contentMd,
-      failDialogConfig: FailDialogConfig,
-      isUpdateFailShowing: false,
+      failDialogConfig: FailUpdateDialogConfig as Dialog,
+      askDialogConfig: askRemoveDialogConfig,
+      isRemoveAskDialogShowing: false,
+      isUpdateDialogShowing: false,
+      isRemoveDialogShowing: false,
       syncher: null as Syncher | null,
     };
   },
@@ -207,7 +248,7 @@ export default Vue.extend({
       if (result !== null) {
         // eslint-disable-next-line no-console
         console.error(`Failed to update diary: ${result}`);
-        this.isUpdateFailShowing = true;
+        this.isUpdateDialogShowing = true;
       } else {
         const toolbar = this.$refs.toolbar;
         removeDiary(this.diary.dateID);
@@ -224,7 +265,8 @@ export default Vue.extend({
     },
 
     onFailDialogClosed () {
-      this.isUpdateFailShowing = false;
+      this.isUpdateDialogShowing = false;
+      this.isRemoveDialogShowing = false;
     },
 
     onTemporaryChange (isTemporary: boolean) {
@@ -275,6 +317,25 @@ export default Vue.extend({
       } else {
         this.syncher?.disable();
       }
+    },
+
+    onRequestRemove () {
+      this.isRemoveAskDialogShowing = true;
+    },
+
+    async onDoRemoveDialog () {
+      this.isRemoveAskDialogShowing = false;
+
+      if (await remoteRemoveDiary(this.diary.id)) {
+        this.$router.push('/history');
+      } else {
+        this.failDialogConfig = FailRemoveDialogConfig;
+        this.isRemoveDialogShowing = true;
+      }
+    },
+
+    onCancelRemoveDialog () {
+      this.isRemoveAskDialogShowing = false;
     },
   },
 });

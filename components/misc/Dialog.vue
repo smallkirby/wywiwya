@@ -15,10 +15,35 @@
               <slot />
             </div>
 
-            <div class="text-right">
-              <button class="border-2 border-gray-700 hover:bg-gray-300 px-4 hover:text-skdark" @click="onOkClick">
-                {{ config.closeText }}
-              </button>
+            <div
+              class="flex mt-4 mx-4 text-right"
+              :class="{
+                'justify-between': config.typ === 'choose',
+                'justify-end': config.typ !== 'choose',
+              }"
+            >
+              <div v-if="config.typ === 'choose'">
+                <button
+                  class="border-2 border-gray-700 hover:bg-skwhite-dark px-4 hover:text-skdark rounded-md"
+                  @click="onCancelClick"
+                >
+                  {{ config.cancelText }}
+                </button>
+              </div>
+
+              <div class="text-right">
+                <button
+                  class="border-2 border-gray-700 hover:bg-skwhite-dark px-4 hover:text-skdark rounded-md"
+                  @click="onOkClick"
+                >
+                  <p v-if="config.typ === 'choose'">
+                    {{ config.okText }}
+                  </p>
+                  <p v-else>
+                    {{ config.closeText }}
+                  </p>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -69,7 +94,15 @@ export default Vue.extend({
       if (this.config.typ === 'confirm') {
         const config = this.config as ConfirmDialog;
         this.$emit(config.closeEmission);
+      } else if (this.config.typ === 'choose') {
+        const config = this.config as ChooseDialog;
+        this.$emit(config.okEmission);
       }
+    },
+
+    onCancelClick () {
+      const config = this.config as ChooseDialog;
+      this.$emit(config.cancelEmission);
     },
   },
 });
