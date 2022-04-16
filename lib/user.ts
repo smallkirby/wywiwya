@@ -5,33 +5,28 @@ import { Kusa } from '~/typings/kusa';
 import { getProjectFunctions, getProjectFirestore } from '~/plugins/firebase';
 import { User, UID } from '~/store/state';
 
-// convert user in the server user.
-function convertServerUser (user: User): User;
-// eslint-disable-next-line no-redeclare
-function convertServerUser (user: User[]): User[];
-// eslint-disable-next-line no-redeclare
-function convertServerUser (user: any): any {
-  if (user.constructor === Array) {
-    return user.map((ent) => {
-      if (ent.kusa === undefined) {
-        ent.kusa = [];
-      }
-      if (ent.readNotifications === undefined) {
-        ent.readNotifications = [];
-      }
-      return ent;
-    });
-  } else {
-    if (user.kusa === undefined) {
-      user.kusa = [];
-    }
-    if (user.readNotifications === undefined) {
-      user.readNotifications = [];
-    }
-    return user;
+/*
+ * Convert `User` from remote data type into local data type
+ */
+const convertUser = (user: User): User => {
+  if (user.kusa === undefined) {
+    user.kusa = [];
   }
+  if (user.readNotifications === undefined) {
+    user.readNotifications = [];
+  }
+  return user;
 };
 
+const convertUsers = (users: User[]): User[] => {
+  return users.map((user) => {
+    return convertUser(user);
+  });
+};
+
+/*
+ * Check if user's kusa needs update compared to existing dat ain Firestore.
+ */
 export const kusaNeedMigration = (user: User): boolean => {
   for (const kusa of user.kusa) {
     if (kusa.did === undefined) {
@@ -41,7 +36,10 @@ export const kusaNeedMigration = (user: User): boolean => {
   return false;
 };
 
-export const tryMigrateKusa = async (user: User): Promise<Kusa> => {
+/*
+ * Try to update user's kusa if needed.
+ */
+export const tryMigrateKusa = async (user: User): Promise<Kusa[]> => {
   if (kusaNeedMigration(user)) {
     const functions = getProjectFunctions();
     const f = httpsCallable(functions, 'migrateKusa');
@@ -67,6 +65,11 @@ export const tryMigrateKusa = async (user: User): Promise<Kusa> => {
   }
 };
 
+/*
+ * Set user to Firestore.
+ * If user exists already, it updates only some fileds.
+ * If not, it creates new user.
+ */
 export const setUser = async (user: User): Promise<boolean> => {
   const db = getProjectFirestore();
   const userDocRef = doc(db, 'users', user.uid);
@@ -108,6 +111,9 @@ export const setUser = async (user: User): Promise<boolean> => {
   }
 };
 
+/*
+ * Fetch user of given `uid`.
+ */
 export const fetchUser = async (uid: UID): Promise<User | null> => {
   const db = getFirestore();
   const userRef = doc(db, 'users', uid);
@@ -116,10 +122,13 @@ export const fetchUser = async (uid: UID): Promise<User | null> => {
   if (!userSnap.exists()) {
     return null;
   } else {
-    return convertServerUser(userSnap.data() as User);
+    return convertUser(userSnap.data() as User);
   }
 };
 
+/*
+ * Change user's diaplay name.
+ */
 export const changeDisplayName = async (newName: string): Promise<string | null> => {
   const functions = getProjectFunctions();
   const f = httpsCallable(functions, 'changeUserName');
@@ -145,6 +154,9 @@ export const changeDisplayName = async (newName: string): Promise<string | null>
   });
 };
 
+/*
+ * Search user which matches completely with `name`.
+ */
 export const searchUserFullMatch = async (name: string): Promise<string | User[]> => {
   const functions = getProjectFunctions();
   const f = httpsCallable(functions, 'searchUserFullMatch');
@@ -154,7 +166,7 @@ export const searchUserFullMatch = async (name: string): Promise<string | User[]
     const error = (result.data as any).err;
     const users = (result.data as any).users;
     if (error === null) {
-      return convertServerUser(users);
+      return convertUser(users);
     } else if (error === 'invalid-query') {
       return '検索文字列に不正な文字が含まれています。';
     } else {
@@ -165,6 +177,9 @@ export const searchUserFullMatch = async (name: string): Promise<string | User[]
   });
 };
 
+/*
+ * Search user which partially matches with `name`.
+ */
 export const searchUserPartialMatch = async (name: string): Promise<string | User[]> => {
   const functions = getProjectFunctions();
   const f = httpsCallable(functions, 'searchUserPartial');
@@ -174,7 +189,7 @@ export const searchUserPartialMatch = async (name: string): Promise<string | Use
     const error = (result.data as any).err;
     const users = (result.data as any).users;
     if (error === null) {
-      return convertServerUser(users);
+      return convertUser(users);
     } else if (error === 'invalid-query') {
       return '検索クエリが正しくありません。';
     } else if (error === 'rate-limit') {
@@ -187,6 +202,9 @@ export const searchUserPartialMatch = async (name: string): Promise<string | Use
   });
 };
 
+/*
+ * Get all existing users.
+ */
 export const getAllUsers = async (): Promise<string | User[]> => {
   const functions = getProjectFunctions();
   const f = httpsCallable(functions, 'searchUserFullMatch');
@@ -196,7 +214,7 @@ export const getAllUsers = async (): Promise<string | User[]> => {
     const error = (result.data as any).err;
     const users = (result.data as any).users;
     if (error === null) {
-      return convertServerUser(users);
+      return convertUsers(users);
     } else if (error === 'invalid-query') {
       return '検索文字列に不正な文字が含まれています。';
     } else {

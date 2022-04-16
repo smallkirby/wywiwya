@@ -1,21 +1,31 @@
+/*
+ * This file defines date utility functions.
+ */
+
 import { Timestamp } from 'firebase/firestore';
 import moment, { Moment } from 'moment';
 
-export const serverTimestamp2string = (timestamp: Timestamp): string => {
-  return serverTimestamp2moment(timestamp).format('YYYY年MM月DD日');
-};
-
-export const serverTimestamp2moment = (timestamp: any): Moment => {
+/*
+ * Convert unknown date-like object into Date
+ */
+export const convert2date = (timestamp: any): Date | null => {
   if (timestamp instanceof Timestamp) {
-    const date = timestamp.toDate();
-    return moment(date);
+    return timestamp.toDate();
   } else if (timestamp instanceof Date) {
     // @ts-ignore
-    return moment(timestamp.getTime());
+    return timestamp;
   } else if (typeof timestamp === 'number') {
     // @ts-ignore
-    return moment(new Date(timestamp));
+    return new Date(timestamp);
   } else {
-    return moment(timestamp);
+    return null;
   }
+};
+
+/*
+ * Convert unknown date-like object into moment.
+ */
+export const convert2moment = (timestamp: any): Moment | null => {
+  const dateNullable = convert2date(timestamp);
+  return dateNullable !== null ? moment(dateNullable) : null;
 };

@@ -77,7 +77,7 @@
           <div class="flex flex-col leading-relaxed mt-28">
             <div class="text-3xl font-bold mb-4 border-b-2 border-skdark pb-4">
               <font-awesome-icon icon="fa-solid fa-envelope" />
-              CONTACT
+              CONTACT♻e
             </div>
             <div class="ml-4">
               <p>

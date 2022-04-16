@@ -45,10 +45,9 @@
 </template>
 
 <script lang="ts">
-import { Timestamp } from '@firebase/firestore';
 import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
-import { serverTimestamp2string } from '~/lib/util/date';
+import { convert2moment } from '~/lib/util/date';
 import { User } from '~/store/state';
 
 export default Vue.extend({
@@ -69,7 +68,8 @@ export default Vue.extend({
 
   computed: {
     startDateString () {
-      return serverTimestamp2string(this.user.createdAt as Timestamp);
+      const moment = convert2moment(this.user.createdAt);
+      return moment !== null ? moment.format('YYYY年MM月DD日') : '(unknown)';
     },
 
     ...mapGetters([

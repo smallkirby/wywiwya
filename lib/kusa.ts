@@ -1,17 +1,24 @@
-import { Timestamp } from 'firebase/firestore';
 import moment, { Moment } from 'moment';
-import { serverTimestamp2moment } from './util/date';
+import { convert2moment } from './util/date';
 import { Kusa } from '~/typings/kusa';
 
+/*
+ * Represents single day and describes whether a diary is written at that day.
+ */
 export type KusaEntry = {
   isWritten: boolean,
   date: Moment,
 }
 
-export const getKusaEntries = (kusa: Kusa): KusaEntry[][] => {
-  const kusaMoments = kusa.map((ent) => {
-    return serverTimestamp2moment(ent.date as any as Timestamp);
-  });
+/*
+ * Convert `Kusa[]` into `KusaEntry[][]`.
+ */
+export const getKusaEntries = (kusas: Kusa[]): KusaEntry[][] => {
+  const kusaMoments = kusas.map((ent) => {
+    return convert2moment(ent.date);
+  }).filter((ent) => {
+    return ent !== null;
+  }) as Moment[];
 
   // TODO: for now, show only this year's.
   const now = moment();
@@ -19,7 +26,7 @@ export const getKusaEntries = (kusa: Kusa): KusaEntry[][] => {
     return ent.year === now.year;
   });
 
-  const kusas: KusaEntry[][] = [];
+  const kusaEnts: KusaEntry[][] = [];
   const newyearday = moment().set('month', 0).set('date', 1);
   let offset = -1 * newyearday.weekday();
   while (true) {
@@ -40,8 +47,8 @@ export const getKusaEntries = (kusa: Kusa): KusaEntry[][] => {
       });
       ++offset;
     }
-    kusas.push(weekKusas);
+    kusaEnts.push(weekKusas);
   }
 
-  return kusas;
+  return kusaEnts;
 };

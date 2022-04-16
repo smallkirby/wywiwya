@@ -10,7 +10,7 @@ export type User = {
   uid: UID,
   diaries: DocumentReference[],
   createdAt: Timestamp | null,
-  kusa: Kusa,
+  kusa: Kusa[],
   readNotifications: string[],
 }
 

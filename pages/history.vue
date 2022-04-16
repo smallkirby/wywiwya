@@ -56,8 +56,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import { fetchMyDiaries } from '~/lib/diary';
-import { serverTimestamp2moment } from '~/lib/util/date';
+import { fetchDiaries } from '~/lib/diary';
+import { convert2date } from '~/lib/util/date';
 import { Diary } from '~/typings/diary';
 
 const DATA_BLOCK_LIMIT = 10;
@@ -84,8 +84,10 @@ export const HistoryPage = Vue.extend({
         return this.me.diaries.length;
       } else {
         return this.me.kusa.filter((ent: any) => {
-          const date = serverTimestamp2moment(ent.date).toDate();
-          return this.dateQuery!!.start.getTime() <= date.getTime() &&
+          const date = convert2date(ent.date);
+          return date === null
+            ? -1
+            : this.dateQuery!!.start.getTime() <= date.getTime() &&
             date.getTime() <= this.dateQuery!!.end.getTime();
         }).length;
       }
@@ -113,7 +115,7 @@ export const HistoryPage = Vue.extend({
     },
 
     async fetchDiaries (): Promise<Diary[]> {
-      const diaries = await fetchMyDiaries(this.me, this.pageLimit, this.page, this.dateQuery);
+      const diaries = await fetchDiaries(this.me, this.pageLimit, this.page, this.dateQuery);
       if (diaries === null) {
         // eslint-disable-next-line no-console
         console.error('Failed to fetch diaries...');

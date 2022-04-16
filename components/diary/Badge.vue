@@ -63,7 +63,7 @@ import { Diary } from '~/typings/diary';
 import { User } from '~/store/state';
 import { did2string } from '~/lib/util/diary';
 import { fetchUser } from '~/lib/user';
-import { serverTimestamp2moment } from '~/lib/util/date';
+import { convert2moment } from '~/lib/util/date';
 import { compile2mdStyled } from '~/lib/md';
 
 export default Vue.extend({
@@ -89,7 +89,8 @@ export default Vue.extend({
     },
 
     lastUpdateString () {
-      return serverTimestamp2moment(this.diary.lastUpdatedAt as any).format('YYYY年MM月DD日 HH:mm');
+      const moment = convert2moment(this.diary.lastUpdatedAt);
+      return moment !== null ? moment.format('YYYY年MM月DD日 HH:mm') : '(unknown)';
     },
 
     ...mapGetters([
