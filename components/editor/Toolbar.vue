@@ -111,8 +111,8 @@
 
       <!--  Dirty Indicator -->
       <div
-        class="text-lg font-bold pr-8 border-b-2
-        md:border-b-0 md:border-l-2  border-skgray pb-1 md:pb-0 ml-2 px-2 mb-1 md:mb-0"
+        class="text-lg font-bold border-b-2
+        md:border-b-0 md:border-l-2  border-skgray pb-1 md:pb-0 ml-2 pl-2 pr-1 mb-1 md:mb-0"
       >
         <div class="w-7 h-7 text-center">
           <font-awesome-icon
@@ -127,6 +127,24 @@
             icon="fa-solid fa-star-of-david"
             class="px-auto mx-auto"
           />
+        </div>
+      </div>
+
+      <!--  Remove -->
+      <div
+        class="text-lg font-bold pr-8 border-b-2
+        md:border-b-0 md:border-l-2  border-skgray pb-1 md:pb-0 ml-2 px-2 mb-1 md:mb-0"
+      >
+        <div class="px-1 my-1 w-10 h-full">
+          <div class="border-2 border-skdark-dark hover:border-red-800 hover:text-red-800 text-skgray rounded-md">
+            <button class="w-full h-full outline-none" @click="onRequestRemove">
+              <font-awesome-icon
+                v-tooltip="'消去する'"
+                class="outline-none"
+                icon="fa-solid fa-trash-can"
+              />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -219,6 +237,10 @@ export default Vue.extend({
     onRequestSyncChange () {
       this.currentSynched = !this.currentSynched;
       this.$emit('requestSyncChange', this.currentSynched);
+    },
+
+    onRequestRemove () {
+      this.$emit('requestRemove');
     },
 
     setDirty () {

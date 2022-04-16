@@ -2,8 +2,14 @@ import firebase from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { firestore } from '../lib/firebase';
 import { isAuthed } from '../lib/auth';
+import { DID } from '../diary';
 
 export type UID = string;
+
+export type Kusa = {
+  date: Date,
+  did: DID,
+};
 
 export type User = {
   displayName: string,
@@ -11,6 +17,7 @@ export type User = {
   uid: UID,
   diaries: firebase.firestore.DocumentReference[],
   createdAt: number | null, // TODO
+  kusa: Kusa[],
 }
 
 export const addDiaryRef =
@@ -35,11 +42,6 @@ export const addDiaryRef =
       return null;
     }
   };
-
-type Kusa = {
-  date: Date,
-  did: string,
-};
 
 // NOTE: costy
 const recalculateKusa = async (uid: UID): Promise<Kusa[] | string> => {
@@ -104,6 +106,27 @@ export const addKusa = async (uid: UID, did: string): Promise<string | null> => 
 
     return null;
   }
+};
+
+export const removeKusa = async (uid: UID, did: DID): Promise<string | null> => {
+  const userRef = firestore().collection('users').doc(uid);
+  const userSnap = await userRef.get();
+  const kusa = (userSnap.data() as User).kusa;
+  const targetIndex = kusa.findIndex((ent) => {
+    return ent.did === did;
+  });
+  if (targetIndex === -1) {
+    return null;
+  }
+
+  kusa.splice(targetIndex, 1);
+  return await userRef.update({
+    kusa,
+  }).then(() => {
+    return null;
+  }).catch((e) => {
+    return e.toString();
+  });
 };
 
 export const fetchUsers = async (uids: UID[]): Promise<User[]> => {
@@ -206,6 +229,7 @@ const doSearchUserFullMatch = async (searchStr: string): Promise<User[]> => {
       displayName: data.displayName,
       diaries: data.diaries,
       createdAt: data.createdAt.toDate().getTime(),
+      kusa: [],
     });
   });
 
