@@ -193,11 +193,6 @@ export default Vue.extend({
         // @ts-ignore
         this.$refs.toolbar.setDirty();
       }
-
-      // mark syncher as dirty
-      if (this.syncher) {
-        this.syncher.markAsDirty();
-      }
     },
 
     restoreUnsavedDiary () {
@@ -308,6 +303,7 @@ export default Vue.extend({
 
     onEditorScrolled () {
       if (this.syncher !== null) {
+        this.syncher.rebuildMaps();
         this.syncher.syncToPreview(window);
       }
     },
@@ -340,7 +336,7 @@ export default Vue.extend({
     },
 
     onIframeLoaded () {
-      this.syncher?.rebuildMaps();
+      this.syncher?.markAsDirty();
     },
   },
 });

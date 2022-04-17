@@ -118,6 +118,7 @@ export class Syncher {
   private buildScrollMapNotThrottled (elms: HTMLCollection, window: Window): Record<number, number> {
     this.nowCreatingScrollMap = true;
     if (elms.length === 0) {
+      this.nowCreatingScrollMap = false;
       return {
         0: 0,
       };
@@ -179,7 +180,8 @@ export class Syncher {
     const elements = this.getPreviewElements();
     if (elements === null) { return; }
 
-    // Build mapping if editor is marked as dirty
+    // Build mappings only for first time.
+    // Rebuilding of mappings must be handled only by `rebuildMaps`
     if (this.blockMap === null || this.scrollMap === null) {
       this.buildMaps(this.editor.getValue(), elements, window, () => {
         this.syncToPreview(window);
@@ -208,7 +210,7 @@ export class Syncher {
   }
 
   rebuildMaps () {
-    if (!this.enabled) {
+    if (!this.enabled || !this.isMapsDirty) {
       return;
     }
     if (this.nowCreatingBlockMap || this.nowCreatingScrollMap) {
@@ -218,10 +220,7 @@ export class Syncher {
     const elements = this.getPreviewElements();
     if (elements === null) { return; }
 
-    // Build mapping if editor is marked as dirty
-    if (this.blockMap === null || this.scrollMap === null || this.isMapsDirty) {
-      this.buildMaps(this.editor.getValue(), elements, window, () => {});
-    }
+    this.buildMaps(this.editor.getValue(), elements, window, () => {});
   }
 
   enable () {
