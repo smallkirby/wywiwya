@@ -62,6 +62,7 @@ export default Vue.extend({
       // scroll to previous Y position when load finishes
       elm.onload = () => {
         elm.contentWindow?.scrollTo(0, currentY);
+        this.$emit('iframeLoaded');
       };
     },
 

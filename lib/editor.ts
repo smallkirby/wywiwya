@@ -25,8 +25,7 @@ export class Syncher {
   private preview: HTMLIFrameElement;
   private blockMap: Record<number, number> | null;
   private scrollMap: Record<number, number> | null;
-  private isBlockMapDirty: boolean;
-  private isScrollMapDirty: boolean;
+  private isMapsDirty: boolean;
   private enabled: boolean;
   private nowCreatingBlockMap: boolean;
   private nowCreatingScrollMap: boolean;
@@ -36,8 +35,7 @@ export class Syncher {
     this.preview = iframe;
     this.blockMap = null;
     this.scrollMap = null;
-    this.isBlockMapDirty = true;
-    this.isScrollMapDirty = true;
+    this.isMapsDirty = true;
     this.enabled = true;
     this.nowCreatingBlockMap = false;
     this.nowCreatingScrollMap = false;
@@ -93,9 +91,7 @@ export class Syncher {
       for (const ix of Array(lisCollection.length).keys()) {
         const li = lisCollection.item(ix);
         if (li !== null) {
-          const currentHeightAmount = currentMap.length !== 0 ? currentMap[currentMap.length - 1] : 0;
-          currentMap.push(0);
-          const tmpIndex = currentMap.length - 1;
+          currentMap.push(li.getClientRects()[0].top);
 
           const liChildCollection = li.children;
           for (const jx of Array(liChildCollection.length)) {
@@ -104,18 +100,10 @@ export class Syncher {
               currentMap = this.getRecursiveScrollMap(liChild, window, currentMap);
             }
           }
-
-          const marginBottom = window.getComputedStyle(li).marginBottom.split('px')[0];
-          const liEntireHeight = li.clientHeight + Number(marginBottom);
-          const firstLineHeight = liEntireHeight - currentMap[currentMap.length - 1];
-          for (const jx of Array(currentMap.length - tmpIndex).keys()) {
-            currentMap[tmpIndex + jx] += firstLineHeight + currentHeightAmount;
-          }
         }
       }
     } else {
-      const marginBottom = window.getComputedStyle(elm).marginBottom.split('px')[0];
-      currentMap.push(currentMap[currentMap.length - 1] + elm.clientHeight + Number(marginBottom));
+      currentMap.push(elm.getClientRects()[0].top);
     }
 
     return currentMap;
@@ -141,19 +129,15 @@ export class Syncher {
       }
     }
 
+    tmpScrollMap.splice(0, 1);
     this.nowCreatingScrollMap = false;
     return tmpScrollMap;
   }
 
-  private buildBlockMap = _.throttle((mdContent, callback) => {
+  private buildMaps = _.throttle((mdContent, elms, window, callback) => {
     this.blockMap = this.buildBlockMapNotThrottled(mdContent);
-    this.isBlockMapDirty = false;
-    callback();
-  }, 100);
-
-  private buildScrollMap = _.throttle((elms, window, callback) => {
     this.scrollMap = this.buildScrollMapNotThrottled(elms, window);
-    this.isBlockMapDirty = false;
+    this.isMapsDirty = false;
     callback();
   }, 100);
 
@@ -190,14 +174,8 @@ export class Syncher {
     if (elements === null) { return; }
 
     // Build mapping if editor is marked as dirty
-    if (this.blockMap === null || this.isBlockMapDirty) {
-      this.buildBlockMap(this.editor.getValue(), () => {
-        this.syncToPreview(window);
-      });
-      return;
-    }
-    if (this.scrollMap === null || this.isBlockMapDirty) {
-      this.buildScrollMap(elements, window, () => {
+    if (this.blockMap === null || this.scrollMap === null) {
+      this.buildMaps(this.editor.getValue(), elements, window, () => {
         this.syncToPreview(window);
       });
       return;
@@ -220,8 +198,24 @@ export class Syncher {
   }
 
   markAsDirty () {
-    this.isBlockMapDirty = true;
-    this.isScrollMapDirty = true;
+    this.isMapsDirty = true;
+  }
+
+  rebuildMaps () {
+    if (!this.enabled) {
+      return;
+    }
+    if (this.nowCreatingBlockMap || this.nowCreatingScrollMap) {
+      return;
+    }
+
+    const elements = this.getPreviewElements();
+    if (elements === null) { return; }
+
+    // Build mapping if editor is marked as dirty
+    if (this.blockMap === null || this.scrollMap === null || this.isMapsDirty) {
+      this.buildMaps(this.editor.getValue(), elements, window, () => {});
+    }
   }
 
   enable () {
