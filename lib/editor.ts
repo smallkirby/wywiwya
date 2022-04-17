@@ -59,6 +59,9 @@ export class Syncher {
 
       if (line.startsWith('#')) {
         // Unconditionally increment block
+        if (blockIncFlag === 'lazy') {
+          tmpBlockMap[currentLineNum] = ++currentBlockNum;
+        }
         blockIncFlag = 'imm';
         isPreviousLineEmpty = false;
       } else if (line.startsWith('- ')) {
@@ -92,7 +95,7 @@ export class Syncher {
   }
 
   private getRecursiveScrollMap (elm: Element, window: Window, currentMap: number[]): number[] {
-    if (['ul'].includes(elm.tagName.toLowerCase())) {
+    if (['ul', 'li'].includes(elm.tagName.toLowerCase())) {
       const lisCollection = elm.children;
       for (const ix of Array(lisCollection.length).keys()) {
         const li = lisCollection.item(ix);
@@ -100,9 +103,9 @@ export class Syncher {
           currentMap.push(li.getClientRects()[0].top);
 
           const liChildCollection = li.children;
-          for (const jx of Array(liChildCollection.length)) {
+          for (const jx of Array(liChildCollection.length).keys()) {
             const liChild = liChildCollection.item(jx);
-            if (liChild !== null) {
+            if (liChild !== null && ['ul', 'li'].includes(liChild.tagName.toLowerCase())) {
               currentMap = this.getRecursiveScrollMap(liChild, window, currentMap);
             }
           }

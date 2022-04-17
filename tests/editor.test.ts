@@ -181,4 +181,52 @@ describe('Test of block counts', () => {
       expect(answer[ix]).toBe(blockMap[ix]);
     }
   });
+
+  test('List parser check 3', () => {
+    const syncher = new Syncher(null as any, null as any);
+    const mdCode = `- 0
+    - 1
+      - 2
+    # 3
+    4
+    4`;
+
+    const answer = [
+      0,
+      1,
+      2,
+      3,
+      4,
+      4,
+    ];
+    const blockMap = (syncher as any).buildBlockMapNotThrottled(mdCode);
+    for (const ix of Array(answer.length).keys()) {
+      expect(answer[ix]).toBe(blockMap[ix]);
+    }
+  });
+
+  test('List parser check 4', () => {
+    const syncher = new Syncher(null as any, null as any);
+    const mdCode = `- 0
+    - 1
+      - 2
+
+    # 3
+    4
+    4`;
+
+    const answer = [
+      0,
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+    ];
+    const blockMap = (syncher as any).buildBlockMapNotThrottled(mdCode);
+    for (const ix of Array(answer.length).keys()) {
+      expect(answer[ix]).toBe(blockMap[ix]);
+    }
+  });
 });
