@@ -25,8 +25,7 @@ export class Syncher {
   private preview: HTMLIFrameElement;
   private blockMap: Record<number, number> | null;
   private scrollMap: Record<number, number> | null;
-  private isBlockMapDirty: boolean;
-  private isScrollMapDirty: boolean;
+  private isMapsDirty: boolean;
   private enabled: boolean;
   private nowCreatingBlockMap: boolean;
   private nowCreatingScrollMap: boolean;
@@ -36,8 +35,7 @@ export class Syncher {
     this.preview = iframe;
     this.blockMap = null;
     this.scrollMap = null;
-    this.isBlockMapDirty = true;
-    this.isScrollMapDirty = true;
+    this.isMapsDirty = true;
     this.enabled = true;
     this.nowCreatingBlockMap = false;
     this.nowCreatingScrollMap = false;
@@ -48,7 +46,7 @@ export class Syncher {
     const tmpBlockMap: Record<number, number> = {};
     let currentLineNum = 0;
     let currentBlockNum = 0;
-    let isPreviousLineEmpty = false;
+    let isPreviousLineEmpty = true;
     let blockIncFlag: BlockIncrementFlag = 'cont';
 
     for (const _line of mdCode.split('\n')) {
@@ -59,9 +57,18 @@ export class Syncher {
       }
       tmpBlockMap[currentLineNum] = currentBlockNum;
 
-      if (line.startsWith('#') || line.startsWith('- ')) {
+      if (line.startsWith('#')) {
         // Unconditionally increment block
+        if (blockIncFlag === 'lazy') {
+          tmpBlockMap[currentLineNum] = ++currentBlockNum;
+        }
         blockIncFlag = 'imm';
+        isPreviousLineEmpty = false;
+      } else if (line.startsWith('- ')) {
+        if (blockIncFlag === 'lazy') {
+          tmpBlockMap[currentLineNum] = ++currentBlockNum;
+        }
+        blockIncFlag = 'lazy';
         isPreviousLineEmpty = false;
       } else if (line.length !== 0 && isPreviousLineEmpty) {
         blockIncFlag = 'lazy';
@@ -88,34 +95,24 @@ export class Syncher {
   }
 
   private getRecursiveScrollMap (elm: Element, window: Window, currentMap: number[]): number[] {
-    if (['ul'].includes(elm.tagName.toLowerCase())) {
+    if (['ul', 'li'].includes(elm.tagName.toLowerCase())) {
       const lisCollection = elm.children;
       for (const ix of Array(lisCollection.length).keys()) {
         const li = lisCollection.item(ix);
         if (li !== null) {
-          const currentHeightAmount = currentMap.length !== 0 ? currentMap[currentMap.length - 1] : 0;
-          currentMap.push(0);
-          const tmpIndex = currentMap.length - 1;
+          currentMap.push(li.getClientRects()[0].top);
 
           const liChildCollection = li.children;
-          for (const jx of Array(liChildCollection.length)) {
+          for (const jx of Array(liChildCollection.length).keys()) {
             const liChild = liChildCollection.item(jx);
-            if (liChild !== null) {
+            if (liChild !== null && ['ul', 'li'].includes(liChild.tagName.toLowerCase())) {
               currentMap = this.getRecursiveScrollMap(liChild, window, currentMap);
             }
-          }
-
-          const marginBottom = window.getComputedStyle(li).marginBottom.split('px')[0];
-          const liEntireHeight = li.clientHeight + Number(marginBottom);
-          const firstLineHeight = liEntireHeight - currentMap[currentMap.length - 1];
-          for (const jx of Array(currentMap.length - tmpIndex).keys()) {
-            currentMap[tmpIndex + jx] += firstLineHeight + currentHeightAmount;
           }
         }
       }
     } else {
-      const marginBottom = window.getComputedStyle(elm).marginBottom.split('px')[0];
-      currentMap.push(currentMap[currentMap.length - 1] + elm.clientHeight + Number(marginBottom));
+      currentMap.push(elm.getClientRects()[0].top);
     }
 
     return currentMap;
@@ -124,6 +121,7 @@ export class Syncher {
   private buildScrollMapNotThrottled (elms: HTMLCollection, window: Window): Record<number, number> {
     this.nowCreatingScrollMap = true;
     if (elms.length === 0) {
+      this.nowCreatingScrollMap = false;
       return {
         0: 0,
       };
@@ -141,19 +139,15 @@ export class Syncher {
       }
     }
 
+    tmpScrollMap.splice(0, 1);
     this.nowCreatingScrollMap = false;
     return tmpScrollMap;
   }
 
-  private buildBlockMap = _.throttle((mdContent, callback) => {
+  private buildMaps = _.throttle((mdContent, elms, window, callback) => {
     this.blockMap = this.buildBlockMapNotThrottled(mdContent);
-    this.isBlockMapDirty = false;
-    callback();
-  }, 100);
-
-  private buildScrollMap = _.throttle((elms, window, callback) => {
     this.scrollMap = this.buildScrollMapNotThrottled(elms, window);
-    this.isBlockMapDirty = false;
+    this.isMapsDirty = false;
     callback();
   }, 100);
 
@@ -189,15 +183,10 @@ export class Syncher {
     const elements = this.getPreviewElements();
     if (elements === null) { return; }
 
-    // Build mapping if editor is marked as dirty
-    if (this.blockMap === null || this.isBlockMapDirty) {
-      this.buildBlockMap(this.editor.getValue(), () => {
-        this.syncToPreview(window);
-      });
-      return;
-    }
-    if (this.scrollMap === null || this.isBlockMapDirty) {
-      this.buildScrollMap(elements, window, () => {
+    // Build mappings only for first time.
+    // Rebuilding of mappings must be handled only by `rebuildMaps`
+    if (this.blockMap === null || this.scrollMap === null) {
+      this.buildMaps(this.editor.getValue(), elements, window, () => {
         this.syncToPreview(window);
       });
       return;
@@ -220,8 +209,21 @@ export class Syncher {
   }
 
   markAsDirty () {
-    this.isBlockMapDirty = true;
-    this.isScrollMapDirty = true;
+    this.isMapsDirty = true;
+  }
+
+  rebuildMaps () {
+    if (!this.enabled || !this.isMapsDirty) {
+      return;
+    }
+    if (this.nowCreatingBlockMap || this.nowCreatingScrollMap) {
+      return;
+    }
+
+    const elements = this.getPreviewElements();
+    if (elements === null) { return; }
+
+    this.buildMaps(this.editor.getValue(), elements, window, () => {});
   }
 
   enable () {

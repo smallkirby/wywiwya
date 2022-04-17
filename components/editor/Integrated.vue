@@ -63,6 +63,7 @@
               ref="previewBox"
               :adjust-height="mode === 'view'"
               :side-border="mode === 'view'"
+              @iframeLoaded="onIframeLoaded"
             />
           </div>
         </div>
@@ -192,11 +193,6 @@ export default Vue.extend({
         // @ts-ignore
         this.$refs.toolbar.setDirty();
       }
-
-      // mark syncher as dirty
-      if (this.syncher) {
-        this.syncher.markAsDirty();
-      }
     },
 
     restoreUnsavedDiary () {
@@ -307,6 +303,7 @@ export default Vue.extend({
 
     onEditorScrolled () {
       if (this.syncher !== null) {
+        this.syncher.rebuildMaps();
         this.syncher.syncToPreview(window);
       }
     },
@@ -336,6 +333,10 @@ export default Vue.extend({
 
     onCancelRemoveDialog () {
       this.isRemoveAskDialogShowing = false;
+    },
+
+    onIframeLoaded () {
+      this.syncher?.markAsDirty();
     },
   },
 });
