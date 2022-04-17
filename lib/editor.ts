@@ -46,7 +46,7 @@ export class Syncher {
     const tmpBlockMap: Record<number, number> = {};
     let currentLineNum = 0;
     let currentBlockNum = 0;
-    let isPreviousLineEmpty = false;
+    let isPreviousLineEmpty = true;
     let blockIncFlag: BlockIncrementFlag = 'cont';
 
     for (const _line of mdCode.split('\n')) {
@@ -57,9 +57,15 @@ export class Syncher {
       }
       tmpBlockMap[currentLineNum] = currentBlockNum;
 
-      if (line.startsWith('#') || line.startsWith('- ')) {
+      if (line.startsWith('#')) {
         // Unconditionally increment block
         blockIncFlag = 'imm';
+        isPreviousLineEmpty = false;
+      } else if (line.startsWith('- ')) {
+        if (blockIncFlag === 'lazy') {
+          tmpBlockMap[currentLineNum] = ++currentBlockNum;
+        }
+        blockIncFlag = 'lazy';
         isPreviousLineEmpty = false;
       } else if (line.length !== 0 && isPreviousLineEmpty) {
         blockIncFlag = 'lazy';
