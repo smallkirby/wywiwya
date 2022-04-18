@@ -17,6 +17,9 @@
               <p>IS</p>
               <p>WHAT YOU ARE</p>
             </div>
+            <div v-if="versionUrl !== null" class="text-center mx-auto mt-4">
+              <img :src="versionUrl">
+            </div>
           </div>
         </div>
 
@@ -96,9 +99,39 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import axios from 'axios';
 
 export const IndexPage = Vue.extend({
   name: 'IndexPage',
+
+  data () {
+    return {
+      versionUrl: null as string | null,
+    };
+  },
+
+  async mounted () {
+    const result = await axios.get('https://raw.githubusercontent.com/smallkirby/wywiwya/master/README.md');
+    if (result.status === 200) {
+      this.versionUrl = this.parseVersion(result.data);
+    }
+  },
+
+  methods: {
+    parseVersion (readme: string): string | null {
+      for (const _line of readme.split('\n')) {
+        const line = _line.trim();
+        if (line.startsWith('![](')) {
+          const regexResult = line.match(/!\[\]\((.*)\)/);
+          if (regexResult === null || regexResult.length <= 1) {
+            return null;
+          }
+          return regexResult[1];
+        }
+      }
+      return null;
+    },
+  },
 });
 
 export default IndexPage;
