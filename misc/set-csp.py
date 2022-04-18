@@ -38,6 +38,7 @@ CSP = {
     "www.google-analytics.com",
     "upload.gyazo.com",
     "wywiwya.microcms.io",
+    "https://raw.githubusercontent.com/smallkirby/wywiwya/master/README.md",
     "http://localhost:5001",
     "http://localhost:8081",
     "http://localhost:9099",
